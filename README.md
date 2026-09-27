@@ -44,6 +44,8 @@ python -m orbit_server --http
 
 Desktop-Vorschau: <http://localhost:8443>. Quest benötigt HTTPS; siehe [Verbindung und XR](docs/vr/setup.md).
 
+Für einen Checkout in WSL mit eingerichtetem Zertifikat startet `Start-Orbit.cmd` das aktuelle Spiel unter Windows auf **https://localhost:8443/**. Für WLAN: `Start-Orbit.cmd -BindAddress 0.0.0.0 -Background`. Der Starter verbindet eine Windows-TCP-Weiterleitung mit der vorhandenen WSL-Laufzeit; Details stehen im [Windows-Setup](docs/vr/setup.md#windows-start-mit-https).
+
 Desktop: WASD bewegen, F fliegen/landen, Leertaste/Shift Höhe, rechte Maus umsehen, linke Maus Bogen. Quest: links bewegen, rechts drehen/Höhe, A fliegen, X links Episodenmenü. Episode auswählen, Aufgaben nahe am passenden Objekt ausführen. [Bedienung](docs/vr/setup.md) · [Sprache einrichten](docs/ai/speech.md).
 
 ## Kreaturenwerkstatt (Design Mode)

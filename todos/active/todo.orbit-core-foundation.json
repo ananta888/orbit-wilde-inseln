@@ -68,7 +68,8 @@
       "status": "in_progress",
       "task_ids": [
         "NET-CONTRACT",
-        "NET-PAIR"
+        "NET-PAIR",
+        "NET-WINDOWS-START"
       ]
     },
     {
@@ -1552,6 +1553,58 @@
       "evidence": [
         "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
       ]
+    },
+    {
+      "id": "NET-WINDOWS-START",
+      "title": "Aktuellen Checkout unter Windows an der bestehenden HTTPS-Adresse starten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "NET",
+      "priority": "P0",
+      "risk": "medium",
+      "progress_percent": 100,
+      "dependencies": [
+        "NET-CONTRACT",
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "Start-Orbit.cmd",
+        "tools/run-windows.ps1",
+        "tools/run-local.py",
+        "tools/start_wsl_backend.py",
+        "tools/tcp_relay.py",
+        "tests/test_launcher.py",
+        "docs/vr/setup.md",
+        "docs/architecture/adr/005-windows-wsl-launch.md",
+        "README.md",
+        "docs/testing.md"
+      ],
+      "description": "Der alte native Windows-Prototyp belegte HTTPS 8443, waehrend der neue Checkout nur auf HTTP 8444 lief. Ein reproduzierbarer Windows-Start muss dieselbe Adresse mit dem aktuellen Code bedienen.",
+      "implementation_plan": [
+        "Aktuellen HTTPS-Spielserver in vorhandener WSL-Umgebung betreiben; native Windows-TCP-Weiterleitung fuer denselben Clientzugang bereitstellen.",
+        "Vorhandenes lokales Zertifikat und Linux-KI-Konfiguration beibehalten; eigene Backend-Prozesse nach PID, Befehl und HTTPS-Antwort erkennen.",
+        "Neuen Dienst vor Umschaltung pruefen, Spielstaende sichern und alten Launcher auf den aktuellen Checkout umstellen."
+      ],
+      "acceptance_criteria": [
+        "HTTPS /health meldet orbit-wilde-inseln und Protokoll 4; Root und Designer stammen aus diesem Checkout.",
+        "WebSockets, Geometrieprozesse und Optimierung funktionieren ueber die Windows-HTTPS-Adresse; die vorhandene WSL-Laufzeit bleibt massgeblich.",
+        "Bestehende Spielstaende bleiben erhalten; Launcher ueberschreibt keinen fremden Listener und erkennt Startfehler."
+      ],
+      "tests": [
+        "Socket-Tests fuer bidirektionale Bytes, Halb-Schliessen, Verbindungslimit und Shutdown; PowerShell-Parser und echter Start/Portkonfliktpfad unter Windows.",
+        "Browserpruefung von Spiel, Werkstatt, Authoring und Probeflug gegen separate Windows-Testdaten.",
+        "Vergleich von HTTPS /health, HTML und WebSocket-Protokoll an der produktiven Adresse."
+      ],
+      "definition_of_done": [
+        "Aktueller Windows-Listener laeuft auf 8443; alte Startverknuepfung fuehrt zum neuen Checkout.",
+        "Bedienung und Laufzeitpfade dokumentiert, Quellcode auf main gesichert; keine Zertifikate, Token oder Spielstaende eingecheckt."
+      ],
+      "evidence": [
+        "2026-09-28: Windows-HTTPS auf 8443 meldet aktuellen Checkout und Protokoll 4; Root/Designer/app.js bytegenau verglichen.",
+        "Native Windows-Chrome-Tests fuer Authoring und Veroeffentlichung/Probeflug gegen getrennte Testdaten bestanden.",
+        "SQLite-Backups geprueft, dieselben WSL-Daten weiterverwendet; lokalen Prototyp-Starter nach Sicherung umgeleitet.",
+        "Socket-, Portkonflikt-, Backend-Wiederverwendungs- und Foundation-Pruefungen: docs/testing.md."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -1573,24 +1626,24 @@
     "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
   ],
   "tasks_status_summary": {
-    "total": 45,
+    "total": 46,
     "by_status": {
       "todo": 17,
       "in_progress": 0,
       "partial": 1,
       "blocked": 0,
-      "done": 27
+      "done": 28
     },
-    "progress_percent_done": 60.0,
+    "progress_percent_done": 60.87,
     "by_priority": {
-      "P0": 27,
+      "P0": 28,
       "P1": 4,
       "P2": 14,
       "P3": 0
     },
     "by_risk": {
       "low": 27,
-      "medium": 13,
+      "medium": 14,
       "high": 5
     },
     "critical_path": {
