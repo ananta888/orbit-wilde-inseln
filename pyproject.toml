@@ -13,6 +13,7 @@ authors = [{name = "Peter Stuiber"}]
 dependencies = ["aiohttp>=3.14.3,<4", "jsonschema>=4.23,<5"]
 
 [project.optional-dependencies]
+design = ["numpy==2.3.5", "trimesh==5.1.0", "manifold3d==3.5.4"]
 dev = ["pytest>=8,<10", "ruff>=0.11,<1", "mypy>=1.15,<2", "types-jsonschema"]
 
 [project.scripts]
@@ -36,7 +37,11 @@ ignore = ["E701", "E702", "E731"]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["server/orbit_server/missions", "server/orbit_server/persistence", "server/orbit_server/learning", "server/orbit_server/fitness", "server/orbit_server/ai/contracts.py", "server/orbit_server/speech"]
+files = ["server/orbit_server/missions", "server/orbit_server/persistence", "server/orbit_server/learning", "server/orbit_server/fitness", "server/orbit_server/ai/contracts.py", "server/orbit_server/speech", "server/orbit_server/design"]
 check_untyped_defs = true
 warn_unused_ignores = true
 follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = ["manifold3d"]
+ignore_missing_imports = true

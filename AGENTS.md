@@ -34,6 +34,18 @@ Use small modules, dependency injection, typed Python interfaces and documented 
 - Orbit source and original procedural assets are BSD-3-Clause. External components retain their licenses; inspect every asset's provenance. Do not copy Ananta/Piper source or models into this repository.
 - Tests must run unattended and without Quest hardware, an LLM, microphone access or external services. Keep hardware/integration diagnostics opt-in.
 
-## Definition of done
+## Creature Designer
+
+The separate track `todos/active/todo.vr-ai-creature-designer.json` owns design-mode work. Update this track for editor changes; leave unrelated foundation tasks intact. Refresh a single track by passing its path to `tools/validate_todos.py --refresh`.
+
+- Read `docs/design-mode/overview.md` and the two `design-*` ADRs before editing the designer.
+- Canonical metres and revisioned region buffers belong to the laptop. Browser preview never becomes authoritative by itself.
+- Every new mutation needs schema validation, mask/lock handling, resource limits, reversible history, and a test of its failure path.
+- Changes to ODG1 must update both decoders and the Python-generated cross-language fixture in `examples/design/odg1-triangle.json`.
+- Do not silently remove unknown UV/skin/morph/layer data during import. Extend the format with tests, or reject the unsupported input.
+- The original creature, AI candidate, accepted revision and runtime asset are separate objects. No editor command writes gameplay rewards or missions.
+- Hardware-free validation uses `pytest`, `npm test`, `npm run test:design` and `npm run test:design:xr` against a dedicated local test server. Record IWER results as emulation. Do not invent Quest, Whisper, GPU or Ananta integration results.
+
+## Completion evidence
 
 The behavior is executable, error paths are handled, relevant tests pass, contracts/docs agree, and the TODO track reflects actual completed and outstanding work. A stub, emulator pass or planned adapter is not a verified hardware feature. Report limitations directly; no fabricated Ananta evidence identifiers.

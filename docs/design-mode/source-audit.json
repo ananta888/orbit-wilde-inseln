@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.0",
+  "captured_at_utc": "2026-09-27T21:14:18.550932+00:00",
+  "base_commit": "cb2e3719427f804edb77510bf0c7690b831761f7",
+  "scope": "Uncommitted local design implementation; no physical hardware certification",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "558ceda67a095cbcd0c8d46cf7094430acd3bd3ab8351ee2d75f7dd8a835566c",
+      "bytes": 792,
+      "lines": 17
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "b597b9550ee9b96c3072eeaba90c4367de183a36cc2d29a65503ad5e6b521df1",
+      "bytes": 1811,
+      "lines": 54
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "00df0b2148cf1b5ff672a504b5bfdc1f2ad347b35d3b68367517efe2e31c816a",
+      "bytes": 4791,
+      "lines": 51
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "sha256": "1b16b3d480318c9dac70c9a3ec8ca87cdd8b4a4dbdace0780a2a75143e0eb4a8",
+      "bytes": 7849,
+      "lines": 65
+    },
+    {
+      "path": "README.md",
+      "sha256": "1eafb28c896c29bf53d1baba49215051af28a7807781e21da8270dff70b69387",
+      "bytes": 5631,
+      "lines": 74
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "sha256": "2d3a00c1248f1b6c5faf8aa9ae3a4c86bfe47d8f8917809c0fdea88719f0c00a",
+      "bytes": 2970,
+      "lines": 21
+    },
+    {
+      "path": "client/webxr/designer/index.html",
+      "sha256": "89e64ea4d955cee34ac7d972cf2f66ff0c9d48c50a56bb86e898f76238bce268",
+      "bytes": 7952,
+      "lines": 71
+    },
+    {
+      "path": "client/webxr/designer/style.css",
+      "sha256": "76502af849e66fe8d6497cd82f0858843a7a092c6b8aacd864c0b5ebfbd7268a",
+      "bytes": 2478,
+      "lines": 18
+    },
+    {
+      "path": "client/webxr/src/design/assets.js",
+      "sha256": "7ecac74167389548b65f6a7212f00470e25ed462fa22472d9582287cadfa1a8c",
+      "bytes": 8965,
+      "lines": 145
+    },
+    {
+      "path": "client/webxr/src/design/input.js",
+      "sha256": "c2c4383eab78e8579866cc70bf05ded6d88ddd7b9eebcec43ad6692778209386",
+      "bytes": 1559,
+      "lines": 31
+    },
+    {
+      "path": "client/webxr/src/design/navigation.js",
+      "sha256": "2733f1276bdf4924e5a74aedf20c56c99031b3309aaf1ff3ba27c45dc0c0e541",
+      "bytes": 1794,
+      "lines": 29
+    },
+    {
+      "path": "client/webxr/src/design/networking/client.js",
+      "sha256": "ad3c0142bf8eba6fbe991743679adddfce40e7300a38166703c4baf26a53b6aa",
+      "bytes": 5512,
+      "lines": 96
+    },
+    {
+      "path": "client/webxr/src/design/networking/journal.js",
+      "sha256": "2607551d8567ca1f555329c52f750894456f9a69ce3146c38fa18eebe9aba5b9",
+      "bytes": 1443,
+      "lines": 25
+    },
+    {
+      "path": "client/webxr/src/design/networking/protocol.js",
+      "sha256": "8b24af3028795e8cb3dd92be5e5d8004590788db515d17e2dabb4ae67a70ed0c",
+      "bytes": 5020,
+      "lines": 74
+    },
+    {
+      "path": "client/webxr/src/design/palette.js",
+      "sha256": "9e98ba44ad8ee68c5657091b684cbb849a36d65c09cf3e2382d16af8c935a60c",
+      "bytes": 1569,
+      "lines": 26
+    },
+    {
+      "path": "client/webxr/src/design/rendering.js",
+      "sha256": "5d618507078b10eba133bb63430e7d63818ad941e0e98c1463465d7c4c109d69",
+      "bytes": 10082,
+      "lines": 173
+    },
+    {
+      "path": "client/webxr/src/design/workspace.js",
+      "sha256": "b7b292d4763569f336aa3e01ccc4c6517e085cc6e00b26320b19aca86dedda18",
+      "bytes": 27671,
+      "lines": 382
+    },
+    {
+      "path": "docs/architecture/adr/design-001-editing-foundation.md",
+      "sha256": "b53ddea9d4277027945d2fb67929fefd12f3d94b3ffd6dc6b040f151f00fb4c2",
+      "bytes": 1895,
+      "lines": 21
+    },
+    {
+      "path": "docs/architecture/adr/design-002-protocol-and-storage.md",
+      "sha256": "8d35401c22579ff66d0266bb1fa531c4778e3a093bb650e70cea8f1633d4b42e",
+      "bytes": 1449,
+      "lines": 13
+    },
+    {
+      "path": "docs/design-mode/ai-assisted-editing.md",
+      "sha256": "a5bdfac4e4371ae0856c438fddb6785dc00302ba06f7f15d2beceda134d61782",
+      "bytes": 2874,
+      "lines": 34
+    },
+    {
+      "path": "docs/design-mode/creature-format.md",
+      "sha256": "24092cb43c71bf35e926079ea346257fe87a9da27ab5ada30fa55755e961b775",
+      "bytes": 3066,
+      "lines": 23
+    },
+    {
+      "path": "docs/design-mode/integration-map.md",
+      "sha256": "72551d7fa5b24f57100d4ff614543fd686ba937a18ac044f78a8b717d66fcb37",
+      "bytes": 1641,
+      "lines": 15
+    },
+    {
+      "path": "docs/design-mode/networking.md",
+      "sha256": "4ab8b82e3ec0301f4dfea8580da72c31e9eb63bb08c3c5edef064c4457f4ac1c",
+      "bytes": 2934,
+      "lines": 29
+    },
+    {
+      "path": "docs/design-mode/overview.md",
+      "sha256": "85f4ed0d07fd538943742cb782828f11a415ac35d811d5b2bbb6ea608295d8fc",
+      "bytes": 3260,
+      "lines": 43
+    },
+    {
+      "path": "docs/design-mode/performance.md",
+      "sha256": "b69603f1f9639459f3eec717477a9f91d136ae32fa3cf2016e18e4d422c0e2c2",
+      "bytes": 2280,
+      "lines": 28
+    },
+    {
+      "path": "docs/design-mode/requirements.md",
+      "sha256": "38f31f3d0835b3ab2cab6100eaf53e6810355de38beee220fc64c5bc9ba2586b",
+      "bytes": 13812,
+      "lines": 241
+    },
+    {
+      "path": "docs/design-mode/rigging.md",
+      "sha256": "5f1cafc84b20bccd1bde1f8bb404bb1b2aac2d16fa3892da5d2aea52c76ad94f",
+      "bytes": 1963,
+      "lines": 23
+    },
+    {
+      "path": "docs/design-mode/sculpting.md",
+      "sha256": "3056a60f160b14d4dadcd06b305f215f4468e8af3ce558845acd95714f39ca8f",
+      "bytes": 2624,
+      "lines": 23
+    },
+    {
+      "path": "docs/design-mode/verification.md",
+      "sha256": "b01f27b6c7b7a798f8094aeda3ce292c16008f393a322727ecbbd8986cb35674",
+      "bytes": 3378,
+      "lines": 35
+    },
+    {
+      "path": "docs/design-mode/xr-interaction.md",
+      "sha256": "97b4428e1c0d140fdc5ed3edbdab0893bce6e8d063342f06c87102933abcc6d5",
+      "bytes": 2504,
+      "lines": 23
+    },
+    {
+      "path": "examples/design/odg1-triangle.json",
+      "sha256": "ce036d49d3aad49ec8fbadb3dd8259f028a407236b4d797036b8c188850e65d6",
+      "bytes": 5560,
+      "lines": 117
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "b5521b8c7e2b249674ae2539016df44d813caed7f70692d858d91b27ab1250a3",
+      "bytes": 3198,
+      "lines": 97
+    },
+    {
+      "path": "package.json",
+      "sha256": "1a3ab216d3dfaeb6f7e2a82edceec3a9fdcc9bdd26d04fa68448f770ba1b92af",
+      "bytes": 830,
+      "lines": 27
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "2b62294e43e001c03c84253c8e2be1f1f3eb74ffa62e6d6ddd0dccf3d49cff9f",
+      "bytes": 1392,
+      "lines": 47
+    },
+    {
+      "path": "server/orbit_server/design/__init__.py",
+      "sha256": "a94443f7159b634dd0bacf18c5b9adf1d7702611545443ea415e05b83cab621c",
+      "bytes": 81,
+      "lines": 1
+    },
+    {
+      "path": "server/orbit_server/design/ai.py",
+      "sha256": "02e9d7f5090f6c3321c197904565499a2d3bc6acea6645b3109cecbaaa2c3772",
+      "bytes": 4745,
+      "lines": 82
+    },
+    {
+      "path": "server/orbit_server/design/document.py",
+      "sha256": "73c3650a567bdde67270f91d8c0ef336fb6a4565049d20926c9e1cce071b9345",
+      "bytes": 9536,
+      "lines": 176
+    },
+    {
+      "path": "server/orbit_server/design/generation.py",
+      "sha256": "5037d193b3277c82fd0552fb8f407b2f2b4cd74e5e6752385c5aa68a22d28544",
+      "bytes": 9466,
+      "lines": 161
+    },
+    {
+      "path": "server/orbit_server/design/geometry.py",
+      "sha256": "0cc4f990d744a6428b0a62878133c0abe84ab103cd371890240fe195ce30551e",
+      "bytes": 13791,
+      "lines": 233
+    },
+    {
+      "path": "server/orbit_server/design/http.py",
+      "sha256": "ecc857c80925f4d1964676e69bba95bf8d23b52f3a7eed3e1a5a39a67fc9c556",
+      "bytes": 13959,
+      "lines": 217
+    },
+    {
+      "path": "server/orbit_server/design/ports.py",
+      "sha256": "da7c165b68a869d68e58c03d6061e0835ef6238e0675a11e73bb8669571183fa",
+      "bytes": 592,
+      "lines": 18
+    },
+    {
+      "path": "server/orbit_server/design/preview.py",
+      "sha256": "13850f578645ef3ebdd20f4522add8a386d4ad9a6a80039f981f5fe901edd897",
+      "bytes": 1503,
+      "lines": 32
+    },
+    {
+      "path": "server/orbit_server/design/repository.py",
+      "sha256": "53a8807fa76769dcabbf767bdf5fa76716182cfb0ed4836a57c271bc705ccabd",
+      "bytes": 8526,
+      "lines": 159
+    },
+    {
+      "path": "server/orbit_server/design/rigging.py",
+      "sha256": "dfbde852f843e66812d60265fcf415e2df4961299330f175209ffe1ffb8b5c6e",
+      "bytes": 4766,
+      "lines": 82
+    },
+    {
+      "path": "server/orbit_server/design/schemas.py",
+      "sha256": "771c3b671a160582703742e8658841800464c62dd55d1db78132f688a6feb57c",
+      "bytes": 1043,
+      "lines": 24
+    },
+    {
+      "path": "server/orbit_server/design/streaming.py",
+      "sha256": "ced552f502825a1a59258a43ce35922964f7f74480055980caba5bc7921d24a6",
+      "bytes": 3912,
+      "lines": 76
+    },
+    {
+      "path": "server/orbit_server/design/validation.py",
+      "sha256": "fd1eebabd8b66223df6a6d8734a6fa8996c5c81fa0e0f613df38107de531df30",
+      "bytes": 2425,
+      "lines": 36
+    },
+    {
+      "path": "server/orbit_server/design/workers.py",
+      "sha256": "380c0321fa03e1ed105c03de9691e0cb24de372aec9930f829642b1e7f57aad5",
+      "bytes": 2836,
+      "lines": 71
+    },
+    {
+      "path": "server/orbit_server/networking/http.py",
+      "sha256": "1d35d40209b75bb757df56a218da3fd9c63a5ae343b6305b341ce24fd09911c0",
+      "bytes": 14785,
+      "lines": 281
+    },
+    {
+      "path": "shared/schemas/design/v1/ai-edit.schema.json",
+      "sha256": "0e1edca205b90623cc26ba04018ca153e90453e531eeb6bbc2e313e787e07838",
+      "bytes": 598,
+      "lines": 24
+    },
+    {
+      "path": "shared/schemas/design/v1/client-message.schema.json",
+      "sha256": "f035882f8155343b95653ac1a9e94ef771719329b93c74f254af3f0445a4e370",
+      "bytes": 3623,
+      "lines": 173
+    },
+    {
+      "path": "shared/schemas/design/v1/edit-command.schema.json",
+      "sha256": "f5848a6b2440dacb6435999a15e7f8d080c3b2d28fddb4e1f61be187f5f02fc7",
+      "bytes": 9052,
+      "lines": 507
+    },
+    {
+      "path": "shared/schemas/design/v1/edit-document.schema.json",
+      "sha256": "af1cd48c6385f95cc1e5c622efe1069ef62dd28af50c0d257dc12216859d7e38",
+      "bytes": 11743,
+      "lines": 492
+    },
+    {
+      "path": "tests/client/design-input.test.mjs",
+      "sha256": "908b9ce37d5dde17b9ec63ff3a9c636feb2449489fb75f5794b589eeb26384b8",
+      "bytes": 1050,
+      "lines": 22
+    },
+    {
+      "path": "tests/client/design-navigation.test.mjs",
+      "sha256": "c0fc19d4c2809d98017c448bcec0fb05ab56f1d4374e14580b54efb88183075d",
+      "bytes": 1495,
+      "lines": 28
+    },
+    {
+      "path": "tests/client/design-protocol.test.mjs",
+      "sha256": "07b787282655a98710fe946ff3b543bb56024cafad5473a5f2ef09fb4acd65e2",
+      "bytes": 1955,
+      "lines": 32
+    },
+    {
+      "path": "tests/design/__init__.py",
+      "sha256": "ac2b86f192d2bfacd9a600a493d4ea854c8a0d7d908e723851ff1a4617ec53a1",
+      "bytes": 78,
+      "lines": 1
+    },
+    {
+      "path": "tests/design/test_ai_provider.py",
+      "sha256": "9b962d16b4c85b8586d048b6af6e99f95883ab6e4b07c1f07bedf0fe98eaa091",
+      "bytes": 1815,
+      "lines": 38
+    },
+    {
+      "path": "tests/design/test_core.py",
+      "sha256": "210b0f20d3370089ec2a7b77231da28d842645e98c889582ea58cdf612bb63eb",
+      "bytes": 5737,
+      "lines": 119
+    },
+    {
+      "path": "tests/design/test_invariants.py",
+      "sha256": "b2e7a12a85bc7fa4ce68d56ac8bd2bacbe8d8a19fd30e360ce1d84df56183928",
+      "bytes": 6830,
+      "lines": 145
+    },
+    {
+      "path": "tests/design/test_protocol.py",
+      "sha256": "2e7ebefbaea2072132e215c8d6d55f71312ca29709c7dbf0cb1bf32b80590a8a",
+      "bytes": 5808,
+      "lines": 108
+    },
+    {
+      "path": "todos/todo.track.schema.json",
+      "sha256": "0a4d1a9e070b7d8ea71522b18a095ab598c3ecc9b8caab7ce8f858357817a98e",
+      "bytes": 10107,
+      "lines": 451
+    },
+    {
+      "path": "tools/diagnostics/README.md",
+      "sha256": "f08de6ffa13bd1ae10419ae0e4f02bccb71000a240fe4ae65ef1eedb96f8cfa1",
+      "bytes": 1537,
+      "lines": 16
+    },
+    {
+      "path": "tools/diagnostics/benchmark_design_geometry.py",
+      "sha256": "3cc09267716e07783685a524a340a89c94ea3781059040d9c2f0dc12b615a5ae",
+      "bytes": 2192,
+      "lines": 45
+    },
+    {
+      "path": "tools/diagnostics/check-design-assets.mjs",
+      "sha256": "21225845828bcb7bea7f5aaf2b1590e109dc466eccae9f1b276839643dcfc261",
+      "bytes": 4898,
+      "lines": 72
+    },
+    {
+      "path": "tools/diagnostics/check-design-xr.mjs",
+      "sha256": "5757ec46aa58f49cd4105520654d5ccd35e301396b4681013699074c148a5013",
+      "bytes": 5499,
+      "lines": 77
+    },
+    {
+      "path": "tools/diagnostics/check-design.mjs",
+      "sha256": "48a2b00447365a2a420c00ef26bf9ab194b85599853f9e9db81e807f4a8fb516",
+      "bytes": 5204,
+      "lines": 70
+    },
+    {
+      "path": "tools/vendor-client.mjs",
+      "sha256": "e99259902bc31037a8c07c802aa8c98401ec54e52899fe402d3aa0a2ebb9e667",
+      "bytes": 947,
+      "lines": 11
+    }
+  ],
+  "verification": "docs/design-mode/verification.md"
+}

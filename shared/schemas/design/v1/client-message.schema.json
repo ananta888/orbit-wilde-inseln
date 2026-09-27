@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/shared/schemas/design/v1/client-message.schema.json",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "command",
+            "undo",
+            "redo",
+            "accept_proposal"
+          ]
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+        },
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+        },
+        "base_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation": {
+          "$ref": "https://ananta888.github.io/orbit-wilde-inseln/shared/schemas/design/v1/edit-command.schema.json"
+        },
+        "proposal_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+        },
+        "blend": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "type",
+        "command_id",
+        "asset_id",
+        "base_revision"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "command"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "operation"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "accept_proposal"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "proposal_id"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "new"
+        },
+        "template": {
+          "enum": [
+            "dragon",
+            "quadruped",
+            "humanoid",
+            "bird",
+            "serpent",
+            "insectoid",
+            "fish",
+            "creature_generic"
+          ]
+        },
+        "parameters": {
+          "type": "object",
+          "maxProperties": 5
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "open"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "resync",
+            "reject_proposal"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "proposal"
+        },
+        "instruction": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "maxItems": 16,
+          "minItems": 1
+        },
+        "base_revision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "type",
+        "instruction",
+        "regions",
+        "base_revision"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

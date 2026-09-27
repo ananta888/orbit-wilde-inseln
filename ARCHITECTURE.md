@@ -50,7 +50,15 @@ Quest-Aufnahme → Orbit → externer Ananta-Hub → Whisper → Dialogplanung/J
 
 `DialogueProvider`, `SpeechRecognizer`, `SpeechSynthesizer` beschreiben die Ports. Adapter existieren für den vorhandenen Ananta-`game-dragon`-Vertrag, Whisper.cpp-WAV-HTTP und Piper-HTTP. `FallbackRecognizer` kann einen separat konfigurierten CPU-Dienst verwenden. GPU-Auswahl ist Aufgabe des externen Whisper-Prozesses, nicht des Quest-Clients. [Pipeline](docs/ai/speech.md), [Kontextgrenzen](docs/ai/context-and-actions.md).
 
-## Persistenz und Anpassung
+## Kreaturenwerkstatt
+
+`client/webxr/src/design` ist eine eigene XR-Szene mit Auswahl, Formung, Malen und Vorschau. `server/orbit_server/design` validiert Commands, berechnet Geometrie in begrenzten, abbrechbaren Prozessen und speichert autoritative Revisionen in einer separaten `creatures.sqlite3`. Optionales Python-Extra: `design`.
+
+Der kanonische Master besteht aus Dreiecksregionen in Metern. NumPy verarbeitet lokale Werkzeuge, Manifold geschlossene Volumen und trimesh die Analyse. WebSocket-Protokoll 1 über `/api/design/ws` überträgt geänderte Vertexwerte oder einzelne neue Topologieregionen. SQLite-CAS und Command-Belege schützen gegen doppelte Änderungen; IndexedDB hält einen unbestätigten Clientbefehl für Reconnect bereit.
+
+Ein KI-Vorschlag bleibt ein Kandidat bis zur expliziten Annahme. Design-Kontext, lokale Tool-Allowlist und Masken sind unabhängig vom Game-Dragon-Dialogvertrag. Spiel- und Designzustände bleiben getrennt. [Repräsentation](docs/architecture/adr/design-001-editing-foundation.md), [Revisionen/Transport](docs/architecture/adr/design-002-protocol-and-storage.md), [aktuelle Grenzen](docs/design-mode/overview.md).
+
+## Spielstand und Anpassung
 
 SQLite schreibt validierte JSON-Spielstände atomar, regelmäßig und beim Sitzungsende. Der HttpOnly/SameSite-Cookie identifiziert ein lokales Browserprofil; er ist kein Cloud-Konto. Gespeichert werden Missions- und Lernfortschritt, Entdeckungen, Arins Erinnerungen/Beziehung, Einstellungen, Lösungswege, Achsenbeobachtungen und exakte Paketversionen. Unbekannte Save-Schemas werden abgelehnt und nicht überschrieben. Inventar und aktuelle Stufe können fortgesetzt werden.
 

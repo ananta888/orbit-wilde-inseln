@@ -9,6 +9,10 @@ Orbit-Code, Texte der Beispielmissionen, SVG-Symbol und prozedural erzeugte Geom
 | jsonschema / referencing | Lokale Schema- und Referenzprüfung | [MIT](https://github.com/python-jsonschema/jsonschema/blob/main/COPYING), [MIT](https://github.com/python-jsonschema/referencing/blob/main/COPYING) |
 | Playwright | Browserprüfungen, nur Entwicklung | [Apache-2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) |
 | IWER | WebXR-Emulation, nur Entwicklung | [MIT](https://github.com/meta-quest/immersive-web-emulation-runtime/blob/main/LICENSE) |
+| three-mesh-bvh 0.9.15 | Lokale Picking-Beschleunigung im Designer; LICENSE wird mit Vendor-Modul kopiert | [MIT](https://github.com/gkjohnson/three-mesh-bvh/blob/v0.9.15/LICENSE) |
+| NumPy 2.3.5 | Optionales Design-Extra, Arrayberechnung | [BSD-3-Clause](https://github.com/numpy/numpy/blob/v2.3.5/LICENSE.txt); native Wheels enthalten weitere eigene Notices |
+| trimesh 5.1.0 | Eigene Primitive und Meshdiagnose, ohne zusätzliche Extras | [MIT](https://github.com/mikedh/trimesh/blob/5.1.0/LICENSE.md) |
+| manifold3d 3.5.4 | Boolesche Volumenoperationen, Verfeinerung und Vereinfachung | [Apache-2.0](https://github.com/elalish/manifold/blob/master/LICENSE); versionsgebundener Wheel-Lizenztext vor Installation geprüft |
 | Whisper.cpp | Optionaler externer ASR-Dienst | [MIT](https://github.com/ggml-org/whisper.cpp/blob/master/LICENSE) |
 | Piper, aktuelle OHF-Voice-Linie | Optionaler externer TTS-Dienst; kein Import oder Bündeln des Piper-Codes | [GPL-3.0](https://github.com/OHF-Voice/piper1-gpl/blob/main/LICENSE.md) |
 | Piper-Stimmen | Nicht enthalten; Lizenz je Stimme prüfen | [Voice-Dokumentation](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md) |

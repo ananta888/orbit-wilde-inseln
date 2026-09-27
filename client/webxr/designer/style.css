@@ -1,0 +1,18 @@
+:root{font-family:system-ui,sans-serif;color:#eff8ef;background:#142421;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;overflow:hidden}#world{width:100vw;height:100vh;display:block;touch-action:none}
+header{position:absolute;top:0;left:0;right:0;padding:14px 20px;display:flex;gap:16px;align-items:center;background:linear-gradient(#12201fed,transparent)}
+a{color:#b5dabe;text-decoration:none}.brand{font-weight:650;letter-spacing:.04em}#status{margin-right:auto;font-size:12px;color:#c0cfc5}
+aside{position:absolute;background:#132521e8;border:1px solid #6e937642;border-radius:20px;padding:18px;backdrop-filter:blur(16px);max-height:calc(100vh - 145px);overflow:auto}
+#tools{top:86px;left:20px;width:270px}#assistant{top:86px;right:20px;width:290px}
+h1{font-size:23px;letter-spacing:-.04em;margin:0 0 8px}p{font-size:13px;line-height:1.5}.muted{color:#a7baad}label{font-size:12px;display:block;margin:12px 0}
+input,select,textarea,button{font:inherit}input[type=range]{width:100%;accent-color:#b6d97c}select,textarea{display:block;width:100%;margin-top:6px;background:#20372f;border:1px solid #68846c66;padding:9px;border-radius:8px;color:#eff8ef}
+button,.file{border:1px solid #a4cda644;background:#304b3b;color:#f1f8e7;border-radius:9px;padding:9px 12px;cursor:pointer;font-size:12px;margin:4px 0}
+button:hover{background:#436447}button:disabled{opacity:.45;cursor:default}button.active{background:#798c3a}
+.row{display:flex;gap:6px}.row>*{flex:1;min-width:0}#color{height:39px;max-width:58px;border:0;background:transparent}
+.row button{padding:9px 6px;font-size:11px}
+details{border-top:1px solid #68846c44;padding-top:10px;margin-top:12px}summary{cursor:pointer;font-size:13px;font-weight:600}.eyebrow{font-size:10px;letter-spacing:.14em;color:#c1dba0}
+#selection{color:#bdd895}footer{position:absolute;bottom:16px;left:310px;right:320px;text-align:center;font-size:12px;color:#aec8b0;pointer-events:none}
+#conflict{color:#ffce88}.file input{max-width:220px;font-size:11px;display:block;margin-top:8px}
+body.xr header,body.xr aside,body.xr footer{display:none}
+@media(max-width:850px){#tools{width:225px;left:10px}#assistant{width:230px;right:10px}header{gap:8px;flex-wrap:wrap}.brand{font-size:13px}#status{max-width:160px}footer{display:none}}
+@media(max-width:580px){aside{max-height:32vh}#tools{top:auto;bottom:8px;width:calc(50% - 14px);padding:10px}#assistant{top:auto;bottom:8px;width:calc(50% - 14px);padding:10px}header{padding:8px}h1{font-size:18px}}

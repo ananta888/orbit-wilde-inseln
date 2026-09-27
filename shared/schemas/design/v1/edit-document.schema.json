@@ -1,0 +1,492 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/shared/schemas/design/v1/edit-document.schema.json",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "units": {
+      "const": "meters"
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "part": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "topology_revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "solid": {
+            "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "maxItems": 300000,
+            "minItems": 9
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99999
+            },
+            "maxItems": 540000,
+            "minItems": 3
+          },
+          "normals": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "maxItems": 300000,
+            "minItems": 9
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxItems": 300000,
+            "minItems": 9
+          },
+          "mask": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxItems": 100000,
+            "minItems": 3
+          },
+          "surface": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxItems": 400000,
+            "minItems": 12
+          },
+          "material": {
+            "type": "object",
+            "properties": {
+              "roughness": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "metallic": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "opacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "emissive": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -100,
+                  "maximum": 100
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "detail": {
+                "enum": [
+                  "none",
+                  "skin",
+                  "scales",
+                  "fur",
+                  "feather",
+                  "horn",
+                  "bone",
+                  "metal",
+                  "stone",
+                  "crystal",
+                  "slime"
+                ]
+              },
+              "detail_scale": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "roughness",
+              "metallic",
+              "opacity",
+              "emissive",
+              "detail",
+              "detail_scale"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "part",
+          "topology_revision",
+          "solid",
+          "locked",
+          "positions",
+          "indices",
+          "normals",
+          "colors",
+          "mask",
+          "surface",
+          "material"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 96,
+      "minItems": 1
+    },
+    "rig": {
+      "type": "object",
+      "properties": {
+        "bones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+              },
+              "parent": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "position": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -100,
+                  "maximum": 100
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -100,
+                  "maximum": 100
+                },
+                "minItems": 3,
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "id",
+              "parent",
+              "position",
+              "rotation"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 128,
+          "minItems": 0
+        },
+        "weights": {
+          "type": "object",
+          "maxProperties": 96,
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "joints": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 127
+                },
+                "maxItems": 400000,
+                "minItems": 0
+              },
+              "weights": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "maxItems": 400000,
+                "minItems": 0
+              }
+            },
+            "required": [
+              "joints",
+              "weights"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "bones",
+        "weights"
+      ],
+      "additionalProperties": false
+    },
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 60
+          },
+          "loop": {
+            "type": "boolean"
+          },
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bone": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+                },
+                "time": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 60
+                },
+                "rotation": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -100,
+                    "maximum": 100
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              },
+              "required": [
+                "bone",
+                "time",
+                "rotation"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 512,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "duration",
+          "loop",
+          "keys"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 32,
+      "minItems": 0
+    },
+    "mount_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "rotation": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "safe_radius": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 2
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "rotation",
+          "safe_radius"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 16,
+      "minItems": 0
+    },
+    "colliders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "size": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "kind": {
+            "enum": [
+              "sphere",
+              "capsule",
+              "box"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "size",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 96,
+      "minItems": 0
+    },
+    "layers": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "license": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "template": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "parameters": {
+          "type": "object",
+          "maxProperties": 5
+        }
+      },
+      "required": [
+        "source",
+        "license"
+      ],
+      "additionalProperties": false
+    },
+    "behaviour_profile": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "revision",
+    "units",
+    "regions",
+    "rig",
+    "clips",
+    "mount_points",
+    "colliders",
+    "layers",
+    "provenance",
+    "behaviour_profile"
+  ],
+  "additionalProperties": false
+}

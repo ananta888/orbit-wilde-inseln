@@ -1,0 +1,117 @@
+{
+  "initial": {
+    "message": {
+      "document": {
+        "schema_version": "1.0",
+        "id": "golden",
+        "name": "Protocol fixture",
+        "revision": 0,
+        "units": "meters",
+        "rig": {
+          "bones": [],
+          "weights": {}
+        },
+        "clips": [],
+        "mount_points": [],
+        "colliders": [],
+        "layers": [],
+        "provenance": {
+          "source": "Orbit procedural",
+          "license": "BSD-3-Clause"
+        },
+        "behaviour_profile": "friendly_dragon",
+        "regions": [
+          {
+            "id": "surface",
+            "part": "surface",
+            "topology_revision": 0,
+            "solid": false,
+            "material": {
+              "roughness": 0.65,
+              "metallic": 0.0,
+              "emissive": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "opacity": 1.0,
+              "detail": "none",
+              "detail_scale": 12.0
+            },
+            "locked": false,
+            "vertex_count": 3,
+            "index_count": 3
+          }
+        ]
+      },
+      "base_revision": -1,
+      "frames": 1
+    },
+    "frames": [
+      "T0RHMbYDAAB7ImFzc2V0X2lkIjoiZ29sZGVuIiwiYmFzZV9yZXZpc2lvbiI6LTEsImJ1ZmZlcnMiOnsiY29sb3JzIjp7ImJ5dGVzIjozNiwiY291bnQiOjksImR0eXBlIjoiZjMyIiwib2Zmc2V0Ijo3Miwic2hhMjU2IjoiMGNhZTZjNTVmNDU3YTVhN2QwNWFmYWY2ODkyOWE5ZWViZjMzODA4MDRhN2ZmODM1NDQyMjIyMWJjN2VhYTkyYSJ9LCJpbmRpY2VzIjp7ImJ5dGVzIjoxMiwiY291bnQiOjMsImR0eXBlIjoidTMyIiwib2Zmc2V0IjoxNjgsInNoYTI1NiI6ImJlM2U2M2RkYjE4ZTI3MmRkOGE4YmExMDI3NzJlNjU4NWU2NzJkODcyMzBlMDA0ODYzNWY0NzQwNTkyNjEwOWYifSwibWFzayI6eyJieXRlcyI6MTIsImNvdW50IjozLCJkdHlwZSI6ImYzMiIsIm9mZnNldCI6MTA4LCJzaGEyNTYiOiIxNWVjN2JmMGI1MDczMmI0OWY4MjI4ZTA3ZDI0MzY1MzM4ZjllM2FiOTk0YjAwYWYwOGU1YTNiZmZlNTVmZDhiIn0sIm5vcm1hbHMiOnsiYnl0ZXMiOjM2LCJjb3VudCI6OSwiZHR5cGUiOiJmMzIiLCJvZmZzZXQiOjM2LCJzaGEyNTYiOiI0ZTlmMWNmNjNiMTk4NTM3NDk5MjRiMmEzNzVlMjRhNTBhNTkyYWJkYTBmNDczN2JiYzA0ZmYwYWUyY2JhM2Y3In0sInBvc2l0aW9ucyI6eyJieXRlcyI6MzYsImNvdW50Ijo5LCJkdHlwZSI6ImYzMiIsIm9mZnNldCI6MCwic2hhMjU2IjoiM2NjZjM3MjkxZDkwMGNkZDk1YjBjYjk4MWYyNDg5ZjMzZjQxMmM5NjhkYjMxZTI2ZGYyMTAzZGYwOTlkM2RiNSJ9LCJzdXJmYWNlIjp7ImJ5dGVzIjo0OCwiY291bnQiOjEyLCJkdHlwZSI6ImYzMiIsIm9mZnNldCI6MTIwLCJzaGEyNTYiOiIyNWEzYWI5NjE2MDYxMTY4ZjNiMGMzNGJkZTZiNTgwYWE4MDkzMjAyMGQ0YTVlMDQ4MDA0NTQ2ZmRkYzM5ZjYzIn19LCJtb2RlIjoicmVwbGFjZSIsInByb3RvY29sIjoxLCJyZWdpb25faWQiOiJzdXJmYWNlIiwicmV2aXNpb24iOjAsInRvcG9sb2d5X3JldmlzaW9uIjowfQAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAI/C9T1cj8I+cT2KPo/C9T1cj8I+cT2KPo/C9T1cj8I+cT2KPgAAAAAAAAAAAAAAAGZmJj8AAAAAAAAAAAAAgD9mZiY/AAAAAAAAAAAAAIA/ZmYmPwAAAAAAAAAAAACAPwAAAAACAAAAAQAAAA=="
+    ]
+  },
+  "edit": {
+    "message": {
+      "document": {
+        "schema_version": "1.0",
+        "id": "golden",
+        "name": "Protocol fixture",
+        "revision": 1,
+        "units": "meters",
+        "rig": {
+          "bones": [],
+          "weights": {}
+        },
+        "clips": [],
+        "mount_points": [],
+        "colliders": [],
+        "layers": [],
+        "provenance": {
+          "source": "Orbit procedural",
+          "license": "BSD-3-Clause"
+        },
+        "behaviour_profile": "friendly_dragon",
+        "regions": [
+          {
+            "id": "surface",
+            "part": "surface",
+            "topology_revision": 0,
+            "solid": false,
+            "material": {
+              "roughness": 0.65,
+              "metallic": 0.0,
+              "emissive": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "opacity": 1.0,
+              "detail": "none",
+              "detail_scale": 12.0
+            },
+            "locked": false,
+            "vertex_count": 3,
+            "index_count": 3
+          }
+        ]
+      },
+      "base_revision": 0,
+      "frames": 1
+    },
+    "frames": [
+      "T0RHMbUDAAB7ImFzc2V0X2lkIjoiZ29sZGVuIiwiYmFzZV9yZXZpc2lvbiI6MCwiYnVmZmVycyI6eyJjb2xvcnMiOnsiYnl0ZXMiOjM2LCJjb3VudCI6OSwiZHR5cGUiOiJmMzIiLCJvZmZzZXQiOjg0LCJzaGEyNTYiOiIwY2FlNmM1NWY0NTdhNWE3ZDA1YWZhZjY4OTI5YTllZWJmMzM4MDgwNGE3ZmY4MzU0NDIyMjIxYmM3ZWFhOTJhIn0sIm1hc2siOnsiYnl0ZXMiOjEyLCJjb3VudCI6MywiZHR5cGUiOiJmMzIiLCJvZmZzZXQiOjEyMCwic2hhMjU2IjoiMTVlYzdiZjBiNTA3MzJiNDlmODIyOGUwN2QyNDM2NTMzOGY5ZTNhYjk5NGIwMGFmMDhlNWEzYmZmZTU1ZmQ4YiJ9LCJub3JtYWxzIjp7ImJ5dGVzIjozNiwiY291bnQiOjksImR0eXBlIjoiZjMyIiwib2Zmc2V0Ijo0OCwic2hhMjU2IjoiMWYxMzg2MTQxZjk5MTcxZDAzMjZlOTlmZmIxMDI0ZTY4YTc1YjNjODE4OThmMWMxYjU0YWFiYzM0MDg0NGNmNSJ9LCJwb3NpdGlvbnMiOnsiYnl0ZXMiOjM2LCJjb3VudCI6OSwiZHR5cGUiOiJmMzIiLCJvZmZzZXQiOjEyLCJzaGEyNTYiOiJhMGJiOWYwMjdmYjg0Mzg0NGNkMTg0NWFhZDhkYjQ5MTRmN2MzNWRkNzk1NTVjYTA4ZWYyOGRiNGU1ODEwNDNjIn0sInN1cmZhY2UiOnsiYnl0ZXMiOjQ4LCJjb3VudCI6MTIsImR0eXBlIjoiZjMyIiwib2Zmc2V0IjoxMzIsInNoYTI1NiI6IjI1YTNhYjk2MTYwNjExNjhmM2IwYzM0YmRlNmI1ODBhYTgwOTMyMDIwZDRhNWUwNDgwMDQ1NDZmZGRjMzlmNjMifSwidmVydGV4X2lkcyI6eyJieXRlcyI6MTIsImNvdW50IjozLCJkdHlwZSI6InUzMiIsIm9mZnNldCI6MCwic2hhMjU2IjoiYWQ1ZGMxNDc4ZGUwNmE0YzI3MjhlYTUyOGJkOTM2MWE0Yjk0NWU5MmE0MTRiZjRkMTgwY2VkYWFlYWE1ZjRjYyJ9fSwibW9kZSI6InBhdGNoIiwicHJvdG9jb2wiOjEsInJlZ2lvbl9pZCI6InN1cmZhY2UiLCJyZXZpc2lvbiI6MSwidG9wb2xvZ3lfcmV2aXNpb24iOjB9AAAAAAEAAAACAAAAAAAAADMzsz0AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/89exPe4Pfj/z17E989exPe4Pfj/z17E989exPe4Pfj/z17E9j8L1PVyPwj5xPYo+j8L1PVyPwj5xPYo+j8L1PVyPwj5xPYo+AAAAAAAAAAAAAAAAZmYmPwAAAAAAAAAAAACAP2ZmJj8AAAAAAAAAAAAAgD9mZiY/AAAAAAAAAAAAAIA/"
+    ]
+  },
+  "expected_positions": [
+    0.0,
+    0.08749999850988388,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ]
+}

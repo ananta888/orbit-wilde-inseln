@@ -165,6 +165,19 @@
             "minItems": 1,
             "uniqueItems": true
           },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "implementation_plan": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2,
+            "uniqueItems": true
+          },
           "acceptance_criteria": {
             "type": "array",
             "items": {

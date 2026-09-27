@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/shared/schemas/design/v1/ai-edit.schema.json",
+  "type": "object",
+  "properties": {
+    "speech": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "https://ananta888.github.io/orbit-wilde-inseln/shared/schemas/design/v1/edit-command.schema.json"
+      },
+      "maxItems": 4,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "speech",
+    "operations"
+  ],
+  "additionalProperties": false
+}

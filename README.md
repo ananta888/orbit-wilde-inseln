@@ -46,7 +46,15 @@ Desktop-Vorschau: <http://localhost:8443>. Quest benötigt HTTPS; siehe [Verbind
 
 Desktop: WASD bewegen, F fliegen/landen, Leertaste/Shift Höhe, rechte Maus umsehen, linke Maus Bogen. Quest: links bewegen, rechts drehen/Höhe, A fliegen, X links Episodenmenü. Episode auswählen, Aufgaben nahe am passenden Objekt ausführen. [Bedienung](docs/vr/setup.md) · [Sprache einrichten](docs/ai/speech.md).
 
-## Entwicklung
+## Kreaturenwerkstatt (Design Mode)
+
+Mit `python -m pip install -c requirements-dev.lock -e '.[dev,design]'` die optionale Geometrie-Erweiterung installieren. Nach `npm ci` und dem Serverstart öffnet `/designer/index.html` einen eigenen Arbeitsplatz für Arin und neue Kreaturen.
+
+Bereits ausführbar: lokale Formung mit Server-Deltas, Masken, Oberflächenmalerei, Primitive und geschlossene Volumenoperationen, Undo/Redo, Autosave, Rig-/Pose-Vorschau und GLB-Rundlauf eigener Assets. Hände und Controller werden in XR-Emulation geprüft; echte Quest-Abnahme bleibt offen. Ohne Design-KI-Dienst sind nur ausdrücklich gekennzeichnete lokale Werkzeugbefehle verfügbar.
+
+[Start und Bedienung](docs/design-mode/overview.md) · [Design-TODO](todos/active/todo.vr-ai-creature-designer.json). Der vollständige Creator, generative Modelle und die Veröffentlichung editierter Kreaturen in der Spielwelt sind noch im Ausbau.
+
+## Entwicklungsprüfungen
 
 ```sh
 python -m pytest

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit · Kreaturenwerkstatt</title><link rel="stylesheet" href="/designer/style.css">
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/","three-mesh-bvh":"/vendor/bvh/index.js"}}</script>
+</head><body>
+<canvas id="world" aria-label="Dreidimensionaler Arbeitsplatz"></canvas>
+<header><a href="/">← Orbit</a><span class="brand">Kreaturenwerkstatt</span><span id="status" role="status">Verbinden …</span>
+<button id="vr">In VR gestalten</button><button id="mr">Im Raum gestalten</button></header>
+<aside id="tools">
+<h1>Forme deine Kreatur.</h1><p class="muted">Auswählen, berühren, gestalten. In VR mit Pinch oder Trigger. Am Laptop mit linker Maustaste; rechts drehen, Rad zoomen.</p>
+<label>Werkzeug<select id="tool">
+<option value="select">Auswählen</option><option value="pull" selected>Herausziehen</option><option value="push">Eindrücken</option>
+<option value="grab">Greifen</option><option value="inflate">Aufpolstern</option><option value="deflate">Abschwellen</option>
+<option value="smooth">Glätten</option><option value="flatten">Einebnen</option><option value="pinch">Zusammenziehen</option>
+<option value="crease">Falte ziehen</option><option value="clay">Ton auftragen</option><option value="stretch">Strecken</option>
+<option value="bend">Biegen</option><option value="twist">Verdrehen</option><option value="scale">Lokal vergrößern</option>
+<option value="move">Bereich verschieben</option><option value="paint">Malen</option><option value="mask">Schützen</option><option value="pose">Gelenk posieren</option>
+</select></label>
+<label>Radius <output id="radius-value">20 cm</output><input id="radius" type="range" min=".02" max="1" step=".01" value=".2"></label>
+<label>Stärke<input id="strength" type="range" min=".05" max="1" step=".05" value=".5"></label>
+<label>Spiegelung<select id="symmetry"><option value="">Aus</option><option value="x">Links / rechts</option><option value="y">Oben / unten</option><option value="z">Vorn / hinten</option><option value="xyz">Alle Achsen</option></select></label>
+<label>Radiale Wiederholung<input id="radial" type="range" min="1" max="12" step="1" value="1"></label>
+<label><input id="multi-select" type="checkbox"> Mehrere Bereiche auswählen</label>
+<label><input id="erase-mask" type="checkbox"> Schutzmaske entfernen</label>
+<label><input id="fist-navigation" type="checkbox" checked> Mit Faust das Modell bewegen</label>
+<div class="row"><button id="lock">Bereich sperren</button><button id="unlock">Freigeben</button></div>
+<div class="row"><button id="undo">↶ Zurück</button><button id="redo">↷ Wiederholen</button></div>
+<div class="row"><button id="mini">Miniatur</button><button id="life">Lebensgröße</button><button id="reset">Ansicht</button></div>
+<p id="selection">Berühre einen Bereich.</p>
+<details open><summary>Farbe & Oberfläche</summary>
+<div class="row"><input id="color" type="color" value="#408a59" aria-label="Farbe"><select id="paint-tool" aria-label="Pinsel"><option value="brush">Pinsel</option><option value="airbrush">Airbrush</option><option value="spray">Spray</option><option value="fill">Füllen</option><option value="gradient">Verlauf</option><option value="eraser">Radierer</option><option value="smudge">Verwischen</option><option value="stamp">Musterstempel</option></select></div>
+<label>Kanal<select id="channel"><option value="color">Farbe</option><option value="roughness">Rauheit</option><option value="metallic">Metall</option><option value="emission">Leuchten</option><option value="opacity">Deckkraft</option></select></label>
+<label>Kanalwert<input id="channel-value" type="range" min="0" max="1" step=".05" value=".5"></label>
+<select id="material" aria-label="Oberfläche"><option value="none">Ohne Detail</option><option value="skin">Haut</option><option value="scales">Schuppen</option><option value="fur">Fellstruktur</option><option value="feather">Federstruktur</option><option value="horn">Horn</option><option value="bone">Knochen</option><option value="metal">Metall</option><option value="stone">Stein</option><option value="crystal">Kristall</option><option value="slime">Schleim</option></select>
+<button id="apply-material">Oberfläche anwenden</button>
+</details>
+<details><summary>Form hinzufügen</summary>
+<select id="part" aria-label="Neue Form"><option value="horn">Horn</option><option value="sphere">Kugel</option><option value="ellipsoid">Ellipsoid</option><option value="capsule">Kapsel</option><option value="cone">Kegel</option><option value="cylinder">Zylinder</option><option value="box">Box</option><option value="ear">Ohr</option><option value="eye">Auge</option><option value="claw">Klaue</option><option value="armor">Panzerplatte</option><option value="tooth">Zahn</option><option value="finger">Finger</option><option value="tail">Schwanzstück</option><option value="wing">Flügelmembran</option><option value="scale">Schuppe</option><option value="tentacle">Tentakel</option></select>
+<button id="add-part">Am markierten Punkt hinzufügen</button>
+<div class="row"><button id="refine">Verfeinern</button><button id="simplify">Vereinfachen</button></div>
+<div class="row"><button id="union">Verbinden</button><button id="subtract">Abziehen</button></div>
+<button id="delete">Ausgewähltes Teil löschen</button>
+<button id="cut">An markierter Oberfläche schneiden</button>
+<p class="muted">Mit Umschalt-Klick mehrere Teile wählen. Geschützte Teile bleiben erhalten.</p></details>
+<details><summary>Pose & Vorschau</summary>
+<button id="rig">Rig-Vorschlag erstellen</button><button id="living">Lebendig ansehen</button>
+<label>Gelenkwinkel<input id="pose-angle" type="range" min="-1.4" max="1.4" step=".05" value="0"></label>
+<button id="pose">Ausgewähltes Teil posieren</button><button id="clip">Flügelbewegung vorbereiten</button>
+<button id="mount">Sitzpunkt markieren</button><button id="flight">Sitzansicht prüfen</button>
+</details>
+</aside>
+<aside id="assistant"><div class="eyebrow">ANANTA · DESIGNBEGLEITER</div>
+<p id="assistant-text">Markiere eine Form. Ich bereite Änderungen vor, die du erst ansehen und dann übernehmen kannst.</p>
+<textarea id="instruction" rows="3" placeholder="Mach den Kopf etwas breiter …" aria-label="Designbeschreibung"></textarea>
+<div class="row"><button id="propose">Vorschlag vorbereiten</button><button id="mic">Sprechen</button></div>
+<div id="proposal" hidden><button id="before">Original / Vorschlag</button>
+<label>Vorschlagsanteil<input id="blend" type="range" min="0" max="1" step=".05" value="1"></label>
+<div class="row"><button id="accept">Übernehmen</button><button id="reject">Verwerfen</button></div><button id="regenerate">Neuer Vorschlag</button></div>
+<details><summary>Kreaturen & Dateien</summary>
+<select id="saved-creatures" aria-label="Gespeicherte Kreaturen"></select><button id="open-saved">Kreatur wieder öffnen</button>
+<select id="template" aria-label="Vorlage"></select><button id="new">Neue Kreatur</button><button id="original">Arin aus Orbit laden</button>
+<button id="save">Kreatur als JSON sichern</button><button id="glb-export">GLB exportieren</button>
+<label class="file">GLB / Kreatur öffnen<input id="import" type="file" accept=".glb,.json"></label>
+<button id="journal-export">Lokalen Änderungspuffer sichern</button>
+<button id="analyze">Modell prüfen</button><p id="analysis-result" class="muted"></p>
+</details>
+<div id="conflict" hidden><p>Die Änderung konnte nicht bestätigt werden. Sie bleibt lokal erhalten.</p><button id="discard">Lokale Änderung verwerfen und Serverstand laden</button></div>
+</aside>
+<footer>Ein eigener Arbeitsplatz für deine Wesen. <span id="stats"></span></footer>
+<script type="module" src="/src/design/workspace.js"></script></body></html>
