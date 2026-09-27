@@ -1,0 +1,15 @@
+{
+  "horizontalSpeed": 5.5,
+  "verticalSpeed": 3,
+  "landingSpeed": 2.5,
+  "response": 5,
+  "boostStart": 16,
+  "boostScale": 24,
+  "boostPower": 1.35,
+  "maxBoost": 100,
+  "ceiling": 4000,
+  "planetRadius": 325.94932345220167,
+  "detailFadeStart": 55,
+  "detailFadeEnd": 150,
+  "streamCutoff": 180
+}

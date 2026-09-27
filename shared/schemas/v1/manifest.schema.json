@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/manifest.schema.json",
+  "title": "Orbit manifest v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "license": {
+      "const": "BSD-3-Clause"
+    },
+    "duration_minutes": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        },
+        "target": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        }
+      },
+      "required": [
+        "min",
+        "target",
+        "max"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "maxItems": 32,
+      "uniqueItems": true
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "maxItems": 64,
+      "uniqueItems": true
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 32
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "mission": {
+          "const": "mission.json"
+        },
+        "world": {
+          "const": "world.json"
+        },
+        "objectives": {
+          "const": "objectives.json"
+        },
+        "learning": {
+          "const": "learning.json"
+        },
+        "dialogue": {
+          "const": "dialogue.json"
+        },
+        "encounters": {
+          "const": "encounters.json"
+        }
+      },
+      "required": [
+        "mission",
+        "world",
+        "objectives",
+        "learning",
+        "dialogue",
+        "encounters"
+      ],
+      "additionalProperties": false
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "maxItems": 32,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "title",
+    "summary",
+    "license",
+    "duration_minutes",
+    "capabilities",
+    "assets",
+    "dependencies",
+    "files",
+    "difficulty",
+    "prerequisites"
+  ],
+  "additionalProperties": false
+}

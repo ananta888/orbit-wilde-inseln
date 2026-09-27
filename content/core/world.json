@@ -1,0 +1,8 @@
+{
+  "title": "Orbit · Wilde Inseln",
+  "seed": 16,
+  "generation": { "enabled": true, "viewRadius": 1, "density": 1.2 },
+  "rules": { "targetSpeed": 1 },
+  "palette": { "ground": "#608b48", "foliage": "#39854c", "stone": "#647a70", "accent": "#e2b874" },
+  "objects": []
+}

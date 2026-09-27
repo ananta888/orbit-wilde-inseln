@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "objectives": [
+    {
+      "id": "see_wind",
+      "event": "observe",
+      "target": "wind",
+      "description": "Beobachte, wohin der Wind die Fahne trägt.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "wind"
+      ]
+    },
+    {
+      "id": "practice_hit",
+      "event": "hit",
+      "target": "practice",
+      "description": "Triff das Holzzeichen mit unterschiedlichen Auszugslängen.",
+      "count": 2,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "trajectory"
+      ]
+    },
+    {
+      "id": "read_wind",
+      "event": "observe",
+      "target": "wind",
+      "description": "Vergleiche deine Pfeilbahn mit der Windrichtung.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "wind"
+      ]
+    },
+    {
+      "id": "moving_hits",
+      "event": "hit",
+      "target": "final_target",
+      "description": "Wende deine Korrektur am bewegten Zeichen an.",
+      "count": 2,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "transfer"
+      ]
+    }
+  ]
+}

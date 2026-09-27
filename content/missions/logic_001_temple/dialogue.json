@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "lines": [
+    {
+      "id": "discover",
+      "character": "arin",
+      "language": "de",
+      "text": "Es scheint nicht uns zu suchen. Was interessiert dieses Tier?"
+    },
+    {
+      "id": "prepare",
+      "character": "arin",
+      "language": "de",
+      "text": "Riechst du die Früchte? Wir könnten auch den Seitenpfad oder den Stein untersuchen."
+    },
+    {
+      "id": "choose",
+      "character": "arin",
+      "language": "de",
+      "text": "Du entscheidest: ablenken, leise vorbeigehen oder die Umgebung verändern."
+    },
+    {
+      "id": "enter",
+      "character": "arin",
+      "language": "de",
+      "text": "Unser Weg hat funktioniert. Im Tempel wartet ein Stück meiner Erinnerung."
+    }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Was würde das Tier tun, wenn wir gar nicht hier wären?"
+    },
+    {
+      "level": 2,
+      "text": "Es reagiert auf Futter. Aber auch die Umgebung bietet Wege."
+    },
+    {
+      "level": 3,
+      "text": "Eine Ablenkung verändert seine Aufmerksamkeit, ein Seitenpfad unsere Sichtbarkeit, der Stein die Wege."
+    },
+    {
+      "level": 4,
+      "text": "Wähle am Wildschwein Ablenken mit Früchten, am Seitenpfad Schleichen oder am Stein Verwenden. Gehe danach zum Tempel."
+    }
+  ]
+}

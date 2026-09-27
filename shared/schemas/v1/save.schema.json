@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/save.schema.json",
+  "title": "Orbit save v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "completed_missions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "maxItems": 4096,
+      "uniqueItems": true
+    },
+    "learning": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "mission": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "axis": {
+            "enum": [
+              "body",
+              "skill",
+              "mind"
+            ]
+          },
+          "event": {
+            "enum": [
+              "observe",
+              "collect",
+              "use",
+              "speak",
+              "reach",
+              "hit",
+              "distract",
+              "sneak"
+            ]
+          }
+        },
+        "required": [
+          "goal",
+          "mission",
+          "axis",
+          "event"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 4096
+    },
+    "world": {
+      "type": "object",
+      "properties": {
+        "discoveries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "discoveries"
+      ],
+      "additionalProperties": false
+    },
+    "arin": {
+      "type": "object",
+      "properties": {
+        "memories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "relationship": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "memories",
+        "relationship"
+      ],
+      "additionalProperties": false
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "fitness": {
+          "enum": [
+            "seated",
+            "light",
+            "normal",
+            "active"
+          ]
+        },
+        "difficulty": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "adaptive": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fitness",
+        "difficulty",
+        "adaptive"
+      ],
+      "additionalProperties": false
+    },
+    "play_style": {
+      "type": "object",
+      "properties": {
+        "solutions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "solutions"
+      ],
+      "additionalProperties": false
+    },
+    "abilities": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "skill": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "mind": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        }
+      },
+      "required": [
+        "body",
+        "skill",
+        "mind"
+      ],
+      "additionalProperties": false
+    },
+    "package_versions": {
+      "type": "object",
+      "maxProperties": 4096,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      }
+    },
+    "active_mission": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "stage_index": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 16
+            },
+            "counts": {
+              "type": "object",
+              "maxProperties": 64,
+              "propertyNames": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+              },
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              }
+            },
+            "inventory": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+              },
+              "maxItems": 64,
+              "uniqueItems": true
+            },
+            "elapsed": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000000.0
+            },
+            "hints_used": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100000
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "digest",
+            "stage_index",
+            "counts",
+            "inventory",
+            "elapsed",
+            "hints_used"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "completed_missions",
+    "learning",
+    "world",
+    "arin",
+    "settings",
+    "play_style",
+    "abilities",
+    "package_versions",
+    "active_mission"
+  ],
+  "additionalProperties": false
+}

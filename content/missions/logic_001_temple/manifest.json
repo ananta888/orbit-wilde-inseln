@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "id": "logic_001_temple",
+  "version": "1.0.0",
+  "title": "Das Tier am Tempel",
+  "summary": "Ein Wildschwein bewacht den Zugang. Beobachte es und finde deinen eigenen Weg.",
+  "license": "BSD-3-Clause",
+  "duration_minutes": {
+    "min": 10,
+    "target": 15,
+    "max": 20
+  },
+  "capabilities": [
+    "interaction.v1",
+    "dialogue.v1",
+    "inventory.v1",
+    "branching.v1"
+  ],
+  "assets": [
+    "core.bait",
+    "core.boar",
+    "core.oracle",
+    "core.route",
+    "core.ruin"
+  ],
+  "dependencies": [],
+  "files": {
+    "mission": "mission.json",
+    "world": "world.json",
+    "objectives": "objectives.json",
+    "learning": "learning.json",
+    "dialogue": "dialogue.json",
+    "encounters": "encounters.json"
+  },
+  "difficulty": 2,
+  "prerequisites": []
+}

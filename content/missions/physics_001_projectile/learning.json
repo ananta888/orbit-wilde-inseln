@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "domain": "physics",
+  "framework": "experiential",
+  "level": "",
+  "goals": [
+    {
+      "id": "wind",
+      "description": "Windrichtung für eine Handlung nutzen",
+      "axes": [
+        "mind"
+      ],
+      "evidence": "Windfahne vor und nach Schüssen betrachtet; keine Wissensdiagnose"
+    },
+    {
+      "id": "trajectory",
+      "description": "Auszug und Flugbahn praktisch erproben",
+      "axes": [
+        "body",
+        "skill"
+      ],
+      "evidence": "Zwei serverseitig bestätigte Treffer"
+    },
+    {
+      "id": "transfer",
+      "description": "Korrektur auf bewegtes Ziel übertragen",
+      "axes": [
+        "skill",
+        "mind"
+      ],
+      "evidence": "Bewegtes Ziel zweimal getroffen"
+    }
+  ],
+  "adaptation": {
+    "enabled": false,
+    "signals": [
+      "attempts",
+      "time",
+      "accuracy",
+      "hints",
+      "application"
+    ],
+    "manual_override": true
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "id": "language_001_bridge",
+  "version": "1.0.0",
+  "title": "Die verlorene Brücke",
+  "summary": "Verstehe einen Reisenden, finde Bohlen und öffne gemeinsam den Weg.",
+  "license": "BSD-3-Clause",
+  "duration_minutes": {
+    "min": 10,
+    "target": 15,
+    "max": 20
+  },
+  "capabilities": [
+    "interaction.v1",
+    "dialogue.v1",
+    "inventory.v1"
+  ],
+  "assets": [
+    "core.bridge",
+    "core.oracle",
+    "core.plank",
+    "core.ruin"
+  ],
+  "dependencies": [],
+  "files": {
+    "mission": "mission.json",
+    "world": "world.json",
+    "objectives": "objectives.json",
+    "learning": "learning.json",
+    "dialogue": "dialogue.json",
+    "encounters": "encounters.json"
+  },
+  "difficulty": 2,
+  "prerequisites": []
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "language_001_bridge",
+  "stages": [
+    {
+      "id": "discover",
+      "title": "A traveler needs help",
+      "phase": "discover",
+      "objectives": [
+        "listen"
+      ],
+      "completion": "all",
+      "narration": "discover"
+    },
+    {
+      "id": "gather",
+      "title": "Find something long enough",
+      "phase": "movement",
+      "objectives": [
+        "find_a",
+        "find_b"
+      ],
+      "completion": "all",
+      "narration": "gather"
+    },
+    {
+      "id": "reply",
+      "title": "Explain your idea",
+      "phase": "learning",
+      "objectives": [
+        "answer"
+      ],
+      "completion": "all",
+      "narration": "reply"
+    },
+    {
+      "id": "build",
+      "title": "Open the crossing",
+      "phase": "finale",
+      "objectives": [
+        "repair"
+      ],
+      "completion": "all",
+      "narration": "build"
+    }
+  ],
+  "rewards": {
+    "memories": [
+      "language_001_bridge.memory"
+    ],
+    "discoveries": [
+      "language_001_bridge.site"
+    ]
+  },
+  "next_missions": [
+    "logic_001_temple"
+  ],
+  "solutions": [
+    {
+      "id": "repair",
+      "title": "Gemeinsam die Brücke reparieren",
+      "objectives": [
+        "repair"
+      ]
+    }
+  ]
+}

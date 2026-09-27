@@ -1,0 +1,17 @@
+{
+  "name": "orbit-wilde-inseln",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "BSD-3-Clause",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "postinstall": "node tools/vendor-client.mjs",
+    "test": "node tools/check-js.mjs && node --test tests/client/*.test.mjs",
+    "test:browser": "node tools/diagnostics/check-foundation.mjs",
+    "test:xr": "node tools/diagnostics/check-xr.mjs",
+    "test:game": "node tools/diagnostics/check-browser.mjs"
+  },
+  "dependencies": { "three": "0.186.1" },
+  "devDependencies": { "playwright": "1.63.0", "iwer": "2.5.0" }
+}

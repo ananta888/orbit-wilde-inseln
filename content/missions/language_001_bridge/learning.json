@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "domain": "language",
+  "framework": "CEFR",
+  "level": "A2",
+  "goals": [
+    {
+      "id": "comprehension",
+      "description": "Englische Hinweise durch Handlungen umsetzen",
+      "axes": [
+        "mind"
+      ],
+      "evidence": "Bohlen nach englischer Anweisung gefunden"
+    },
+    {
+      "id": "communication",
+      "description": "Eine eigene Antwort formulieren",
+      "axes": [
+        "mind"
+      ],
+      "evidence": "Freie Antwort abgegeben; keine automatische Niveaubewertung"
+    },
+    {
+      "id": "transfer",
+      "description": "Verstandene Anweisung anwenden",
+      "axes": [
+        "skill",
+        "mind"
+      ],
+      "evidence": "Brücke mit zwei gefundenen Bohlen repariert"
+    }
+  ],
+  "adaptation": {
+    "enabled": false,
+    "signals": [
+      "attempts",
+      "time",
+      "accuracy",
+      "hints",
+      "application"
+    ],
+    "manual_override": true
+  }
+}

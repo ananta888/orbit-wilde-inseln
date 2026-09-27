@@ -1,0 +1,65 @@
+{
+  "core.marker": {
+    "kind": "procedural",
+    "generator": "marker",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Windfahne aus einfachen Geometrien"
+  },
+  "core.target": {
+    "kind": "procedural",
+    "generator": "target",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Holzziel mit Ringen"
+  },
+  "core.plank": {
+    "kind": "procedural",
+    "generator": "plank",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Holzbohle"
+  },
+  "core.bridge": {
+    "kind": "procedural",
+    "generator": "bridge",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Brückensegment"
+  },
+  "core.boar": {
+    "kind": "procedural",
+    "generator": "boar",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Prozedurales Wildschwein"
+  },
+  "core.oracle": {
+    "kind": "procedural",
+    "generator": "oracle",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Ananta als gewundene Schlange"
+  },
+  "core.ruin": {
+    "kind": "procedural",
+    "generator": "ruin",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Steinruine"
+  },
+  "core.bait": {
+    "kind": "procedural",
+    "generator": "bait",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Fruchtbündel"
+  },
+  "core.route": {
+    "kind": "procedural",
+    "generator": "route",
+    "license": "BSD-3-Clause",
+    "author": "Peter Stuiber",
+    "description": "Markierter Pfad"
+  }
+}

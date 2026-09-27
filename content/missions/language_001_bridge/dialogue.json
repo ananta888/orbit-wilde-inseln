@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "lines": [
+    {
+      "id": "discover",
+      "character": "guide",
+      "language": "en",
+      "text": "The bridge collapsed. Find something long enough to span the gap."
+    },
+    {
+      "id": "gather",
+      "character": "guide",
+      "language": "en",
+      "text": "Two long planks should be enough. Look beside the path."
+    },
+    {
+      "id": "reply",
+      "character": "guide",
+      "language": "en",
+      "text": "What did you find? Tell me how you want to use it."
+    },
+    {
+      "id": "build",
+      "character": "guide",
+      "language": "en",
+      "text": "Place both planks across the gap. We can cross together."
+    }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Achte darauf, welche Gegenstände der Reisende ansieht."
+    },
+    {
+      "level": 2,
+      "text": "Long enough heißt lang genug. Suche zwei Bohlen."
+    },
+    {
+      "level": 3,
+      "text": "Span the gap bedeutet, die Lücke zu überbrücken. Beschreibe deine Idee in eigenen Worten."
+    },
+    {
+      "level": 4,
+      "text": "Sammle beide Bohlen, antworte dem Reisenden frei und verwende die Bohlen an der Brücke. Eine mögliche Antwort: I found two planks."
+    }
+  ]
+}

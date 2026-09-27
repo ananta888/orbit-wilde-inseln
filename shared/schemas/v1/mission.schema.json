@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/mission.schema.json",
+  "title": "Orbit mission v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "phase": {
+            "enum": [
+              "discover",
+              "movement",
+              "learning",
+              "finale"
+            ]
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "completion": {
+            "enum": [
+              "all",
+              "any"
+            ]
+          },
+          "narration": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "phase",
+          "objectives",
+          "completion",
+          "narration"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 16,
+      "minItems": 1
+    },
+    "rewards": {
+      "type": "object",
+      "properties": {
+        "memories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "discoveries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "memories",
+        "discoveries"
+      ],
+      "additionalProperties": false
+    },
+    "next_missions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "maxItems": 16,
+      "uniqueItems": true
+    },
+    "solutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "objectives"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 16,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "stages",
+    "rewards",
+    "next_missions",
+    "solutions"
+  ],
+  "additionalProperties": false
+}

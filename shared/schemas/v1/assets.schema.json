@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/assets.schema.json",
+  "type": "object",
+  "maxProperties": 256,
+  "propertyNames": {
+    "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "kind",
+      "generator",
+      "license",
+      "author",
+      "description"
+    ],
+    "properties": {
+      "kind": {
+        "const": "procedural"
+      },
+      "generator": {
+        "enum": [
+          "marker",
+          "target",
+          "plank",
+          "bridge",
+          "boar",
+          "oracle",
+          "ruin",
+          "bait",
+          "route"
+        ]
+      },
+      "license": {
+        "const": "BSD-3-Clause"
+      },
+      "author": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "description": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    }
+  }
+}

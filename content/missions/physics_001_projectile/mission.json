@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "id": "physics_001_projectile",
+  "stages": [
+    {
+      "id": "discover",
+      "title": "Die singende Windruine",
+      "phase": "discover",
+      "objectives": [
+        "see_wind"
+      ],
+      "completion": "all",
+      "narration": "discover"
+    },
+    {
+      "id": "practice",
+      "title": "Spanne, ziele, beobachte",
+      "phase": "movement",
+      "objectives": [
+        "practice_hit"
+      ],
+      "completion": "all",
+      "narration": "practice"
+    },
+    {
+      "id": "reflect",
+      "title": "Lies den Wind",
+      "phase": "learning",
+      "objectives": [
+        "read_wind"
+      ],
+      "completion": "all",
+      "narration": "reflect"
+    },
+    {
+      "id": "apply",
+      "title": "Das wandernde Zeichen",
+      "phase": "finale",
+      "objectives": [
+        "moving_hits"
+      ],
+      "completion": "all",
+      "narration": "apply"
+    }
+  ],
+  "rewards": {
+    "memories": [
+      "physics_001_projectile.memory"
+    ],
+    "discoveries": [
+      "physics_001_projectile.site"
+    ]
+  },
+  "next_missions": [
+    "language_001_bridge"
+  ],
+  "solutions": [
+    {
+      "id": "archery",
+      "title": "Die Zeichen durch Pfeilflug wecken",
+      "objectives": [
+        "moving_hits"
+      ]
+    }
+  ]
+}

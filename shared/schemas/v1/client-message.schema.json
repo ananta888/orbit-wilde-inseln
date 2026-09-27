@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/client-message.schema.json",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "start"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "restart"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "pause"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "resume"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "mission_leave"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "enter"
+        },
+        "mode": {
+          "enum": [
+            "vr",
+            "mr",
+            "desktop"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "move"
+        },
+        "direction": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1000,
+            "maximum": 1000
+          },
+          "maxItems": 3,
+          "minItems": 2
+        },
+        "dt": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.12
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "flight": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "direction",
+        "dt",
+        "seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "loose"
+        },
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -10000,
+            "maximum": 10000
+          },
+          "maxItems": 3,
+          "minItems": 3
+        },
+        "direction": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1000,
+            "maximum": 1000
+          },
+          "maxItems": 3,
+          "minItems": 3
+        },
+        "draw": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.65
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "type",
+        "origin",
+        "direction",
+        "draw",
+        "seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "ping"
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000000.0
+        }
+      },
+      "required": [
+        "type",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "dragon"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 600
+        }
+      },
+      "required": [
+        "type",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "mission_start"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "interact"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+        },
+        "verb": {
+          "enum": [
+            "observe",
+            "collect",
+            "use",
+            "speak",
+            "reach",
+            "hit",
+            "distract",
+            "sneak"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 600
+        }
+      },
+      "required": [
+        "type",
+        "target",
+        "verb"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "hint"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "full_help": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "level"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "settings"
+        },
+        "fitness": {
+          "enum": [
+            "seated",
+            "light",
+            "normal",
+            "active"
+          ]
+        },
+        "difficulty": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "adaptive": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "fitness",
+        "difficulty",
+        "adaptive"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

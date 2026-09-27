@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0.0",
+  "wind": [
+    0,
+    0,
+    0
+  ],
+  "objects": [
+    {
+      "id": "boar",
+      "kind": "boar",
+      "label": "Wildschwein am Tempel",
+      "asset": "core.boar",
+      "position": [
+        0,
+        0,
+        -5
+      ],
+      "mr_position": [
+        0.0,
+        0,
+        -1.1
+      ],
+      "verbs": [
+        "observe",
+        "distract"
+      ],
+      "material": "organic"
+    },
+    {
+      "id": "fruit",
+      "kind": "bait",
+      "label": "Duftende Früchte",
+      "asset": "core.bait",
+      "position": [
+        2,
+        0,
+        -3
+      ],
+      "mr_position": [
+        0.6,
+        0,
+        -0.66
+      ],
+      "verbs": [
+        "collect"
+      ],
+      "material": "organic"
+    },
+    {
+      "id": "side_path",
+      "kind": "route",
+      "label": "Leiser Seitenpfad",
+      "asset": "core.route",
+      "position": [
+        -4,
+        0,
+        -6
+      ],
+      "mr_position": [
+        -1.2,
+        0,
+        -1.32
+      ],
+      "verbs": [
+        "sneak"
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "stone",
+      "kind": "ruin",
+      "label": "Verschiebbarer Stein",
+      "asset": "core.ruin",
+      "position": [
+        3,
+        0,
+        -6
+      ],
+      "mr_position": [
+        0.8999999999999999,
+        0,
+        -1.32
+      ],
+      "verbs": [
+        "use"
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "temple",
+      "kind": "ruin",
+      "label": "Alter Tempel",
+      "asset": "core.ruin",
+      "position": [
+        0,
+        0,
+        -10
+      ],
+      "mr_position": [
+        0.0,
+        0,
+        -2.2
+      ],
+      "verbs": [
+        "reach"
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "ananta",
+      "kind": "oracle",
+      "label": "Ananta",
+      "asset": "core.oracle",
+      "position": [
+        -3,
+        0,
+        -3
+      ],
+      "mr_position": [
+        -0.8999999999999999,
+        0,
+        -0.66
+      ],
+      "verbs": [
+        "observe"
+      ],
+      "material": "stone"
+    }
+  ]
+}

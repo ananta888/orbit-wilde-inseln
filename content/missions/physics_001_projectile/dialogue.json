@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "lines": [
+    {
+      "id": "discover",
+      "character": "arin",
+      "language": "de",
+      "text": "Die Fahne erzählt uns, was wir nicht sehen. Schau sie dir an."
+    },
+    {
+      "id": "practice",
+      "character": "arin",
+      "language": "de",
+      "text": "Verändere Auszug und Winkel. Du kannst so lange experimentieren, wie du möchtest."
+    },
+    {
+      "id": "reflect",
+      "character": "arin",
+      "language": "de",
+      "text": "Ein längerer Flug gibt dem Wind mehr Zeit. Vergleiche deine Versuche."
+    },
+    {
+      "id": "apply",
+      "character": "arin",
+      "language": "de",
+      "text": "Das Zeichen bewegt sich. Ziele vor seinen Weg und berücksichtige den Wind."
+    }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Was bewegt sich, obwohl niemand es berührt?"
+    },
+    {
+      "level": 2,
+      "text": "Die Fahne zeigt die Windrichtung. Beobachte dann einen Pfeil."
+    },
+    {
+      "level": 3,
+      "text": "Schwerkraft senkt die Flugbahn; Luftbewegung verändert sie seitlich. Auszug bestimmt die Anfangsgeschwindigkeit."
+    },
+    {
+      "level": 4,
+      "text": "Beobachte die Fahne, triff das feste Ziel zweimal, beobachte erneut und halte beim bewegten Ziel gegen den Wind und vor seine Bewegung."
+    }
+  ]
+}

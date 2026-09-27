@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/learning.schema.json",
+  "title": "Orbit learning v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "framework": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "level": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "axes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "body",
+                "skill",
+                "mind"
+              ]
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "axes",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 32,
+      "minItems": 1
+    },
+    "adaptation": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "attempts",
+              "time",
+              "accuracy",
+              "hints",
+              "application",
+              "language",
+              "repetitions"
+            ]
+          },
+          "maxItems": 7,
+          "uniqueItems": true
+        },
+        "manual_override": {
+          "const": true
+        }
+      },
+      "required": [
+        "enabled",
+        "signals",
+        "manual_override"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "domain",
+    "framework",
+    "level",
+    "goals",
+    "adaptation"
+  ],
+  "additionalProperties": false
+}

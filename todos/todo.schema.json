@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/todos/todo.schema.json",
+  "$ref": "https://ananta888.github.io/orbit-wilde-inseln/todos/todo.track.schema.json"
+}

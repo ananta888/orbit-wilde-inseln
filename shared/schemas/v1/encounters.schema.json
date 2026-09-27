@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/encounters.schema.json",
+  "title": "Orbit encounters v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "character": {
+            "enum": [
+              "arin",
+              "ananta",
+              "guide",
+              "boar"
+            ]
+          },
+          "object": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "behavior": {
+            "enum": [
+              "companion",
+              "oracle",
+              "instructor",
+              "territorial"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "character",
+          "object",
+          "behavior"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 16
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "on_objective": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "action": {
+            "enum": [
+              "reveal",
+              "hide"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          }
+        },
+        "required": [
+          "id",
+          "on_objective",
+          "action",
+          "target"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 32
+    }
+  },
+  "required": [
+    "schema_version",
+    "npcs",
+    "events"
+  ],
+  "additionalProperties": false
+}

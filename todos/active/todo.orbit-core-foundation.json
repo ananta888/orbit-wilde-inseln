@@ -1,0 +1,1608 @@
+{
+  "version": "1.0.0",
+  "owner": "Peter Stuiber / ananta888",
+  "track": "orbit-core-foundation",
+  "purpose": "Ausführbares modulares VR/MR-Fundament und nachvollziehbarer Ausbau zu Orbit – Wilde Inseln.",
+  "goal": "Laptop und Quest ergänzen sich; Content, Simulation, Charaktere und Lernsystem bleiben unabhängig erweiterbar.",
+  "status_scale": [
+    "todo",
+    "in_progress",
+    "partial",
+    "blocked",
+    "done"
+  ],
+  "priority_scale": [
+    "P0",
+    "P1",
+    "P2",
+    "P3"
+  ],
+  "risk_scale": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "milestones": [
+    {
+      "id": "REPO",
+      "title": "Repository Bootstrap",
+      "status": "in_progress",
+      "task_ids": [
+        "REPO-BOOT",
+        "REPO-PUBLISH"
+      ]
+    },
+    {
+      "id": "ARCH",
+      "title": "Architecture",
+      "status": "in_progress",
+      "task_ids": [
+        "ARCH-PORTS",
+        "ARCH-OWNERS",
+        "ARCH-TYPES"
+      ]
+    },
+    {
+      "id": "XR",
+      "title": "WebXR Client",
+      "status": "in_progress",
+      "task_ids": [
+        "XR-MODES",
+        "XR-MISSIONS",
+        "XR-DEVICE",
+        "XR-SPATIAL"
+      ]
+    },
+    {
+      "id": "SERVER",
+      "title": "Server Runtime",
+      "status": "in_progress",
+      "task_ids": [
+        "SERVER-LOOP",
+        "SERVER-BUDGET"
+      ]
+    },
+    {
+      "id": "NET",
+      "title": "Networking",
+      "status": "in_progress",
+      "task_ids": [
+        "NET-CONTRACT",
+        "NET-PAIR"
+      ]
+    },
+    {
+      "id": "PACK",
+      "title": "Mission Packages",
+      "status": "in_progress",
+      "task_ids": [
+        "PACK-SCHEMA",
+        "PACK-EXAMPLES",
+        "PACK-HOTLOAD",
+        "PACK-BUILD",
+        "PACK-INSTALL"
+      ]
+    },
+    {
+      "id": "WORLD",
+      "title": "World Streaming",
+      "status": "in_progress",
+      "task_ids": [
+        "WORLD-CHUNKS",
+        "WORLD-ART",
+        "WORLD-PLANET"
+      ]
+    },
+    {
+      "id": "BOW",
+      "title": "Bow",
+      "status": "in_progress",
+      "task_ids": [
+        "BOW-BALLISTICS",
+        "BOW-MATERIALS"
+      ]
+    },
+    {
+      "id": "ARIN",
+      "title": "Dragon / Arin",
+      "status": "in_progress",
+      "task_ids": [
+        "ARIN-FLIGHT",
+        "ARIN-MEMORY",
+        "ARIN-CHARACTER"
+      ]
+    },
+    {
+      "id": "ORACLE",
+      "title": "Ananta Oracle",
+      "status": "in_progress",
+      "task_ids": [
+        "ORACLE-HINTS",
+        "ORACLE-CONTEXT"
+      ]
+    },
+    {
+      "id": "SPEECH",
+      "title": "Speech",
+      "status": "in_progress",
+      "task_ids": [
+        "SPEECH-ADAPTERS",
+        "SPEECH-CAPTURE",
+        "SPEECH-GPU"
+      ]
+    },
+    {
+      "id": "AI",
+      "title": "AI",
+      "status": "in_progress",
+      "task_ids": [
+        "AI-BOUNDS",
+        "AI-JEV",
+        "AI-ACTIONS"
+      ]
+    },
+    {
+      "id": "LEARN",
+      "title": "Learning System",
+      "status": "in_progress",
+      "task_ids": [
+        "LEARN-OBSERVATIONS",
+        "LEARN-ADAPT",
+        "LEARN-EPISODES"
+      ]
+    },
+    {
+      "id": "FIT",
+      "title": "Fitness",
+      "status": "in_progress",
+      "task_ids": [
+        "FIT-PROFILES",
+        "FIT-MOVEMENT"
+      ]
+    },
+    {
+      "id": "SAVE",
+      "title": "Persistence",
+      "status": "in_progress",
+      "task_ids": [
+        "SAVE-LOCAL",
+        "SAVE-MIGRATE"
+      ]
+    },
+    {
+      "id": "TEST",
+      "title": "Testing",
+      "status": "in_progress",
+      "task_ids": [
+        "TEST-CI",
+        "TEST-HARDWARE"
+      ]
+    },
+    {
+      "id": "DOC",
+      "title": "Documentation",
+      "status": "done",
+      "task_ids": [
+        "DOC-SPEC",
+        "DOC-TRACK"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "REPO-BOOT",
+      "title": "BSD-Monorepo und reproduzierbare Entwicklungsumgebung",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "REPO",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [],
+      "affected_files": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "package.json"
+      ],
+      "acceptance_criteria": [
+        "Python-Paket, npm-Lock und BSD-Lizenz vorhanden; keine Modelle oder Laufzeitdaten veröffentlicht."
+      ],
+      "tests": [
+        "python -m pytest; npm ci; npm test"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "REPO-PUBLISH",
+      "title": "Öffentliches Repository unter ananta888 mit main veröffentlichen",
+      "status": "in_progress",
+      "type": "publication",
+      "milestone_id": "REPO",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 50,
+      "dependencies": [
+        "DOC-SPEC",
+        "DOC-TRACK",
+        "TEST-CI"
+      ],
+      "affected_files": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "package.json"
+      ],
+      "acceptance_criteria": [
+        "GitHub-Repository ist public; Default-Branch main; lokaler Commit entspricht origin/main."
+      ],
+      "tests": [
+        "gh repo view ananta888/orbit-wilde-inseln; git ls-remote origin refs/heads/main"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "ARCH-PORTS",
+      "title": "Domänengrenzen und austauschbare Provider definieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ARCH",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "ARCHITECTURE.md",
+        "docs/architecture/adr",
+        "server/orbit_server"
+      ],
+      "acceptance_criteria": [
+        "Simulation ohne HTTP; AI und Speech über Ports; konkrete ADRs mit geprüften Alternativen."
+      ],
+      "tests": [
+        "python -m mypy; python -m pytest tests/test_mission_runtime.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "ARCH-OWNERS",
+      "title": "Arbeitsregeln für Entwickler und Coding-Agenten dokumentieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ARCH",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "ARCHITECTURE.md",
+        "docs/architecture/adr",
+        "server/orbit_server"
+      ],
+      "acceptance_criteria": [
+        "AGENTS.md weist Verzeichnisse, Verträge, Testregeln und Lizenzgrenzen eindeutig zu."
+      ],
+      "tests": [
+        "python tools/validate_todos.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "ARCH-TYPES",
+      "title": "Typabdeckung des übernommenen Rendering- und Physikcodes erweitern",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "ARCH",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "ARCH-PORTS"
+      ],
+      "affected_files": [
+        "ARCHITECTURE.md",
+        "docs/architecture/adr",
+        "server/orbit_server"
+      ],
+      "acceptance_criteria": [
+        "Alle öffentlichen Simulationseinstiegspunkte und XR-Nachrichten werden statisch geprüft."
+      ],
+      "tests": [
+        "mypy --strict server/orbit_server; TypeScript checkJs für den gesamten Client"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "XR-MODES",
+      "title": "VR und Passthrough-MR mit lokalem Tracking integrieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "XR",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr",
+        "client/webxr/src/input",
+        "client/webxr/src/ui"
+      ],
+      "acceptance_criteria": [
+        "Zwei Session-Modi; MR ohne künstliche Fortbewegung; lokale Kopfbewegung bleibt frei."
+      ],
+      "tests": [
+        "npm run test:xr"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "XR-MISSIONS",
+      "title": "Missionsauswahl und Hinweise mit Controller/Hand-Pinch anbieten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "XR",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr",
+        "client/webxr/src/input",
+        "client/webxr/src/ui"
+      ],
+      "acceptance_criteria": [
+        "Desktop und XR zeigen Ziele, freie Antworten und Hilfen; UI-Klick löst keinen Bogenschuss aus."
+      ],
+      "tests": [
+        "npm run test:browser; npm run test:xr"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "XR-DEVICE",
+      "title": "Quest-3-Abnahme mit echten Controllern und Händen durchführen",
+      "status": "todo",
+      "type": "hardware",
+      "milestone_id": "XR",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "XR-MODES"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr",
+        "client/webxr/src/input",
+        "client/webxr/src/ui"
+      ],
+      "acceptance_criteria": [
+        "Stereodarstellung, Passthrough, Hände, Mikrofon, Lesbarkeit und Komfort am Gerät protokolliert."
+      ],
+      "tests": [
+        "docs/vr/device-checklist.md auf echter Quest 3 vollständig ausführen"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "XR-SPATIAL",
+      "title": "Optionale Anchors und Raumverständnis als Capability-Adapter ergänzen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "XR",
+      "priority": "P2",
+      "risk": "high",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "XR-MODES"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr",
+        "client/webxr/src/input",
+        "client/webxr/src/ui"
+      ],
+      "acceptance_criteria": [
+        "Fehlende Raum-APIs blockieren keine Session; Anchors besitzen expliziten Lebenszyklus."
+      ],
+      "tests": [
+        "Capability-Fakes sowie mindestens ein unterstütztes physisches Gerät"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SERVER-LOOP",
+      "title": "Simulation und Missionslaufzeit pro Sitzung verbinden",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "SERVER",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/networking",
+        "server/orbit_server/entities"
+      ],
+      "acceptance_criteria": [
+        "60-Hz-Simulation bleibt unabhängig von Sprachlatenz; Pause stoppt Fortschritt."
+      ],
+      "tests": [
+        "python -m pytest tests/test_protocol.py tests/test_dragon.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "SERVER-BUDGET",
+      "title": "Last- und Zeitbudgets für vier gleichzeitige Spieler vermessen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "SERVER",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "SERVER-LOOP"
+      ],
+      "affected_files": [
+        "server/orbit_server/networking",
+        "server/orbit_server/entities"
+      ],
+      "acceptance_criteria": [
+        "p95-Tickdauer, Paketgrößen und Lastgrenzen dokumentiert; Überlast wird begrenzt."
+      ],
+      "tests": [
+        "Vier simulierte Clients über 30 Minuten mit Messbericht"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "NET-CONTRACT",
+      "title": "Versioniertes WebSocket-Protokoll und Eingangsvalidierung bereitstellen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "NET",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "shared/schemas/v1/client-message.schema.json",
+        "docs/protocols/websocket.md"
+      ],
+      "acceptance_criteria": [
+        "Protokoll 4; unbekannte Felder, nicht-finite Zahlen, fremde Origins und Event-Fälschung abgelehnt."
+      ],
+      "tests": [
+        "python -m pytest tests/test_protocol.py tests/test_foundation_protocol.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "NET-PAIR",
+      "title": "Optionale Geräte-Paarung für gemeinsam genutzte WLANs ergänzen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "NET",
+      "priority": "P2",
+      "risk": "high",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "NET-CONTRACT"
+      ],
+      "affected_files": [
+        "shared/schemas/v1/client-message.schema.json",
+        "docs/protocols/websocket.md"
+      ],
+      "acceptance_criteria": [
+        "Kurzlebiger Paarungscode schützt LAN-Zugang; bestehende lokale Profile können migriert werden."
+      ],
+      "tests": [
+        "Integrationsfälle für Ablauf, Wiederholung, Rate-Limit und widerrufene Geräte"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "PACK-SCHEMA",
+      "title": "Deklarative Paketschemas und semantische Validierung implementieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "PACK",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "content/missions",
+        "shared/schemas/v1",
+        "server/orbit_server/missions"
+      ],
+      "acceptance_criteria": [
+        "Schema-, Paket- und Capability-Version getrennt; Referenzen und Abhängigkeiten geprüft."
+      ],
+      "tests": [
+        "python -m pytest tests/test_content_packages.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "PACK-EXAMPLES",
+      "title": "Drei Beispielmissionen samt verzweigter Runtime ausführen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "PACK",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "content/missions",
+        "shared/schemas/v1",
+        "server/orbit_server/missions"
+      ],
+      "acceptance_criteria": [
+        "Windtreffer, englische Brücke und alle drei Tempelwege erreichen serverseitig das Ende."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "PACK-HOTLOAD",
+      "title": "Atomaren Katalogwechsel mit Versionsbindung aktiver Episoden anbieten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "PACK",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "content/missions",
+        "shared/schemas/v1",
+        "server/orbit_server/missions"
+      ],
+      "acceptance_criteria": [
+        "Fehler behalten letzten Katalog; gleiche Version darf keinen geänderten Inhalt ersetzen."
+      ],
+      "tests": [
+        "python -m pytest tests/test_content_packages.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "PACK-BUILD",
+      "title": "Reproduzierbare Paketarchive und Größenberichte erzeugen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "PACK",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "content/missions",
+        "shared/schemas/v1",
+        "server/orbit_server/missions"
+      ],
+      "acceptance_criteria": [
+        "Identischer Quellinhalt erzeugt identische ZIP-Bytes und SHA-256; zentrale Assets werden referenziert."
+      ],
+      "tests": [
+        "python -m orbit_server.missions.cli build; determinism test"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "PACK-INSTALL",
+      "title": "Versioniertes Offline-Paketarchiv und sicheren Installer ergänzen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "PACK",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "PACK-SCHEMA"
+      ],
+      "affected_files": [
+        "content/missions",
+        "shared/schemas/v1",
+        "server/orbit_server/missions"
+      ],
+      "acceptance_criteria": [
+        "Alte aktive Versionen bleiben über Neustarts verfügbar; ZIP-Traversal und Größenbomben werden abgelehnt."
+      ],
+      "tests": [
+        "Archiv-Rollback, Versionskoexistenz, Abhängigkeitsauflösung, ZIP-Bombentest"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "WORLD-CHUNKS",
+      "title": "Tropische 32-Meter-Chunks mit LOD und Live-Änderungen übernehmen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "WORLD",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/world",
+        "client/webxr/src/rendering"
+      ],
+      "acceptance_criteria": [
+        "Nähe lädt Details; Distanz begrenzt Cache; ungültige Weltänderung wird nicht angewandt."
+      ],
+      "tests": [
+        "python -m pytest tests/test_environment.py tests/test_expedition.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "WORLD-ART",
+      "title": "Inseln, Wasserfälle und Vegetation visuell verfeinern",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "WORLD",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "WORLD-CHUNKS"
+      ],
+      "affected_files": [
+        "server/orbit_server/world",
+        "client/webxr/src/rendering"
+      ],
+      "acceptance_criteria": [
+        "Auf Quest gemessene Renderbudgets; lizenzierte Materialien; Wasser, Schatten und Übergänge sichtbar verbessert."
+      ],
+      "tests": [
+        "Bildvergleich plus physische Quest-Frametime-Messung"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "WORLD-PLANET",
+      "title": "Kontinuierlichen sphärischen Weltübergang entwickeln",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "WORLD",
+      "priority": "P2",
+      "risk": "high",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "WORLD-CHUNKS"
+      ],
+      "affected_files": [
+        "server/orbit_server/world",
+        "client/webxr/src/rendering"
+      ],
+      "acceptance_criteria": [
+        "Globale Koordinaten und lokale Physik wechseln ohne sichtbaren Sprung oder Gleitfehler."
+      ],
+      "tests": [
+        "Pol-/Datumsgrenzen und wiederholte Landung mit Tests und Gerätedemo"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "BOW-BALLISTICS",
+      "title": "Bogen, Luftdämpfung, Wind und Swept-Collision integrieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "BOW",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/physics",
+        "client/webxr/src/input/bow.js"
+      ],
+      "acceptance_criteria": [
+        "Auszug liefert Startgeschwindigkeit; schneller Pfeil tunnelt nicht durch Ziele; Wind verändert Bahn."
+      ],
+      "tests": [
+        "python -m pytest tests/test_simulation.py tests/test_mission_runtime.py; npm run test:xr"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "BOW-MATERIALS",
+      "title": "Materialabhängige Penetration und Abprallen implementieren",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "BOW",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "BOW-BALLISTICS"
+      ],
+      "affected_files": [
+        "server/orbit_server/physics",
+        "client/webxr/src/input/bow.js"
+      ],
+      "acceptance_criteria": [
+        "Holz, Stein und organische Materialien besitzen nachvollziehbare Trefferregeln und Lernmetadaten."
+      ],
+      "tests": [
+        "Energieerhaltungstoleranz, Grenzwinkel und Materialtests"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "ARIN-FLIGHT",
+      "title": "Drachenflug mit Höhengeschwindigkeit und unabhängiger Kopfpose erhalten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ARIN",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "client/webxr/src/rendering/dragon.js",
+        "server/orbit_server/ai"
+      ],
+      "acceptance_criteria": [
+        "Steigen, Schweben, Bremsen und Landen; Körperlage kippt ohne Kameraroll."
+      ],
+      "tests": [
+        "python -m pytest tests/test_expedition.py; npm run test:game"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "ARIN-MEMORY",
+      "title": "Erinnerungen und Beziehung aus Missionsabschlüssen speichern",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ARIN",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "client/webxr/src/rendering/dragon.js",
+        "server/orbit_server/ai"
+      ],
+      "acceptance_criteria": [
+        "Belohnungen werden idempotent gespeichert; Dialogkontext hat begrenzten Zugriff."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "ARIN-CHARACTER",
+      "title": "Langfristige Charakterentwicklung und sichtbare Erinnerungsmomente gestalten",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "ARIN",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "ARIN-FLIGHT"
+      ],
+      "affected_files": [
+        "client/webxr/src/rendering/dragon.js",
+        "server/orbit_server/ai"
+      ],
+      "acceptance_criteria": [
+        "Wiederkehrende Persönlichkeit, Entscheidungen und Erinnerungen beeinflussen Dialog und Animation ohne Aufgaben vorwegzunehmen."
+      ],
+      "tests": [
+        "Mehrere Episoden mit kontrollierten Dialog-Snapshots und Spieltest"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "ORACLE-HINTS",
+      "title": "Schlangenfigur und vier explizite Hilfestufen integrieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ORACLE",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/ai/contracts.py",
+        "client/webxr/src/rendering/mission-objects.js"
+      ],
+      "acceptance_criteria": [
+        "Ananta erscheint an Missionsorten; Level 4 erfordert vollständige Hilfe anfordern."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py; npm run test:browser"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "ORACLE-CONTEXT",
+      "title": "Situative Auftritte und KI-Dialog für Ananta ausbauen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "ORACLE",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "ORACLE-HINTS"
+      ],
+      "affected_files": [
+        "server/orbit_server/ai/contracts.py",
+        "client/webxr/src/rendering/mission-objects.js"
+      ],
+      "acceptance_criteria": [
+        "Orakel erscheint abhängig von Ort und Bedarf; Kontext bleibt getrennt von Arins privaten Gesprächen."
+      ],
+      "tests": [
+        "Orts-/Stage-Trigger und adversariale Kontexttests"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SPEECH-ADAPTERS",
+      "title": "Ananta-, Whisper.cpp- und Piper-Adapter mit CPU-Fallback-Port bereitstellen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "SPEECH",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/speech",
+        "client/webxr/src/audio",
+        "docs/ai/speech.md"
+      ],
+      "acceptance_criteria": [
+        "Begrenzte Requests und gültige WAV-Antworten; Modelle und Dienste extern; Backend wird nicht heimlich zur eGPU gewechselt."
+      ],
+      "tests": [
+        "python -m pytest tests/test_speech.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "SPEECH-CAPTURE",
+      "title": "Begrenzte Quest-Mikrofonaufnahme mit Abbruch anbieten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "SPEECH",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/speech",
+        "client/webxr/src/audio",
+        "docs/ai/speech.md"
+      ],
+      "acceptance_criteria": [
+        "Nur nach Freigabe; maximal 20 Sekunden; Pause/Wechsel bricht Aufnahme ab; Text bleibt Alternative."
+      ],
+      "tests": [
+        "npm run test:browser; tests/test_speech.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "SPEECH-GPU",
+      "title": "Radeon-780M-Vulkan-Pipeline am neuen Checkout end-to-end abnehmen",
+      "status": "todo",
+      "type": "hardware",
+      "milestone_id": "SPEECH",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "SPEECH-ADAPTERS"
+      ],
+      "affected_files": [
+        "server/orbit_server/speech",
+        "client/webxr/src/audio",
+        "docs/ai/speech.md"
+      ],
+      "acceptance_criteria": [
+        "Tatsächlich gewähltes Vulkan-Gerät wird nachgewiesen; Ausfall wechselt kontrolliert auf CPU."
+      ],
+      "tests": [
+        "Physische Quest-Aufnahme über Ananta sowie kontrollierter Ausfall des GPU-ASR-Dienstes"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "AI-BOUNDS",
+      "title": "Kontextprojektion und strukturierte Antwortprüfung implementieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "AI",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/ai",
+        "docs/ai/context-and-actions.md"
+      ],
+      "acceptance_criteria": [
+        "Kein gesamter Weltzustand; nur zugelassene Emotionen/Animationen; requested_action bleibt null."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py tests/test_speech.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "AI-JEV",
+      "title": "Vorhandenen Ananta-Jev-Vertrag anbinden",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "AI",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/ai",
+        "docs/ai/context-and-actions.md"
+      ],
+      "acceptance_criteria": [
+        "Adapter unterstützt laufenden game-dragon-Endpunkt und schützt Simulation vor langsamen Antworten."
+      ],
+      "tests": [
+        "python -m pytest tests/test_dragon.py tests/test_speech.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "AI-ACTIONS",
+      "title": "Gezielte KI-Aktionsvorschläge über separate Game-Policy ermöglichen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "AI",
+      "priority": "P2",
+      "risk": "high",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "AI-BOUNDS"
+      ],
+      "affected_files": [
+        "server/orbit_server/ai",
+        "docs/ai/context-and-actions.md"
+      ],
+      "acceptance_criteria": [
+        "Jede neue Aktion besitzt Schema, serverseitige Vorbedingungen, Cooldown und Audit; keine beliebigen Befehle."
+      ],
+      "tests": [
+        "Fuzz-/Reject-Tests und deterministischer Policy-Replay"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "LEARN-OBSERVATIONS",
+      "title": "Fachunabhängige Lernbeobachtungen und drei Achsen erfassen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "LEARN",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/learning",
+        "docs/learning/model.md"
+      ],
+      "acceptance_criteria": [
+        "Handlungsnachweise sind von Wissensbewertungen getrennt; GER ist optionale Paketmetadaten."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "LEARN-ADAPT",
+      "title": "Transparente Schwierigkeitsvorschläge weiterentwickeln",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "LEARN",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "LEARN-OBSERVATIONS"
+      ],
+      "affected_files": [
+        "server/orbit_server/learning",
+        "docs/learning/model.md"
+      ],
+      "acceptance_criteria": [
+        "Signale liefern erklärbare Vorschläge; Nutzer bestätigt Änderungen; manuelle Wahl hat Vorrang."
+      ],
+      "tests": [
+        "Tests für wiederholte Fehlschläge, Hilfen und manuelles Überschreiben"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "LEARN-EPISODES",
+      "title": "Beispielmissionen zu 10–20-Minuten-Abenteuern ausarbeiten",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "LEARN",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "LEARN-OBSERVATIONS"
+      ],
+      "affected_files": [
+        "server/orbit_server/learning",
+        "docs/learning/model.md"
+      ],
+      "acceptance_criteria": [
+        "Jede Episode besitzt dramaturgische Orte und Experimente; Dauer ist Ziel statt Timer; keine Quizpflicht."
+      ],
+      "tests": [
+        "Spieltests mit verschiedenen Tempi und dokumentierten Lösungswegen"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "FIT-PROFILES",
+      "title": "Sitzend/leicht/normal/aktiv als manuelle Profile implementieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "FIT",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/fitness",
+        "docs/vr/comfort.md"
+      ],
+      "acceptance_criteria": [
+        "Reichweite und Zielgröße sind konfiguriert; keine Diagnose oder harte Bewegungsanforderung."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "FIT-MOVEMENT",
+      "title": "Duck-/Ausweich-/Greifaufgaben mit sitzender Alternative ergänzen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "FIT",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "FIT-PROFILES"
+      ],
+      "affected_files": [
+        "server/orbit_server/fitness",
+        "docs/vr/comfort.md"
+      ],
+      "acceptance_criteria": [
+        "Bewegungsaufgaben respektieren kalibrierten Bereich, Pausen und alternative Eingaben."
+      ],
+      "tests": [
+        "Hardware-Spieltest mit vier Profilen und fehlendem Body Tracking"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SAVE-LOCAL",
+      "title": "Validierte lokale SQLite-Spielstände und Episoden-Resume implementieren",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "SAVE",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "server/orbit_server/persistence",
+        "shared/schemas/v1/save.schema.json"
+      ],
+      "acceptance_criteria": [
+        "Inventar, Fortschritt, Erinnerungen, Einstellungen und Paketversion überstehen Neustart."
+      ],
+      "tests": [
+        "python -m pytest tests/test_mission_runtime.py tests/test_foundation_protocol.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "SAVE-MIGRATE",
+      "title": "Erste reale Save-Migration und Export/Import hinzufügen",
+      "status": "todo",
+      "type": "implementation",
+      "milestone_id": "SAVE",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "SAVE-LOCAL"
+      ],
+      "affected_files": [
+        "server/orbit_server/persistence",
+        "shared/schemas/v1/save.schema.json"
+      ],
+      "acceptance_criteria": [
+        "Schemaänderung hat getestete v1-Migration; beschädigte/fremde Dateien überschreiben keinen gültigen Stand."
+      ],
+      "tests": [
+        "Golden-v1-Save, Rollback, Datenschutz und Profilwechseltests"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "TEST-CI",
+      "title": "Automatische Schema-, Runtime-, Protokoll- und Browserprüfungen einrichten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "TEST",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "tests",
+        ".github/workflows/ci.yml",
+        "tools/diagnostics"
+      ],
+      "acceptance_criteria": [
+        "CI läuft ohne LLM/Headset; Paketbau und TODO-Validierung sind Pflicht."
+      ],
+      "tests": [
+        "python -m pytest; npm test; npm run test:browser"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "TEST-HARDWARE",
+      "title": "Wiederholbares Quest/WLAN-Leistungsprotokoll pflegen",
+      "status": "todo",
+      "type": "hardware",
+      "milestone_id": "TEST",
+      "priority": "P2",
+      "risk": "medium",
+      "progress_percent": 0,
+      "dependencies": [
+        "REPO-BOOT",
+        "TEST-CI"
+      ],
+      "affected_files": [
+        "tests",
+        ".github/workflows/ci.yml",
+        "tools/diagnostics"
+      ],
+      "acceptance_criteria": [
+        "Reales Gerät wird von Emulation unterschieden; Reconnect, Frametime, MR und Audio werden erfasst."
+      ],
+      "tests": [
+        "docs/vr/device-checklist.md"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "DOC-SPEC",
+      "title": "Architektur, Spielschleife, Content-Format und Erweiterungspunkte dokumentieren",
+      "status": "done",
+      "type": "documentation",
+      "milestone_id": "DOC",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "README.md",
+        "CONTRIBUTING.md",
+        "ROADMAP.md",
+        "docs",
+        "todos"
+      ],
+      "acceptance_criteria": [
+        "Neuer Entwickler kann starten, Paket erstellen, testen und Einschränkungen erkennen."
+      ],
+      "tests": [
+        "Dokumentierte Schnellstart-Befehle ausführen; python tools/validate_todos.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    },
+    {
+      "id": "DOC-TRACK",
+      "title": "TODO-Schemas, Semantikvalidator und detaillierten Entwicklungsplan pflegen",
+      "status": "done",
+      "type": "documentation",
+      "milestone_id": "DOC",
+      "priority": "P0",
+      "risk": "low",
+      "progress_percent": 100,
+      "dependencies": [
+        "REPO-BOOT"
+      ],
+      "affected_files": [
+        "README.md",
+        "CONTRIBUTING.md",
+        "ROADMAP.md",
+        "docs",
+        "todos"
+      ],
+      "acceptance_criteria": [
+        "IDs, DAG, Milestone-Zuordnung, Prozentangaben und Summary-Zähler werden geprüft."
+      ],
+      "tests": [
+        "python tools/validate_todos.py; python -m pytest tests/test_todos.py"
+      ],
+      "definition_of_done": [
+        "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
+        "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
+      ],
+      "evidence": [
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+      ]
+    }
+  ],
+  "critical_path_tasks": [
+    "REPO-BOOT",
+    "PACK-SCHEMA",
+    "PACK-EXAMPLES",
+    "TEST-CI",
+    "DOC-SPEC",
+    "DOC-TRACK",
+    "REPO-PUBLISH",
+    "XR-DEVICE",
+    "SPEECH-GPU",
+    "LEARN-EPISODES"
+  ],
+  "definition_of_done": [
+    "Öffentliches BSD-3-Clause-Repository ananta888/orbit-wilde-inseln mit Default-Branch main.",
+    "Grundarchitektur startet ohne externe Modelle; drei Missionspakete validieren und laufen in der Runtime.",
+    "Automatisierte Tests, Content-Builder und TODO-Validator bestehen.",
+    "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
+  ],
+  "tasks_status_summary": {
+    "total": 45,
+    "by_status": {
+      "todo": 18,
+      "in_progress": 1,
+      "partial": 0,
+      "blocked": 0,
+      "done": 26
+    },
+    "progress_percent_done": 57.78,
+    "by_priority": {
+      "P0": 27,
+      "P1": 4,
+      "P2": 14,
+      "P3": 0
+    },
+    "by_risk": {
+      "low": 27,
+      "medium": 13,
+      "high": 5
+    },
+    "critical_path": {
+      "total": 10,
+      "done": 6,
+      "remaining": 4
+    },
+    "milestones": {
+      "total": 17,
+      "todo": 0,
+      "in_progress": 16,
+      "partial": 0,
+      "blocked": 0,
+      "done": 1
+    }
+  },
+  "summary_notes": [
+    "Done bezeichnet das ausführbare Fundament der jeweiligen Aufgabe, nicht die gesamte Spielvision.",
+    "Die Beispielpakete besitzen ein 15-Minuten-Designziel; ihre kompakten Mechanikproben sind noch keine fertig ausproduzierten 15-Minuten-Level.",
+    "Hardware-Nachweise werden separat geführt. Es werden keine Ananta RUN_/SRC_-Nachweise erfunden."
+  ]
+}

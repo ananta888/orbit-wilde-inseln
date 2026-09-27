@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "npcs": [
+    {
+      "id": "temple_boar",
+      "character": "boar",
+      "object": "boar",
+      "behavior": "territorial"
+    },
+    {
+      "id": "oracle",
+      "character": "ananta",
+      "object": "ananta",
+      "behavior": "oracle"
+    }
+  ],
+  "events": []
+}

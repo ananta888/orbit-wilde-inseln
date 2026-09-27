@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "objectives": [
+    {
+      "id": "listen",
+      "event": "observe",
+      "target": "traveler",
+      "description": "Listen to the traveler.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "comprehension"
+      ]
+    },
+    {
+      "id": "find_a",
+      "event": "collect",
+      "target": "plank_a",
+      "description": "Find a long plank.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "comprehension"
+      ]
+    },
+    {
+      "id": "find_b",
+      "event": "collect",
+      "target": "plank_b",
+      "description": "Find another plank.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "comprehension"
+      ]
+    },
+    {
+      "id": "answer",
+      "event": "speak",
+      "target": "traveler",
+      "description": "Tell the traveler what you found, in your own words.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "communication"
+      ]
+    },
+    {
+      "id": "repair",
+      "event": "use",
+      "target": "bridge",
+      "description": "Use both planks to repair the bridge.",
+      "count": 1,
+      "requires_items": [
+        "plank_a",
+        "plank_b"
+      ],
+      "consumes_items": [
+        "plank_a",
+        "plank_b"
+      ],
+      "learning_goals": [
+        "transfer"
+      ]
+    }
+  ]
+}

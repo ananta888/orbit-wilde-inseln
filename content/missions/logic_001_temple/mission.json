@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "id": "logic_001_temple",
+  "stages": [
+    {
+      "id": "discover",
+      "title": "Ein Gast vor dem Tempel",
+      "phase": "discover",
+      "objectives": [
+        "observe_animal"
+      ],
+      "completion": "all",
+      "narration": "discover"
+    },
+    {
+      "id": "prepare",
+      "title": "Was bietet die Umgebung?",
+      "phase": "movement",
+      "objectives": [
+        "gather_bait"
+      ],
+      "completion": "all",
+      "narration": "prepare"
+    },
+    {
+      "id": "choose",
+      "title": "Dein Weg durch das Problem",
+      "phase": "learning",
+      "objectives": [
+        "distract_animal",
+        "sneak_past",
+        "open_route"
+      ],
+      "completion": "any",
+      "narration": "choose"
+    },
+    {
+      "id": "enter",
+      "title": "Das erste Erinnerungsfragment",
+      "phase": "finale",
+      "objectives": [
+        "enter_temple"
+      ],
+      "completion": "all",
+      "narration": "enter"
+    }
+  ],
+  "rewards": {
+    "memories": [
+      "logic_001_temple.memory"
+    ],
+    "discoveries": [
+      "logic_001_temple.site"
+    ]
+  },
+  "next_missions": [],
+  "solutions": [
+    {
+      "id": "distraction",
+      "title": "Aufmerksamkeit umlenken",
+      "objectives": [
+        "distract_animal"
+      ]
+    },
+    {
+      "id": "stealth",
+      "title": "Geschützten Weg nutzen",
+      "objectives": [
+        "sneak_past"
+      ]
+    },
+    {
+      "id": "environment",
+      "title": "Umgebung verändern",
+      "objectives": [
+        "open_route"
+      ]
+    }
+  ]
+}

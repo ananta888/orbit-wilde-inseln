@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/todos/todo.track.schema.json",
+  "title": "Orbit task track, compatible with Ananta track concepts",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0.0"
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "track": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status_scale": {
+      "const": [
+        "todo",
+        "in_progress",
+        "partial",
+        "blocked",
+        "done"
+      ]
+    },
+    "priority_scale": {
+      "const": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "risk_scale": {
+      "const": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_-]+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "in_progress",
+              "partial",
+              "blocked",
+              "done"
+            ]
+          },
+          "task_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_-]+$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "task_ids"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_-]+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "in_progress",
+              "partial",
+              "blocked",
+              "done"
+            ]
+          },
+          "type": {
+            "enum": [
+              "implementation",
+              "testing",
+              "documentation",
+              "hardware",
+              "publication"
+            ]
+          },
+          "milestone_id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_-]+$"
+          },
+          "priority": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2",
+              "P3"
+            ]
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "progress_percent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_-]+$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "affected_files": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "definition_of_done": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "type",
+          "milestone_id",
+          "priority",
+          "risk",
+          "progress_percent",
+          "dependencies",
+          "affected_files",
+          "acceptance_criteria",
+          "tests",
+          "definition_of_done",
+          "evidence"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "critical_path_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_-]+$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "definition_of_done": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "tasks_status_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "todo": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "in_progress": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "partial": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "done": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "todo",
+            "in_progress",
+            "partial",
+            "blocked",
+            "done"
+          ]
+        },
+        "progress_percent_done": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "by_priority": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "P0": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "P1": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "P2": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "P3": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "P0",
+            "P1",
+            "P2",
+            "P3"
+          ]
+        },
+        "by_risk": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "low": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "critical_path": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "done": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "done",
+            "remaining"
+          ]
+        },
+        "milestones": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "todo": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "in_progress": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "partial": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "done": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "todo",
+            "in_progress",
+            "partial",
+            "blocked",
+            "done"
+          ]
+        }
+      },
+      "required": [
+        "total",
+        "by_status",
+        "progress_percent_done",
+        "by_priority",
+        "by_risk",
+        "critical_path",
+        "milestones"
+      ]
+    },
+    "summary_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "version",
+    "owner",
+    "track",
+    "purpose",
+    "goal",
+    "status_scale",
+    "priority_scale",
+    "risk_scale",
+    "milestones",
+    "tasks",
+    "critical_path_tasks",
+    "definition_of_done",
+    "tasks_status_summary",
+    "summary_notes"
+  ]
+}

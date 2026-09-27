@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/ai-response.schema.json",
+  "title": "Orbit ai-response v1",
+  "type": "object",
+  "properties": {
+    "speech": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "emotion": {
+      "enum": [
+        "calm",
+        "curious",
+        "encouraging",
+        "concerned"
+      ]
+    },
+    "animation": {
+      "enum": [
+        "glide",
+        "head_tilt",
+        "look_around"
+      ]
+    },
+    "hint_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "requested_action": {
+      "type": "null"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "maxItems": 3
+    }
+  },
+  "required": [
+    "speech",
+    "emotion",
+    "animation",
+    "hint_level",
+    "requested_action",
+    "options"
+  ],
+  "additionalProperties": false
+}

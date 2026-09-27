@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "objectives": [
+    {
+      "id": "observe_animal",
+      "event": "observe",
+      "target": "boar",
+      "description": "Beobachte das Tier, bevor du handelst.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "behavior"
+      ]
+    },
+    {
+      "id": "gather_bait",
+      "event": "collect",
+      "target": "fruit",
+      "description": "Untersuche die duftenden Früchte am Weg.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "behavior"
+      ]
+    },
+    {
+      "id": "distract_animal",
+      "event": "distract",
+      "target": "boar",
+      "description": "Lenke das Wildschwein mit Früchten ab.",
+      "count": 1,
+      "requires_items": [
+        "fruit"
+      ],
+      "consumes_items": [
+        "fruit"
+      ],
+      "learning_goals": [
+        "strategy"
+      ]
+    },
+    {
+      "id": "sneak_past",
+      "event": "sneak",
+      "target": "side_path",
+      "description": "Nutze den geschützten Seitenpfad.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "strategy"
+      ]
+    },
+    {
+      "id": "open_route",
+      "event": "use",
+      "target": "stone",
+      "description": "Verschiebe den Stein und öffne einen anderen Zugang.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "strategy"
+      ]
+    },
+    {
+      "id": "enter_temple",
+      "event": "reach",
+      "target": "temple",
+      "description": "Betritt den Tempel über deinen gewählten Weg.",
+      "count": 1,
+      "requires_items": [],
+      "consumes_items": [],
+      "learning_goals": [
+        "transfer"
+      ]
+    }
+  ]
+}

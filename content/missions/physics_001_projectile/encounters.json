@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "npcs": [
+    {
+      "id": "oracle",
+      "character": "ananta",
+      "object": "ananta",
+      "behavior": "oracle"
+    }
+  ],
+  "events": []
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "id": "physics_001_projectile",
+  "version": "1.0.0",
+  "title": "Pfeile im Wind",
+  "summary": "Die Windruine erwacht, wenn du ihre schwebenden Holzzeichen triffst.",
+  "license": "BSD-3-Clause",
+  "duration_minutes": {
+    "min": 10,
+    "target": 15,
+    "max": 20
+  },
+  "capabilities": [
+    "interaction.v1",
+    "dialogue.v1",
+    "bow.v1",
+    "wind.v1"
+  ],
+  "assets": [
+    "core.marker",
+    "core.oracle",
+    "core.target"
+  ],
+  "dependencies": [],
+  "files": {
+    "mission": "mission.json",
+    "world": "world.json",
+    "objectives": "objectives.json",
+    "learning": "learning.json",
+    "dialogue": "dialogue.json",
+    "encounters": "encounters.json"
+  },
+  "difficulty": 2,
+  "prerequisites": []
+}

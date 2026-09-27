@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0.0",
+  "wind": [
+    3,
+    0,
+    0.5
+  ],
+  "objects": [
+    {
+      "id": "wind",
+      "kind": "wind_marker",
+      "label": "Windfahne",
+      "asset": "core.marker",
+      "position": [
+        -2,
+        0,
+        -3
+      ],
+      "mr_position": [
+        -0.6,
+        0,
+        -0.66
+      ],
+      "verbs": [
+        "observe"
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "practice",
+      "kind": "target",
+      "label": "Übungszeichen",
+      "asset": "core.target",
+      "position": [
+        0,
+        0,
+        -6
+      ],
+      "mr_position": [
+        0.0,
+        0,
+        -1.32
+      ],
+      "verbs": [
+        "hit"
+      ],
+      "material": "wood"
+    },
+    {
+      "id": "final_target",
+      "kind": "moving_target",
+      "label": "Wanderndes Zeichen",
+      "asset": "core.target",
+      "position": [
+        3,
+        0,
+        -9
+      ],
+      "mr_position": [
+        0.8999999999999999,
+        0,
+        -1.98
+      ],
+      "verbs": [
+        "hit"
+      ],
+      "material": "wood",
+      "motion": {
+        "axis": "x",
+        "amplitude": 1.5,
+        "speed": 0.7
+      }
+    },
+    {
+      "id": "ananta",
+      "kind": "oracle",
+      "label": "Ananta",
+      "asset": "core.oracle",
+      "position": [
+        -3,
+        0,
+        -4
+      ],
+      "mr_position": [
+        -0.8999999999999999,
+        0,
+        -0.88
+      ],
+      "verbs": [
+        "observe"
+      ],
+      "material": "stone"
+    }
+  ]
+}

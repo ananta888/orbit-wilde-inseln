@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0.0",
+  "wind": [
+    0,
+    0,
+    0
+  ],
+  "objects": [
+    {
+      "id": "traveler",
+      "kind": "ruin",
+      "label": "Reisender am Weg",
+      "asset": "core.ruin",
+      "position": [
+        -2,
+        0,
+        -3
+      ],
+      "mr_position": [
+        -0.6,
+        0,
+        -0.66
+      ],
+      "verbs": [
+        "observe",
+        "speak"
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "plank_a",
+      "kind": "plank",
+      "label": "Long plank",
+      "asset": "core.plank",
+      "position": [
+        2,
+        0,
+        -3
+      ],
+      "mr_position": [
+        0.6,
+        0,
+        -0.66
+      ],
+      "verbs": [
+        "collect"
+      ],
+      "material": "wood"
+    },
+    {
+      "id": "plank_b",
+      "kind": "plank",
+      "label": "Second long plank",
+      "asset": "core.plank",
+      "position": [
+        3,
+        0,
+        -5
+      ],
+      "mr_position": [
+        0.8999999999999999,
+        0,
+        -1.1
+      ],
+      "verbs": [
+        "collect"
+      ],
+      "material": "wood"
+    },
+    {
+      "id": "bridge",
+      "kind": "bridge",
+      "label": "Broken bridge",
+      "asset": "core.bridge",
+      "position": [
+        0,
+        0,
+        -7
+      ],
+      "mr_position": [
+        0.0,
+        0,
+        -1.54
+      ],
+      "verbs": [
+        "use"
+      ],
+      "material": "wood"
+    },
+    {
+      "id": "ananta",
+      "kind": "oracle",
+      "label": "Ananta",
+      "asset": "core.oracle",
+      "position": [
+        -3,
+        0,
+        -4
+      ],
+      "mr_position": [
+        -0.8999999999999999,
+        0,
+        -0.88
+      ],
+      "verbs": [
+        "observe"
+      ],
+      "material": "stone"
+    }
+  ]
+}

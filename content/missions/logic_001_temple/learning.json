@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "domain": "logic",
+  "framework": "experiential",
+  "level": "",
+  "goals": [
+    {
+      "id": "behavior",
+      "description": "Tierverhalten beobachten",
+      "axes": [
+        "mind"
+      ],
+      "evidence": "Tier und Umgebung betrachtet"
+    },
+    {
+      "id": "strategy",
+      "description": "Eine von mehreren Strategien anwenden",
+      "axes": [
+        "body",
+        "mind"
+      ],
+      "evidence": "Eine serverseitig geprüfte Alternative ausgeführt"
+    },
+    {
+      "id": "transfer",
+      "description": "Gewählten Weg zu Ende gehen",
+      "axes": [
+        "skill",
+        "mind"
+      ],
+      "evidence": "Tempel nach gültiger Lösung erreicht"
+    }
+  ],
+  "adaptation": {
+    "enabled": false,
+    "signals": [
+      "attempts",
+      "time",
+      "accuracy",
+      "hints",
+      "application"
+    ],
+    "manual_override": true
+  }
+}

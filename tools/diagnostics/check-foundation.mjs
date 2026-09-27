@@ -1,0 +1,38 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+await mkdir('.local', { recursive: true });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || chromium.executablePath(), headless: true, args: ['--no-sandbox', '--enable-unsafe-swiftshader'] });
+const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1100, height: 800 }, deviceScaleFactor: .7 });
+const page = await context.newPage(); const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+try {
+  await page.goto(process.env.ORBIT_URL || 'http://127.0.0.1:8765', { waitUntil: 'networkidle' });
+  await page.evaluate(async () => { window.orbitView = (await import('/src/app.js')).view; });
+  await page.waitForFunction(() => window.orbitView.state?.tick > 10);
+  await page.locator('#mission-select').selectOption('language_001_bridge');
+  await page.getByRole('button', { name: 'Am Laptop testen' }).click();
+  await page.waitForFunction(() => window.orbitView.state.phase === 'playing' && window.orbitView.missions.packet.active?.phase === 'discover');
+  await page.locator('#mission-actions button').first().click();
+  await page.waitForFunction(() => window.orbitView.missions.packet.active.phase === 'movement');
+  await page.locator('#mission-actions button').first().click();
+  await page.waitForFunction(() => window.orbitView.missions.packet.active.inventory.includes('plank_a'));
+  await page.keyboard.down('w');
+  await page.waitForFunction(() => window.orbitView.state.player[2] < -3.3);
+  await page.keyboard.up('w');
+  await page.locator('#mission-actions button').first().click();
+  await page.waitForFunction(() => window.orbitView.missions.packet.active.phase === 'learning');
+  await page.locator('#mission-answer').fill('I found two long planks. Let us repair the bridge.');
+  await page.getByRole('button', { name: 'Antwort senden', exact: true }).click();
+  await page.waitForFunction(() => window.orbitView.missions.packet.active.phase === 'finale');
+  await page.locator('#mission-actions button').first().click();
+  await page.waitForFunction(() => window.orbitView.missions.packet.active.complete);
+  assert.equal(await page.evaluate(() => window.orbitView.missions.objects.objects.get('bridge').userData.gap.visible), false);
+  await page.screenshot({ path: '.local/foundation-bridge.png' });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForFunction(async () => (await import('/src/app.js')).view.missions.packet?.completed.includes('language_001_bridge'));
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  assert.deepEqual(errors, []);
+  console.log('Foundation browser checks passed: real UI, inventory, free reply, repaired bridge, save/reconnect, mobile layout.');
+} finally { await browser.close(); }

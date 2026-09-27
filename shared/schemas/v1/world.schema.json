@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ananta888.github.io/orbit-wilde-inseln/schemas/v1/world.schema.json",
+  "title": "Orbit world v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "wind": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -15,
+        "maximum": 15
+      },
+      "maxItems": 3,
+      "minItems": 3
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "kind": {
+            "enum": [
+              "wind_marker",
+              "target",
+              "moving_target",
+              "plank",
+              "bridge",
+              "boar",
+              "oracle",
+              "ruin",
+              "bait",
+              "route"
+            ]
+          },
+          "asset": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000
+            },
+            "maxItems": 3,
+            "minItems": 3
+          },
+          "mr_position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000
+            },
+            "maxItems": 3,
+            "minItems": 3
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "verbs": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "observe",
+                "collect",
+                "use",
+                "speak",
+                "reach",
+                "hit",
+                "distract",
+                "sneak"
+              ]
+            },
+            "maxItems": 8,
+            "uniqueItems": true
+          },
+          "material": {
+            "enum": [
+              "wood",
+              "stone",
+              "organic",
+              "energy"
+            ]
+          },
+          "motion": {
+            "type": "object",
+            "properties": {
+              "axis": {
+                "enum": [
+                  "x",
+                  "z"
+                ]
+              },
+              "amplitude": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 3
+              },
+              "speed": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "axis",
+              "amplitude",
+              "speed"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "asset",
+          "position",
+          "mr_position",
+          "label",
+          "verbs",
+          "material"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 64,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "wind",
+    "objects"
+  ],
+  "additionalProperties": false
+}

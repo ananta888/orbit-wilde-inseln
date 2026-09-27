@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "npcs": [
+    {
+      "id": "traveler_npc",
+      "character": "guide",
+      "object": "traveler",
+      "behavior": "instructor"
+    },
+    {
+      "id": "oracle",
+      "character": "ananta",
+      "object": "ananta",
+      "behavior": "oracle"
+    }
+  ],
+  "events": []
+}
