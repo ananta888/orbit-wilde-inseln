@@ -12,6 +12,6 @@ Die lokale Abnahme verwendet Python 3.12, Chromium/Playwright und IWER. Sie ben�
 - IWER: MR/VR mit zwei Stereokameras, Bogen, Flug-/Bewegungsgrenzen, Pause/Fokuswechsel und lokalem Tracking bestanden.
 - Missions-XR: explizites Menü, Controller-Auswahl, synthetischer direkter Hand-Pinch, keine versehentlichen Pfeile und stationärer MR-Modus bestanden.
 
-Die CI unter `.github/workflows/ci.yml` wiederholt Python-Prüfungen auf 3.11/3.12 sowie Browser- und Missions-XR-Tests. Der vollständige Flug-/Bogen-Emulationspfad bleibt zusätzlich lokal aufrufbar. Testprotokolle und Screenshots liegen in `.local` und werden nicht veröffentlicht.
+Der [erste öffentliche CI-Lauf](https://github.com/ananta888/orbit-wilde-inseln/actions/runs/36344166842) ist auf Python 3.11, Python 3.12 und im Browser vollständig erfolgreich. Die CI unter `.github/workflows/ci.yml` wiederholt Python-Prüfungen auf 3.11/3.12 sowie Browser- und Missions-XR-Tests. Der vollständige Flug-/Bogen-Emulationspfad bleibt zusätzlich lokal aufrufbar. Testprotokolle und Screenshots liegen in `.local` und werden nicht veröffentlicht.
 
 **Noch kein Nachweis:** physische Quest-Lesbarkeit/Framerate, tatsächliches Passthrough-Bild, echte Hand-/Controller-Ergonomie und der vollständige neue Checkout mit 780M-ASR. Dafür gibt es den [Geräteplan](vr/device-checklist.md). Der vorherige lokale Prototyp bleibt unabhängig von diesem neuen Repository bestehen.

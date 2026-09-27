@@ -26,7 +26,7 @@
     {
       "id": "REPO",
       "title": "Repository Bootstrap",
-      "status": "in_progress",
+      "status": "done",
       "task_ids": [
         "REPO-BOOT",
         "REPO-PUBLISH"
@@ -222,12 +222,12 @@
     {
       "id": "REPO-PUBLISH",
       "title": "Öffentliches Repository unter ananta888 mit main veröffentlichen",
-      "status": "in_progress",
+      "status": "done",
       "type": "publication",
       "milestone_id": "REPO",
       "priority": "P0",
       "risk": "low",
-      "progress_percent": 50,
+      "progress_percent": 100,
       "dependencies": [
         "DOC-SPEC",
         "DOC-TRACK",
@@ -249,7 +249,10 @@
         "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
         "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
       ],
-      "evidence": []
+      "evidence": [
+        "https://github.com/ananta888/orbit-wilde-inseln",
+        "GitHub bestätigt PUBLIC, main und BSD-3-Clause; initialer Commit c459988816e6e11ede72331a6aecd8b2fb92aa1a wurde mit origin/main abgeglichen."
+      ]
     },
     {
       "id": "ARCH-PORTS",
@@ -1447,7 +1450,8 @@
         "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
       ],
       "evidence": [
-        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests."
+        "Lokale Foundation-Abnahme: docs/testing.md; zugehörige Testbefehle im Feld tests.",
+        "GitHub-CI erfolgreich für Python 3.11, Python 3.12, Browser und Missions-XR: https://github.com/ananta888/orbit-wilde-inseln/actions/runs/36344166842"
       ]
     },
     {
@@ -1569,12 +1573,12 @@
     "total": 45,
     "by_status": {
       "todo": 18,
-      "in_progress": 1,
+      "in_progress": 0,
       "partial": 0,
       "blocked": 0,
-      "done": 26
+      "done": 27
     },
-    "progress_percent_done": 57.78,
+    "progress_percent_done": 60.0,
     "by_priority": {
       "P0": 27,
       "P1": 4,
@@ -1588,16 +1592,16 @@
     },
     "critical_path": {
       "total": 10,
-      "done": 6,
-      "remaining": 4
+      "done": 7,
+      "remaining": 3
     },
     "milestones": {
       "total": 17,
       "todo": 0,
-      "in_progress": 16,
+      "in_progress": 15,
       "partial": 0,
       "blocked": 0,
-      "done": 1
+      "done": 2
     }
   },
   "summary_notes": [

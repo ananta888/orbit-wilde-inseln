@@ -1,5 +1,7 @@
 # Orbit – Wilde Inseln
 
+[![Foundation checks](https://github.com/ananta888/orbit-wilde-inseln/actions/workflows/ci.yml/badge.svg)](https://github.com/ananta888/orbit-wilde-inseln/actions/workflows/ci.yml)
+
 VR und Mixed Reality für Meta Quest 3 und Laptop/PC: Die Quest rendert und verarbeitet Tracking lokal, der Laptop simuliert Welt, Physik, Missionen und optionale Sprach-KI.
 
 Das ausführbare Fundament verbindet tropische Inseln, Bogen, Drachenflug und Planetensicht mit deklarativen Lernabenteuern. Arin begleitet den Spieler; Ananta erscheint als Orakel an besonderen Orten. Nach „Der Bruch“ setzen Entdeckungen ein altes Wissenssystem wieder zusammen.
