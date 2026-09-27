@@ -91,7 +91,19 @@
         "stretch",
         "subtract",
         "twist",
-        "union"
+        "union",
+        "prepare_mount",
+        "weight",
+        "ik",
+        "joint_limits",
+        "optimize",
+        "layer_add",
+        "layer_bake",
+        "layer_lock",
+        "layer_visibility",
+        "layer_strength",
+        "layer_delete",
+        "layer_order"
       ]
     },
     "samples": {
@@ -334,6 +346,10 @@
         "yz",
         "xyz"
       ]
+    },
+    "layer": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
     }
   },
   "required": [
@@ -500,6 +516,54 @@
       "then": {
         "required": [
           "value"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "weight"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "bone",
+          "regions",
+          "samples",
+          "radius",
+          "strength"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "ik"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "bone",
+          "position"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "joint_limits"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "bone",
+          "angle"
         ]
       }
     }

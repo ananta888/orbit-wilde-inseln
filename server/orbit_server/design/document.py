@@ -139,8 +139,10 @@ def validate(doc: dict[str, Any]) -> None:
         finite(material["detail_scale"], 1, 100, "Detailgröße")
         if material["detail"] not in DETAILS: raise DesignError("Oberflächendetail")
     if vertices > MAX_VERTICES or triangles > MAX_TRIANGLES: raise DesignError("Dokument überschreitet Geometriebudget")
-    for key, maximum in (("clips", 32), ("mount_points", 16), ("colliders", 96), ("layers", 128)):
+    for key, maximum in (("clips", 32), ("mount_points", 16), ("colliders", 96), ("layers", 32)):
         if not isinstance(doc[key], list) or len(doc[key]) > maximum: raise DesignError(f"Budget: {key}")
+        ids = [identifier(item.get("id")) if isinstance(item, dict) else None for item in doc[key]]
+        if None in ids or len(set(ids)) != len(ids): raise DesignError(f"Doppelte oder fehlende ID: {key}")
     from .rigging import validate_rig
     validate_rig(doc)
     identifier(doc["behaviour_profile"])
@@ -154,17 +156,26 @@ def validate(doc: dict[str, Any]) -> None:
         identifier(collider["id"]); vec(collider["position"])
         if collider["kind"] not in {"sphere", "capsule", "box"} or np.min(vec(collider["size"], 20)) <= 0:
             raise DesignError("Colliderformat")
-    bone_ids = {b["id"] for b in doc["rig"]["bones"]}
+    bone_ids = {b["id"]: b for b in doc["rig"]["bones"]}
     for clip in doc["clips"]:
         fields(clip, {"id", "duration", "loop", "keys"}, {"id", "duration", "loop", "keys"})
         identifier(clip["id"]); finite(clip["duration"], .1, 60, "Clipdauer")
         if type(clip["loop"]) is not bool or not isinstance(clip["keys"], list) or not 1 <= len(clip["keys"]) <= 512:
             raise DesignError("Clipbudget")
+        key_ids = set()
         for key in clip["keys"]:
             fields(key, {"bone", "time", "rotation"}, {"bone", "time", "rotation"})
             if key["bone"] not in bone_ids: raise DesignError("Clip referenziert fehlenden Knochen")
             finite(key["time"], 0, clip["duration"], "Keyframezeit"); vec(key["rotation"], math.pi)
-    if doc["layers"]: raise DesignError("Nicht unterstützte Layerdaten dürfen nicht still verworfen werden")
+            key_id = (key["bone"], key["time"])
+            if key_id in key_ids: raise DesignError("Doppelter Keyframe für Gelenk und Zeitpunkt")
+            key_ids.add(key_id)
+            limits = bone_ids[key["bone"]].get("limits")
+            if limits and (np.any(np.asarray(key["rotation"]) < limits["min"]) or
+                           np.any(np.asarray(key["rotation"]) > limits["max"])):
+                raise DesignError("Animation überschreitet Gelenkgrenzen")
+    from .layers import validate_layers
+    validate_layers(doc)
     if len(canonical(doc)) > MAX_BYTES: raise DesignError("Dokument zu groß")
 
 

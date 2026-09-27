@@ -14,10 +14,16 @@ Push, Pull, Grab, Inflate, Deflate, Smooth, Flatten, Pinch, Crease, Clay, Stretc
 
 Manifold liefert Union, Subtract, Cut, Refine und Simplify. Offene Flügelmembranen werden nicht automatisch zu Volumen erklärt. Maskierte Volumenoperationen werden abgelehnt, weil ein ungeprüfter Attributtransfer die Schutzregion beschädigen könnte. Farben und Oberflächenkanäle gehen als Vertex-Properties durch Manifold; Normalen werden neu berechnet.
 
-Jeder Topologiewechsel erhöht `topology_revision`. Der Server ersetzt nur betroffene Regionen. Sculpting mit unveränderten Vertex-IDs erhält Rig und Clips. Topologieänderungen invalidieren derzeit Rig und Clips; Undo stellt sie vollständig wieder her. Automatischer Skin-/UV-/Morphtransfer nach Remeshing ist noch nicht freigegeben.
+Jeder Topologiewechsel erhöht `topology_revision`. Der Server ersetzt nur betroffene Regionen. Sculpting mit unveränderten Vertex-IDs erhält Rig und Clips. Allgemeine Manifold-Topologieänderungen invalidieren derzeit Rig und Clips; Undo stellt sie vollständig wieder her. Automatischer Skin-/UV-/Morphtransfer nach Remeshing ist noch nicht freigegeben.
 
 ## History
 
 Ein beendeter Strich ist eine Transaktion. Der Server erzeugt eine neue Revision, einen Command-Beleg und Autosave in derselben SQLite-Transaktion. Große Zahlenfelder werden in 1024-Werte-Blöcke zerlegt und anhand SHA-256 dedupliziert. Es werden keine vollständigen Modelle pro Tracking-Frame gespeichert.
 
-Die letzte History umfasst maximal 128 Schritte. Echte nichtdestruktive Ebenen sind noch nicht vorhanden; nichtleere importierte Layer werden ausdrücklich abgelehnt.
+Die letzte History umfasst maximal 128 Schritte.
+
+## Bearbeitungsebenen
+
+Bis zu 32 sparse additive Ebenen speichern Positions-, Farb- und Materialdeltas mit stabilen Vertex-IDs und Topologieversion. Sichtbarkeit, Sperre, Stärke, Reihenfolge und Löschen sind eigenständige Undo-Befehle. Zum Malen/Formen muss die gewählte Ebene sichtbar, entsperrt und auf 100 % stehen. Geschützte Vertices verhindern nachträgliche Änderungen durch Ausblenden oder Stärkeänderung.
+
+Das Dokument enthält die aktuell ausgewertete Oberfläche und zusätzlich die Deltas. Die Reihenfolge ist bei der additiven Darstellung kommutativ; es sind noch keine Photoshop-artigen Mischmodi. Farbwerte außerhalb des zulässigen Bereichs werden abgelehnt, nicht verlustbehaftet abgeschnitten. „Ebenen zusammenfassen“ hält die sichtbare Oberfläche fest und entfernt den Stack in einer rückgängig machbaren Transaktion. Allgemeine Topologieänderungen und Optimierung benötigen diesen expliziten Schritt. Runtime-Veröffentlichung enthält die ausgewertete Oberfläche; der Editor-Master behält seinen Stack.

@@ -1,0 +1,61 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+
+const base = process.env.ORBIT_URL || 'http://127.0.0.1:8993';
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || chromium.executablePath(),
+  headless: true, args: ['--no-sandbox', '--enable-unsafe-swiftshader'] });
+const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1400, height: 950 } });
+const page = await context.newPage(), errors = [];
+page.on('pageerror', error => errors.push(error.message));
+try {
+  await page.goto(base + '/designer/index.html');
+  await page.evaluate(async () => { window.w = (await import('/src/design/workspace.js')).workspace; });
+  await page.waitForFunction(() => window.w.client.document);
+  await page.locator('summary').filter({ hasText: 'Pose & Vorschau' }).click();
+  await page.locator('#prepare-flight').click();
+  await page.waitForFunction(() => window.w.client.document.mount_points.length && !window.w.client.pending);
+  await page.locator('#publish').click();
+  await page.waitForFunction(() => document.getElementById('status').textContent.includes('übernommen'));
+  const active = await page.evaluate(async () => (await (await fetch('/api/creatures/active')).json()).asset);
+  assert(active.hash && active.behavior.mountable);
+  await page.locator('#test-flight').click();
+  await page.waitForURL('**/?test_asset=*');
+  await page.evaluate(async () => { window.v = (await import('/src/app.js')).view; });
+  await page.waitForFunction(hash => window.v.dragon.assetHash === hash, active.hash);
+  assert(await page.locator('#return-designer').isVisible());
+  await page.locator('#desktop').click();
+  await page.waitForFunction(() => window.v.state.phase === 'playing');
+  await page.keyboard.press('f');
+  await page.waitForFunction(() => window.v.state.flying && window.v.dragon.root.visible);
+  const start = await page.evaluate(() => window.v.state.player[1]);
+  await page.keyboard.down('Space');
+  await page.waitForFunction(y => window.v.state.player[1] > y + 2, start);
+  await page.keyboard.up('Space');
+  const instances = await page.evaluate(async asset => {
+    const THREE = await import('three');
+    const { CreatureAssets } = await import('/src/rendering/creature-assets.js');
+    const assets = new CreatureAssets(), group = new THREE.Group();
+    const first = await assets.instantiate(asset, group), second = await assets.instantiate(asset, group);
+    const boneA = first.view.bones.get('head'), boneB = second.view.bones.get('head');
+    boneA.rotation.x = .8;
+    const isolated = boneB.rotation.x !== .8 && first.view.skeleton !== second.view.skeleton;
+    const shared = [...first.view.meshes.values()][0].geometry === [...second.view.meshes.values()][0].geometry;
+    const geometry = [...second.view.meshes.values()][0].geometry;
+    let disposed = 0; geometry.addEventListener('dispose', () => disposed++);
+    first.dispose(); assets.clear();
+    const preserved = disposed === 0;
+    second.dispose(); const cached = assets.cache.size; assets.clear();
+    return { isolated, shared, preserved, disposed, cached };
+  }, active);
+  assert(instances.isolated && instances.shared && instances.preserved && instances.disposed === 1 && instances.cached === 1);
+  await mkdir('.local', { recursive: true });
+  await page.screenshot({ path: '.local/published-arin-flight.png' });
+  await page.locator('#return-designer').click();
+  await page.waitForURL('**/designer/index.html');
+  await page.evaluate(async () => { window.w = (await import('/src/design/workspace.js')).workspace; });
+  await page.waitForFunction(() => window.w.client.document);
+  assert.equal(await page.evaluate(() => window.w.client.document.revision), active.revision);
+  assert.deepEqual(errors, []);
+  console.log('Published creature: editor -> immutable asset -> real game flight -> editor, private save and independent cached instances passed.');
+} finally { await browser.close(); }

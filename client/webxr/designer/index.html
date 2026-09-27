@@ -15,7 +15,7 @@
 <option value="smooth">Glätten</option><option value="flatten">Einebnen</option><option value="pinch">Zusammenziehen</option>
 <option value="crease">Falte ziehen</option><option value="clay">Ton auftragen</option><option value="stretch">Strecken</option>
 <option value="bend">Biegen</option><option value="twist">Verdrehen</option><option value="scale">Lokal vergrößern</option>
-<option value="move">Bereich verschieben</option><option value="paint">Malen</option><option value="mask">Schützen</option><option value="pose">Gelenk posieren</option>
+<option value="move">Bereich verschieben</option><option value="paint">Malen</option><option value="mask">Schützen</option><option value="pose">Gelenk posieren</option><option value="ik">Gelenkkette ziehen</option><option value="weight">Gelenkgewicht malen</option>
 </select></label>
 <label>Radius <output id="radius-value">20 cm</output><input id="radius" type="range" min=".02" max="1" step=".01" value=".2"></label>
 <label>Stärke<input id="strength" type="range" min=".05" max="1" step=".05" value=".5"></label>
@@ -28,6 +28,16 @@
 <div class="row"><button id="undo">↶ Zurück</button><button id="redo">↷ Wiederholen</button></div>
 <div class="row"><button id="mini">Miniatur</button><button id="life">Lebensgröße</button><button id="reset">Ansicht</button></div>
 <p id="selection">Berühre einen Bereich.</p>
+<details><summary>Bearbeitungsebenen</summary>
+<select id="active-layer" aria-label="Aktive Ebene"><option value="">Grundform direkt bearbeiten</option></select>
+<select id="layer-kind" aria-label="Neue Ebenenart"><option value="sculpt">Form</option><option value="paint">Farbe</option><option value="detail">Detail</option></select>
+<button id="new-layer">Neue Ebene</button>
+<button id="layer-visible">Ein-/ausblenden</button><button id="layer-lock">Sperren / freigeben</button>
+<label>Ebenenstärke<input id="layer-strength" type="range" min="0" max="1" step=".05" value="1"></label>
+<button id="apply-layer-strength">Stärke anwenden</button><button id="delete-layer">Ebene entfernen</button>
+<button id="layer-up">Ebene nach oben</button><button id="bake-layers">Sichtbare Ebenen zusammenfassen</button>
+<p class="muted">Zum Formen oder Malen die Ebene einblenden und auf 100 % stellen. Vor Schnitten und neuen Teilen zusammenfassen; Zurück stellt die Ebenen wieder her.</p>
+</details>
 <details open><summary>Farbe & Oberfläche</summary>
 <div class="row"><input id="color" type="color" value="#408a59" aria-label="Farbe"><select id="paint-tool" aria-label="Pinsel"><option value="brush">Pinsel</option><option value="airbrush">Airbrush</option><option value="spray">Spray</option><option value="fill">Füllen</option><option value="gradient">Verlauf</option><option value="eraser">Radierer</option><option value="smudge">Verwischen</option><option value="stamp">Musterstempel</option></select></div>
 <label>Kanal<select id="channel"><option value="color">Farbe</option><option value="roughness">Rauheit</option><option value="metallic">Metall</option><option value="emission">Leuchten</option><option value="opacity">Deckkraft</option></select></label>
@@ -45,15 +55,26 @@
 <p class="muted">Mit Umschalt-Klick mehrere Teile wählen. Geschützte Teile bleiben erhalten.</p></details>
 <details><summary>Pose & Vorschau</summary>
 <button id="rig">Rig-Vorschlag erstellen</button><button id="living">Lebendig ansehen</button>
+<label>Gelenk<select id="bone"></select></label>
 <label>Gelenkwinkel<input id="pose-angle" type="range" min="-1.4" max="1.4" step=".05" value="0"></label>
 <button id="pose">Ausgewähltes Teil posieren</button><button id="clip">Flügelbewegung vorbereiten</button>
+<button id="joint-limits">Gelenk auf ±80° begrenzen</button>
+<label>Animationsname<input id="clip-name" value="custom" maxlength="40"></label>
+<label>Zeit in Sekunden<input id="key-time" type="number" value="0" min="0" max="30" step=".25"></label>
+<button id="record-pose">Pose aufnehmen</button><button id="save-clip">Animation speichern</button>
+<select id="clips" aria-label="Animation auswählen"></select><button id="play-clip">Animation abspielen</button><p id="recording-info" class="muted"></p>
 <button id="mount">Sitzpunkt markieren</button><button id="flight">Sitzansicht prüfen</button>
+<button id="prepare-flight">Flugmodell vorbereiten</button>
+<button id="test-flight">In Orbit probefliegen</button><button id="publish">Als meinen Arin übernehmen</button>
+<button id="restore-arin">Ursprünglichen Arin verwenden</button>
+<p class="muted">Der Probeflug verwendet die Spielphysik und einen separaten Testspielstand. Entwürfe bleiben in der Werkstatt.</p>
 </details>
 </aside>
 <aside id="assistant"><div class="eyebrow">ANANTA · DESIGNBEGLEITER</div>
 <p id="assistant-text">Markiere eine Form. Ich bereite Änderungen vor, die du erst ansehen und dann übernehmen kannst.</p>
 <textarea id="instruction" rows="3" placeholder="Mach den Kopf etwas breiter …" aria-label="Designbeschreibung"></textarea>
 <div class="row"><button id="propose">Vorschlag vorbereiten</button><button id="mic">Sprechen</button></div>
+<button id="generate">Neue Kreatur aus Beschreibung · Vorschau</button>
 <div id="proposal" hidden><button id="before">Original / Vorschlag</button>
 <label>Vorschlagsanteil<input id="blend" type="range" min="0" max="1" step=".05" value="1"></label>
 <div class="row"><button id="accept">Übernehmen</button><button id="reject">Verwerfen</button></div><button id="regenerate">Neuer Vorschlag</button></div>
@@ -64,6 +85,7 @@
 <label class="file">GLB / Kreatur öffnen<input id="import" type="file" accept=".glb,.json"></label>
 <button id="journal-export">Lokalen Änderungspuffer sichern</button>
 <button id="analyze">Modell prüfen</button><p id="analysis-result" class="muted"></p>
+<button id="optimize">Für Quest optimieren · Vorschau</button>
 </details>
 <div id="conflict" hidden><p>Die Änderung konnte nicht bestätigt werden. Sie bleibt lokal erhalten.</p><button id="discard">Lokale Änderung verwerfen und Serverstand laden</button></div>
 </aside>

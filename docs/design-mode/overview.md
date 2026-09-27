@@ -19,14 +19,17 @@ Am Laptop `http://localhost:8443/designer/index.html` öffnen. Für eine Quest g
 3. Herausziehen/Eindrücken wählen, Radius und Stärke einstellen und einen Strich beenden. Die Quest zeigt eine lokale Vorschau; der Laptop bestätigt die Geometrie und speichert die Revision.
 4. Undo/Redo, Malen, Schutzmaske, neue Primitive und Volumenoperationen verwenden. Vereinigung/Subtraktion benötigen zwei geschlossene, ungeschützte Regionen.
 5. Eine Region auswählen, etwa „20 Prozent größer“ eingeben und Original/Vorschlag vergleichen. Erst „Übernehmen“ schreibt den Vorschlag in die History.
-6. Rig-Vorschlag erstellen, posieren und die Figur belebt ansehen. Die erste Rigging-Stufe benutzt starre Gewichte pro Region.
-7. Als Creature-JSON oder GLB exportieren. Jeder bestätigte Befehl ist bereits lokal gespeichert.
+6. Eine Sculpt-/Paint-Ebene anlegen, Sichtbarkeit/Stärke vergleichen und bei Bedarf zusammenfassen. Vor Topologieoperationen müssen Ebenen explizit zusammengefasst werden.
+7. Rig erstellen: hierarchische Gelenke mit weichen Gewichten. Gewichte malen, IK-Ziel setzen und Gelenkgrenzen verwenden. Unter „Pose & Vorschau“ Posen an unterschiedlichen Zeiten aufnehmen, als Clip speichern und abspielen.
+8. „Für Quest optimieren“ berechnet eine separate Vorschau mit erhaltenem Skin/Rig. Übernehmen und Undo sind möglich; eine automatische FPS-Garantie ist das nicht.
+9. „Flug vorbereiten“ ergänzt fehlendes Rig, Sitz und Körperbox. „Im Spiel testen“ öffnet die echte Flugsimulation mit der unveränderlichen Revision, ohne den regulären Spielstand zu schreiben. Der Rückkehr-Link führt zum gespeicherten Editorstand.
+10. „Als Arin übernehmen“ aktiviert die Figur für die nächste reguläre Spielsitzung; „Original-Arin“ setzt die Auswahl zurück. Creature-JSON und GLB bleiben unabhängige Exportwege. Jeder bestätigte Befehl wird bereits lokal gespeichert.
 
 ## Stand und Ausbau
 
-Die Basis ist ausführbar und automatisiert prüfbar. Sie ist noch kein vollständig abgenommener Creature Creator. Freie generative 3D-Modelle, ein SDF-Master, echte Ebenen, UV-Texturmalerei, organisches Auto-Rigging/IK, allgemeiner Skin-/Morph-Import und die Veröffentlichung in der Spielwelt sind weitere Milestones. Eine Figur im Editor zu laden ist noch keine Übernahme als Gameplay-Asset.
+Die Basis ist ausführbar und automatisiert prüfbar. Sie ist noch kein vollständig abgenommener Creature Creator. Freie neuronale 3D-Modelle, ein SDF-Master, UV-Texturmalerei, anatomisch universelles Auto-Rigging, mehrstufige LOD-/Bake-Pipelines und allgemeiner Skin-/Morph-Import bleiben weitere Milestones. Die neue KI-Generierung wählt parametrisierte Originalvorlagen. Das Rig ist ein nachvollziehbares semantisches Verfahren, kein universeller Anatomie-Erkenner.
 
-Die vorhandene Sitz-/Flugansicht ist eine begrenzte Größen- und Sichtvorschau. Sie ersetzt keinen Test gegen die Flugphysik des Spiels. Handtracking, echte Passthrough-Darstellung, Komfort und Bildrate müssen auf einer physischen Quest separat geprüft werden. Der Nutzer hat die weitere Arbeit ohne angeschlossenes Headset gewünscht; Geräteabnahmen bleiben daher offen.
+Die Sitzansicht bleibt eine Größen-/Sichtvorschau; der zusätzliche Probeflug benutzt die echte Spielsimulation. Editierbare Collider werden bisher als Metadaten geprüft, noch nicht für detaillierte Körperkollisionen im Terrain verwendet. Die ursprüngliche einfache Flugkollision bleibt maßgeblich. Handtracking, echte Passthrough-Darstellung, Komfort und Bildrate müssen auf einer physischen Quest separat geprüft werden. Der Nutzer hat die weitere Arbeit ohne angeschlossenes Headset gewünscht; Geräteabnahmen bleiben daher offen.
 
 Der [vollständige TODO-Track](../../todos/active/todo.vr-ai-creature-designer.json) bleibt maßgeblich. Ein ausgeführter lokaler Parser wird ausdrücklich nicht als LLM ausgegeben.
 

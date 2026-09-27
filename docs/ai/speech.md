@@ -12,7 +12,7 @@ export ORBIT_ANANTA_TOKEN_FILE=/absolute/private/path/game-token
 python -m orbit_server --http
 ```
 
-Alternativ kann eine ignorierte `.local/dragon.json` mit `hub_url` und `token_file` verwendet werden. Umgebungsvariablen haben Vorrang. Unter Windows PowerShell entspricht das `$env:ORBIT_ANANTA_URL=...`. Der Ananta-Hub muss seine eigenen ASR-/LLM-/TTS-Dienste bereits eingerichtet haben; Orbit installiert oder verändert ihn nicht.
+Alternativ kann eine ignorierte `.local/dragon.json` mit `hub_url` und `token_file` verwendet werden. Umgebungsvariablen haben Vorrang. Unter Windows PowerShell entspricht das `$env:ORBIT_ANANTA_URL=...`. Der Ananta-Hub muss seine eigenen ASR-/LLM-/TTS-Dienste bereits eingerichtet haben; der normale Orbit-Start installiert oder verändert ihn nicht. Alternativ lädt `python tools/run-local.py --http` die explizite private Konfiguration `.local/runtime.json`; `.env.example` beschreibt die erlaubten Variablen.
 
 Der Adapter übersetzt den bereits verwendeten Jev-Vertrag mit Stimmung/Geste/Sprache in `CharacterResponse`. Die aktuelle Hub-Route erhält Höhe, Geschwindigkeit, Region, höchstens drei Tierarten und sechs Dialogeinträge. Missionen und Erinnerungen sind im internen Kontextmodell vorbereitet; der bestehende enge Jev-Endpunkt überträgt diese Erweiterungen noch nicht. Ein neuer Hub-Vertrag muss explizit versioniert und getestet werden.
 

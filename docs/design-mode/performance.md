@@ -25,4 +25,8 @@ Das sind technische Obergrenzen, keine Behauptung einer auf Quest erreichten Bil
 
 Native Geometrie läuft in abtrennbaren Prozessen. Ein Timeout beendet den betroffenen Prozess und hält die letzte bestätigte Revision. Ein Prozess pro Auftrag hat Startkosten; eine später wiederverwendbare Worker-Architektur muss dieselben Abbruch- und Speichergrenzen erhalten.
 
-LOD-Erzeugung, progressiver Detailaufbau, Texturatlanten, Meshopt/Draco und automatische Optimierung mit unverändertem Original sind im Track separat vorgesehen. Keine Kompressionsbibliothek wurde ungeprüft hinzugefügt.
+Meshoptimizer 1.3.0 (MIT) läuft als begrenzter lokaler Node-Prozess. Indexbasierte Vereinfachung berücksichtigt Normalen, Farben, Oberflächenkanäle und Skin-Gewichte. Maskierte/gesperrte Regionen sowie Sitzbereiche bleiben geschützt. Die Vorschau reduziert auf ein Ziel von 50 % bei höchstens 8 mm geometrischem Fehler; Rand-/Attributschutz kann eine stärkere Reduktion verhindern. Vorhandene Knochen und Clips bleiben erhalten; keine verborgenen Flächen werden pauschal gelöscht.
+
+„Für Quest optimieren“ ist ein einzelner reversibler Optimierungsschritt, noch keine LOD-/UV-/Atlas-/Draco-Komplettpipeline. Die Library und Wahl sind in [ADR design-003](../architecture/adr/design-003-runtime-and-optimization.md) dokumentiert.
+
+Veröffentlichte Assets: höchstens 60000 Dreiecke, 64 Versionen/128 MiB pro Profil. Der Browser begrenzt auch entpackte Streaming-Antworten auf 32 MiB, prüft SHA-256 und hält höchstens acht Assets im Cache. Geometrie wird zwischen Instanzen geteilt; Knochen, Materialien und Abspielzustände bleiben unabhängig. Aktive Instanzen verhindern vorzeitige Ressourcenfreigabe.

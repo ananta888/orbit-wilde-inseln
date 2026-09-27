@@ -9,9 +9,9 @@ from orbit_server.paths import ROOT
 from .document import DesignError
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=8)
 def schema(name):
-    if name not in {"edit-command", "edit-document", "client-message", "ai-edit"}: raise DesignError("Unbekanntes Designschema")
+    if name not in {"edit-command", "edit-document", "client-message", "ai-edit", "runtime-creature"}: raise DesignError("Unbekanntes Designschema")
     values = [json.loads(path.read_text()) for path in (ROOT / "shared/schemas/design/v1").glob("*.schema.json")]
     registry = Registry().with_resources((v["$id"], Resource.from_contents(v)) for v in values)
     value = next(v for v in values if v["$id"].endswith('/' + name + '.schema.json'))

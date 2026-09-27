@@ -96,6 +96,23 @@ export class DragonMount {
     });
   }
   react(state) { this.mood = state.mood || 'calm'; this.gesture = state.gesture || 'glide'; }
+  async setAsset(descriptor) {
+    if (this.assetHash === descriptor?.hash) return;
+    const generation = this.assetGeneration = (this.assetGeneration || 0) + 1;
+    if (!this.defaultVisuals) this.defaultVisuals = this.body.children.filter(child => child !== this.rider);
+    if (!descriptor) {
+      this.custom?.dispose(); this.custom = null; this.assetHash = null;
+      this.defaultVisuals.forEach(child => { child.visible = true; }); return;
+    }
+    const { CreatureAssets, alignRider } = await import('./creature-assets.js');
+    this.assetCache ||= new CreatureAssets();
+    const candidate = await this.assetCache.instantiate(descriptor, new THREE.Group());
+    if (generation !== this.assetGeneration) { candidate.dispose(); return; }
+    try { alignRider(candidate); } catch (error) { candidate.dispose(); throw error; }
+    this.body.add(candidate.view.root);
+    this.custom?.dispose(); this.custom = candidate; this.assetHash = descriptor.hash;
+    this.defaultVisuals.forEach(child => { child.visible = false; });
+  }
   update(dt, camera, movement, controllers, active) {
     const mounted = active && movement.mode !== 'mr' && movement.locomotion !== 'walk';
     this.blend = THREE.MathUtils.damp(this.blend, mounted ? 1 : 0, 7, dt);
@@ -110,6 +127,10 @@ export class DragonMount {
     this.root.position.copy(movement.rig.position).add(new THREE.Vector3(Math.sin(this.heading) * .8, .33, Math.cos(this.heading) * .8));
     this.root.rotation.y = this.heading; this.root.scale.setScalar(this.blend);
     this.time += dt;
+    if (this.custom) {
+      const clips = this.custom.artifact.document.clips;
+      this.custom.view.pose(true, this.time, clips.find(c => c.id === (speed > .5 ? 'fly' : 'idle')));
+    }
     const climbing = THREE.MathUtils.clamp(velocity.y / Math.max(5, velocity.length()), -1, 1);
     this.body.rotation.x = THREE.MathUtils.damp(this.body.rotation.x, climbing * .18, 4, dt);
     this.body.rotation.z = THREE.MathUtils.damp(this.body.rotation.z, THREE.MathUtils.clamp(-delta * .28, -.22, .22), 4, dt);

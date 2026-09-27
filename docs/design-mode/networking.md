@@ -27,3 +27,5 @@ Ein Konflikt bleibt sichtbar und exportierbar; ausdrücklich verworfene lokale B
 Eigene Endpunkte: `GET /api/design/catalog`, `POST /api/design/import`, `GET /api/design/assets/{id}`. Import und Geometriefehler dürfen den letzten gültigen Stand nicht verändern. Der eigene Creature-Speicher liegt neben dem Spielstand in `creatures.sqlite3`.
 
 Die aktuelle Metadatennachricht enthält das gesamte Rig; binäres, inkrementelles Skin-Streaming bleibt eine Leistungsverbesserung. Der Nachweis für kleine Sculpt-Deltas ist deshalb kein pauschaler Nachweis für jeden späteren Rig-Workflow.
+
+Veröffentlichung und aktive Reittierwahl haben eigene [HTTP-Verträge](publication.md); sie übertragen keine Meshdaten über den 2-KiB-Spielsteuerkanal. Der Gameplay-Vertrag erhält lediglich die additive Nachricht `mount_asset`.

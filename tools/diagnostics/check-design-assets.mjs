@@ -43,7 +43,10 @@ try {
     const imported = await importFile(new File([bytes], 'roundtrip.glb', { type: 'model/gltf-binary' }));
     const original = plainDocument(doc);
     const response = await fetch('/api/design/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(imported) });
-    const compare = key => JSON.stringify(original[key]) === JSON.stringify(imported[key]);
+    // JSON object order is not semantic (the server canonicalizes dictionary keys).
+    const ordered = value => Array.isArray(value) ? value.map(ordered) : value && typeof value === 'object' ?
+      Object.fromEntries(Object.keys(value).sort().map(key => [key, ordered(value[key])])) : value;
+    const compare = key => JSON.stringify(ordered(original[key])) === JSON.stringify(ordered(imported[key]));
     const regionsEqual = original.regions.every(r => {
       const other = imported.regions.find(v => v.id === r.id);
       return other && Object.keys(r).every(key => JSON.stringify(r[key]) === JSON.stringify(other[key]));

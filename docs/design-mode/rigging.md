@@ -1,23 +1,29 @@
 # Rig, Pose und Arin
 
-Das erste Rig ist ein kontrollierter Vorschlag aus semantischen Regionen: ein Root und je Region ein Bone im Schwerpunkt. Jeder Vertex erhält vier Gewichtsslots; zunächst ist das Regionsgewicht 1. Diese starre Aufteilung ist sichtbar prüfbar und wird als `semantic-rigid` gemeldet. Sie ersetzt kein anatomisches Auto-Rig.
+`weighted-semantic-chains` baut ein kontrolliertes Skelett aus semantischen Regionen: Rumpf, Hals, Kopf und angeschlossene Teile; Flügel, Gliedmaßen und Schwanz erhalten nach Budget weitere Biegegelenke. Vier Gewichtsslots pro Vertex mischen den Hauptknochen, die Spitze und am Ansatz den Elternknochen. Die Bindpose bleibt in kanonischen Metern; Miniaturansichten verändern die Darstellung, nicht die Gewichte.
+
+Das ist ein deterministisches semantisches Rig, kein anatomisch universelles Auto-Rig. Bis zu 128 Knochen und vier Einflüsse sind erlaubt. Unbekannte Knochen, negative/nichtendliche/nichtnormalisierte Gewichte und fehlerhafte Hierarchien werden verworfen.
 
 ```json
 {"tool":"pose","bone":"head","rotation":[0,0.2,0]}
 ```
 
-Der Server prüft eindeutige Bone-IDs, topologisch geordnete Eltern, gültige Indizes, endliche Rotationen und normalisierte Gewichte. Posen sind autoritative Commands und Undo-fähig. Die View erzeugt Three.js-SkinnedMeshes; die Bindematrizen berücksichtigen Miniaturansicht und Lebensgröße.
+Gewichtsmalerei verwendet Auswahl, Radius, Masken, Sperren und dieselbe Undo-Transaktion wie Sculpting. `joint_limits` setzt symmetrische Grenzen. `ik` bewegt bis zu vier Elterngelenke mit begrenzter deterministischer Iteration zu einem Ziel in Assetkoordinaten; ein unerreichbares Ziel ist keine Garantie einer passenden Pose. Gelenkwinkel bleiben innerhalb der Grenzen.
 
-Im lebenden Modus bewegen sich Kopf, Flügel und Schwanz; Augen blinzeln, sofern entsprechende Rig-Bereiche existieren. Statisches Sculpt beendet die lebende Vorschau und zeigt die Restpose. Sculpting mit stabilen Vertex-IDs erhält vorhandene Gewichte und Clips. Ein Topologiewechsel invalidiert sie ausdrücklich, anstatt falsche Skin-Indizes weiterzubenutzen.
+```json
+{"tool":"ik","bone":"left_wing_tip","position":[-1.5,1.6,0]}
+```
 
-Clips bestehen aus ID, Dauer, Loop-Flag und zeitlich zugeordneten Bone-Rotationen. Die View interpoliert Quaternionen. Die erste UI erzeugt eine Flügelbewegung. Weitergehende Clip-Bearbeitung, IK, Constraints, weiche Gewichte und Bewegungsgenerierung benötigen eigene Werkzeuge und Tests.
+Unter „Pose & Vorschau“ Gelenk wählen, Pose einstellen, Keyframezeit setzen und „Pose aufnehmen“. Mindestens zwei Zeitpunkte lassen sich als benannter Clip speichern. Jeder Clip enthält bis zu 512 Bone-/Zeit-/Rotationskeys; doppelte Keys, fehlende Bones und Grenzverletzungen werden abgelehnt. Wiedergabe interpoliert Quaternionen. Eigene Clips bleiben beim Speichern, Optimieren, Veröffentlichen und GLB-Export erhalten.
 
-## Sitz und Kollision
+Der lebende Modus bewegt Kopf, Flügel und Schwanz und lässt Augen blinzeln. Procedural Animation und ein gewählter Clip sind getrennte Pfade. Geometriebearbeitung zeigt die Restpose; stabiles Sculpting erhält Rig/Clips. Allgemeines Remeshing invalidiert sie explizit. Die konservative Meshopt-Optimierung überträgt dagegen die Gewichte der erhaltenen Vertices exakt.
+
+## Sitz, Collider und Probeflug
 
 ```json
 {"tool":"mount","id":"rider_seat","position":[0,1.6,0],"rotation":[0,0,0],"radius":0.3}
 ```
 
-Sitzpunkte enthalten Position, Orientierung und Kamerafreiraum. Collider sind eigenständige Metadaten für Kugel, Kapsel oder Box. Das Render-Mesh wird nicht automatisch zum Kollisionskörper erklärt. Konvexe/zusammengesetzte Collider, Handkontakte, visueller Mount-Editor und Abnahme gegen die echte Flugphysik sind weitere Tasks.
+„Flug vorbereiten“ erzeugt fehlendes Rig, einen Sitz über dem Rumpf und eine Körperbox; bestehende Marker bleiben erhalten. Der Client richtet das Asset anhand des Sitzes aus, während das reale Kopftracking unabhängig bleibt. Kugel/Kapsel/Box sind validierte Metadaten. Sie ersetzen noch nicht die einfache Terrain-Kollision der Flugruntime. Convex-/Compound-Collider, Knochenbindungen, vollständige Marker-Greifwerkzeuge und Fußkontakte bleiben offen.
 
-Die jetzige Sitzansicht verändert nur die Editoransicht; sie ist kein autoritativer Gameplay-Flug. MR lehnt diese künstliche Ansicht ab.
+Die Editor-Sitzansicht ist ein Vorschauwerkzeug. „Im Spiel testen“ öffnet zusätzlich einen [isolierten echten Probeflug](publication.md). In einer aktiven MR-Session wird künstlicher Flug abgelehnt; MR zuerst ausdrücklich beenden.

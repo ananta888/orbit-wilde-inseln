@@ -16,7 +16,7 @@ Das ausführbare Fundament verbindet tropische Inseln, Bogen, Drachenflug und Pl
 - Lokale SQLite-Spielstände, Episoden-Resume, Lernbeobachtungen, Arins Erinnerungen, manuelle Fitness-/Schwierigkeitsprofile und Anantas vier Hilfestufen.
 - Optionale Ananta-/Jev-, Whisper.cpp- und Piper-Adapter. Ohne externe Dienste bleibt das Spiel ausführbar; Arin verwendet dann als solche gekennzeichnete Autorentexte.
 
-Das ist Version **0.1.0**, ein weiterentwickelbares Fundament. Die drei Episoden sind kompakte Mechanikbeispiele mit einem 15-Minuten-Designziel. Ausproduzierte Abenteuer, hochwertigere Assets, durchgehend sphärische Physik, Raumverständnis und die erneute Abnahme des neuen Checkouts auf echter Quest/780M stehen im [TODO-Track](todos/active/todo.orbit-core-foundation.json).
+Das ist Version **0.1.0**, ein weiterentwickelbares Fundament. Die drei Episoden sind kompakte Mechanikbeispiele mit einem 15-Minuten-Designziel. Ausproduzierte Abenteuer, hochwertigere Assets, durchgehend sphärische Physik, Raumverständnis und die erneute Abnahme des neuen Checkouts auf echter Quest stehen im [TODO-Track](todos/active/todo.orbit-core-foundation.json).
 
 ## Verteilte Berechnung
 
@@ -50,9 +50,11 @@ Desktop: WASD bewegen, F fliegen/landen, Leertaste/Shift Höhe, rechte Maus umse
 
 Mit `python -m pip install -c requirements-dev.lock -e '.[dev,design]'` die optionale Geometrie-Erweiterung installieren. Nach `npm ci` und dem Serverstart öffnet `/designer/index.html` einen eigenen Arbeitsplatz für Arin und neue Kreaturen.
 
-Bereits ausführbar: lokale Formung mit Server-Deltas, Masken, Oberflächenmalerei, Primitive und geschlossene Volumenoperationen, Undo/Redo, Autosave, Rig-/Pose-Vorschau und GLB-Rundlauf eigener Assets. Hände und Controller werden in XR-Emulation geprüft; echte Quest-Abnahme bleibt offen. Ohne Design-KI-Dienst sind nur ausdrücklich gekennzeichnete lokale Werkzeugbefehle verfügbar.
+Bereits ausführbar: Formung mit Server-Deltas, Masken, Malerei, Bearbeitungsebenen, Volumenoperationen, Undo/Redo und Autosave. Dazu kommen weiche Gelenkgewichte, Gewichtsmalerei, begrenzte IK, eigene Animationsclips, GLB-Rundlauf und eine reversible Meshoptimierung. „Flug vorbereiten“ → „Im Spiel testen“ lädt die genaue Kreaturenrevision in einen isolierten Probeflug. „Als Arin übernehmen“ wählt sie für die nächste reguläre Spielsitzung. Der ursprüngliche Arin bleibt wiederherstellbar.
 
-[Start und Bedienung](docs/design-mode/overview.md) · [Design-TODO](todos/active/todo.vr-ai-creature-designer.json). Der vollständige Creator, generative Modelle und die Veröffentlichung editierter Kreaturen in der Spielwelt sind noch im Ausbau.
+Ein konfigurierter Ananta-/Jev-Dienst liefert lokale Änderungsvorschläge und neue parametrisierte Vorlagen. Änderungen brauchen eine ausdrückliche Übernahme. Der reale Dienstpfad einschließlich Piper und Whisper auf **780M/Vulkan** wurde mit erzeugtem Audio geprüft. Quest-Mikrofon, Komfort und Bildrate bleiben Geräteprüfungen; Controller und Hände sind bisher in XR-Emulation getestet.
+
+[Start und Bedienung](docs/design-mode/overview.md) · [Design-TODO](todos/active/todo.vr-ai-creature-designer.json). Allgemeiner texturierter Skin-/Morph-Import, UV-Baking, umfangreiche LODs und freie neuronale Meshgenerierung bleiben Ausbaupunkte. Diese Funktionen werden durch das neue Modell- und Werkzeugfundament nicht vorgetäuscht.
 
 ## Entwicklungsprüfungen
 

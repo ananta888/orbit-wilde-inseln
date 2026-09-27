@@ -14,11 +14,12 @@ SCULPT = {"push", "pull", "grab", "inflate", "deflate", "smooth", "flatten", "pi
 PAINT = {"brush", "airbrush", "spray", "fill", "gradient", "eraser", "smudge", "stamp"}
 OPERATIONS = SCULPT | {"paint", "mask", "material", "lock", "add", "delete", "union",
                       "subtract", "cut", "refine", "simplify", "rename", "rig", "pose",
-                      "mount", "collider", "clip"}
+                      "mount", "collider", "clip", "prepare_mount", "weight", "ik", "joint_limits", "optimize",
+                      "layer_add", "layer_bake", "layer_lock", "layer_visibility", "layer_strength", "layer_delete", "layer_order"}
 ALLOWED = {"tool", "regions", "samples", "radius", "strength", "normal", "delta", "color",
            "channel", "paint_tool", "symmetry", "radial", "axis", "value", "material",
            "kind", "position", "size", "points", "target", "name", "rotation", "bone",
-           "time", "duration", "loop", "keys", "id", "angle", "tolerance"}
+           "time", "duration", "loop", "keys", "id", "angle", "tolerance", "layer"}
 
 
 def smooth_average(points: np.ndarray, faces: np.ndarray) -> np.ndarray:
@@ -93,12 +94,17 @@ def apply(document: dict[str, Any], operation: dict[str, Any]) -> dict[str, Any]
     tool = operation["tool"]
     if tool not in OPERATIONS: raise DesignError("Unbekanntes Werkzeug")
     doc = copy.deepcopy(document)
+    if tool.startswith("layer_"):
+        from .layers import edit
+        edit(doc, operation); validate(doc); return doc
+    if doc["layers"] and tool in {"add", "delete", "union", "subtract", "cut", "refine", "simplify", "optimize"}:
+        raise DesignError("Vor Topologieänderungen Ebenen zusammenfassen; Undo erhält den Ebenenstand")
     by_id = {r["id"]: r for r in doc["regions"]}
     targets = operation.get("regions", [])
     if not isinstance(targets, list) or len(targets) > 96 or len(set(targets)) != len(targets) or any(t not in by_id for t in targets):
         raise DesignError("Ungültige Auswahl")
     selected = [by_id[t] for t in targets]
-    if tool not in {"add", "rename", "rig", "pose", "mount", "collider", "clip"} and not selected:
+    if tool not in {"add", "rename", "rig", "pose", "mount", "collider", "clip", "prepare_mount", "ik", "joint_limits", "optimize"} and not selected:
         raise DesignError("Zuerst einen Bereich auswählen")
     if any(r["locked"] for r in selected) and tool != "lock": raise DesignError("Bereich ist gesperrt")
     strength = finite(operation.get("strength", .25), 0, 1, "Stärke")
@@ -219,6 +225,12 @@ def apply(document: dict[str, Any], operation: dict[str, Any]) -> dict[str, Any]
         replacement = from_manifold(result, item)
         doc["regions"] = [replacement if r["id"] == item["id"] else r for r in doc["regions"]
                           if len(selected) == 1 or r["id"] != selected[1]["id"]]
+    elif tool == "optimize":
+        from .optimization import optimize
+        doc, _ = optimize(doc, ratio=operation.get("value", .5), tolerance=operation.get("tolerance", .008))
+    elif tool == "prepare_mount":
+        from .publication import prepare_mount
+        prepare_mount(doc)
     elif tool == "rename":
         if not isinstance(operation.get("name"), str): raise DesignError("Name erforderlich")
         doc["name"] = operation["name"][:100]
@@ -229,5 +241,7 @@ def apply(document: dict[str, Any], operation: dict[str, Any]) -> dict[str, Any]
         # Stable-vertex sculpt preserves valid weights. Topology changes require a new rig.
         doc["rig"] = {"bones": [], "weights": {}}
         doc["clips"] = []
+    from .layers import capture
+    capture(document, doc, operation)
     validate(doc)
     return doc

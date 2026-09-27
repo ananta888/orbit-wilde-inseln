@@ -44,6 +44,10 @@ The separate track `todos/active/todo.vr-ai-creature-designer.json` owns design-
 - Changes to ODG1 must update both decoders and the Python-generated cross-language fixture in `examples/design/odg1-triangle.json`.
 - Do not silently remove unknown UV/skin/morph/layer data during import. Extend the format with tests, or reject the unsupported input.
 - The original creature, AI candidate, accepted revision and runtime asset are separate objects. No editor command writes gameplay rewards or missions.
+- Runtime references pin asset ID, revision and SHA-256. A test flight must never write the ordinary gameplay save. Do not mutate cached shared geometry; skeletons and animation state belong to each instance.
+- Preserve sparse layers until an explicit reversible bake. Topology changes need either a proved attribute/skin transfer or a visible rejection/invalidation; never discard protected data silently.
+- Optimization uses the pinned local meshoptimizer worker, with input/time/output budgets. Do not execute paths or programs supplied by content or AI.
+- Ananta's design endpoint returns bounded proposals or template parameters. Live-service diagnostics are opt-in; generated audio does not count as a Quest microphone test.
 - Hardware-free validation uses `pytest`, `npm test`, `npm run test:design` and `npm run test:design:xr` against a dedicated local test server. Record IWER results as emulation. Do not invent Quest, Whisper, GPU or Ananta integration results.
 
 ## Completion evidence

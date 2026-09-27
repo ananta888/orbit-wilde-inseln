@@ -2,6 +2,7 @@
 import json
 import os
 import re
+from pathlib import Path
 from urllib.parse import urlsplit
 
 import aiohttp
@@ -9,7 +10,7 @@ import numpy as np
 
 from .document import DesignError, fields, finite
 
-AI_TOOLS = {"scale", "smooth", "inflate", "deflate", "material", "move", "stretch"}
+AI_TOOLS = {"scale", "smooth", "inflate", "deflate", "material", "move", "stretch", "add"}
 
 
 def context_for(doc, selected):
@@ -61,22 +62,58 @@ def local_plan(doc, selected, instruction):
             "operations": [op]}
 
 
-async def plan(session, doc, selected, instruction):
-    if not isinstance(instruction, str) or not 1 <= len(instruction) <= 1500: raise DesignError("Beschreibung fehlt oder ist zu lang")
+async def request_plan(session, payload):
     url = os.getenv("ORBIT_DESIGN_AI_URL", "")
-    if not url: return validate_plan(local_plan(doc, selected, instruction), selected), "local-command-parser"
     parsed = urlsplit(url)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname or parsed.username or parsed.password:
         raise DesignError("Ungültige KI-Dienstkonfiguration")
     token = os.getenv("ORBIT_DESIGN_AI_TOKEN", "")
+    if os.getenv("ORBIT_DESIGN_AI_TOKEN_FILE"):
+        token = Path(os.environ["ORBIT_DESIGN_AI_TOKEN_FILE"]).read_text(encoding="utf-8").strip()
     headers = {"Authorization": "Bearer " + token} if token else {}
-    async with session.post(url, json={"schema_version": "1.0", "context": context_for(doc, selected),
-                                      "instruction": instruction}, headers=headers,
+    async with session.post(url, json=payload, headers=headers,
                             timeout=aiohttp.ClientTimeout(total=45), allow_redirects=False) as response:
         if response.status != 200: raise DesignError("Design-KI ist nicht erreichbar")
         raw = bytearray()
         async for part in response.content.iter_chunked(4096):
             raw.extend(part)
             if len(raw) > 32768: raise DesignError("KI-Antwort überschreitet Budget")
-    value = json.loads(raw)
-    return validate_plan(value, selected), "configured-design-provider"
+    return json.loads(raw)
+
+
+async def generate_plan(session, instruction):
+    from .generation import TEMPLATES
+    if not isinstance(instruction, str) or not 1 <= len(instruction) <= 1500: raise DesignError("Beschreibung fehlt oder ist zu lang")
+    if not os.getenv("ORBIT_DESIGN_AI_URL"):
+        raise DesignError("Freie Kreaturenwünsche benötigen den Design-KI-Dienst. Vorlagen bleiben verfügbar.")
+    value = await request_plan(session, {"schema_version": "1.0", "mode": "generate", "context": {}, "instruction": instruction})
+    fields(value, {"speech", "generation"}, {"speech", "generation"})
+    if not isinstance(value["speech"], str) or len(value["speech"]) > 1000: raise DesignError("KI-Erklärung zu lang")
+    spec = value["generation"]
+    fields(spec, {"template", "parameters"}, {"template", "parameters"})
+    if spec["template"] not in TEMPLATES or not isinstance(spec["parameters"], dict): raise DesignError("Unbekannte KI-Vorlage")
+    for key, parameter in spec["parameters"].items():
+        if key not in {"body_length", "neck_length", "wing_span", "tail_length", "horn_count"}: raise DesignError("KI-Parameter nicht erlaubt")
+        finite(parameter, 0 if key == "horn_count" else .2, 4, "KI-Parameter")
+    return value
+
+
+async def plan(session, doc, selected, instruction):
+    if not isinstance(instruction, str) or not 1 <= len(instruction) <= 1500: raise DesignError("Beschreibung fehlt oder ist zu lang")
+    url = os.getenv("ORBIT_DESIGN_AI_URL", "")
+    if not url: return validate_plan(local_plan(doc, selected, instruction), selected), "local-command-parser"
+    value = await request_plan(session, {"schema_version": "1.0", "context": context_for(doc, selected), "instruction": instruction})
+    validate_plan(value, selected)
+    by_id = {r["id"]: r for r in doc["regions"]}
+    for op in value["operations"]:
+        if op["tool"] != "add": continue
+        if op.get("target") not in selected or op.get("kind") not in {"horn", "wing", "eye", "ear", "claw", "tail", "armor"}:
+            raise DesignError("KI-Anbau benötigt einen erlaubten Anker und ein Körperteil")
+        target = by_id[op["target"]]
+        if target["locked"] or any(target["mask"]): raise DesignError("Geschützter KI-Anker")
+        points = np.asarray(target["positions"]).reshape(-1, 3)
+        from .document import vec
+        position, size = vec(op.get("position")), vec(op.get("size"), 2)
+        if np.any(size <= 0) or np.any(position < points.min(axis=0)-.1) or np.any(position > points.max(axis=0)+.1):
+            raise DesignError("KI-Anbau verlässt den erlaubten Bereich")
+    return value, "configured-design-provider"

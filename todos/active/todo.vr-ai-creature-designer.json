@@ -721,7 +721,8 @@
         "shared/schemas/design/v1/edit-document.schema.json",
         "client/webxr/src/design/rendering.js",
         "shared/schemas/design/v1/creature-asset.schema.json",
-        "server/orbit_server/missions/schema.py"
+        "server/orbit_server/missions/schema.py",
+        "shared/schemas/design/v1/runtime-creature.schema.json"
       ],
       "acceptance_criteria": [
         "asset_id, revision, schema_version, geometry_revision, part graph, Material-/Detail-Layer, Rig/Clips, Bounds, Einheiten, Hashreferenzen und Provenienz formal beschreiben.",
@@ -731,7 +732,8 @@
       ],
       "tests": [
         "Geplante tests/design/test_document_schema.py: gültige Fixtures, unbekannte Version, NaN/Infinity, riesige Zähler, zyklische Referenzen.",
-        "Schema-Roundtrip eines minimalen Drachen inklusive leerem Rig und zwei Renderregionen."
+        "Schema-Roundtrip eines minimalen Drachen inklusive leerem Rig und zwei Renderregionen.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle genannten Akzeptanzkriterien sind umgesetzt und durch die zugeordneten Prüfungen belegt.",
@@ -740,7 +742,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] server/orbit_server/missions/schema.py::validator akzeptiert aktuell feste Spiel-/Missionsschemanamen; save.schema.json enthält kein Kreaturendokument.",
         "[Implementierung] Dokument 1.0, Metereinheiten, semantische Regionen und getrennte CPU-/GPU-Kopien vorhanden. Attachments, Layer- und vollständiges Exportpaket noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Strikte Ebenen-/Gelenk-/Clipregeln und getrenntes versioniertes Runtime-Artefakt implementiert. Größeres Austauschpaket/LOD-/Texturhashes bleiben offen."
       ],
       "description": "Versioniertes CreatureAsset- und EditDocument-Schema erstellen. Ausgangspunkt: server/orbit_server/missions/schema.py::validator akzeptiert aktuell feste Spiel-/Missionsschemanamen; save.schema.json enthält kein Kreaturendokument.",
       "implementation_plan": [
@@ -2051,12 +2054,12 @@
     {
       "id": "DM-PIPELINE-LAYERS",
       "title": "Base Shape, Sculpt, Detail, Paint, Decals, Rig und Animation getrennt verwalten",
-      "status": "todo",
+      "status": "partial",
       "type": "implementation",
       "milestone_id": "DM-PIPELINE",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 0,
+      "progress_percent": 65,
       "dependencies": [
         "DM-DOC-SCHEMA",
         "DM-HISTORY-COMMANDS"
@@ -2064,7 +2067,9 @@
       "affected_files": [
         "server/orbit_server/design/layers.py",
         "shared/schemas/design/v1/layer.schema.json",
-        "client/webxr/src/design/ui/layers.js"
+        "client/webxr/src/design/ui/layers.js",
+        "tests/design/test_layers.py",
+        "tools/diagnostics/check-designer-authoring.mjs"
       ],
       "description": "Base Shape, Sculpt, Detail, Paint, Decals, Rig und Animation getrennt verwalten. Ausgangspunkt: Das heutige Assetcatalog beschreibt nur prozedurale Generatoren; ein Master-/Layerstapel fehlt.",
       "implementation_plan": [
@@ -2079,7 +2084,8 @@
       ],
       "tests": [
         "tests/design/test_layers.py: Layer ausblenden, Stärke ändern, bake/undo und referenzierter Rig-Layer nach Topologiewechsel.",
-        "tests/client/design-layer-ui.test.mjs ohne große permanente Menüwand."
+        "tests/client/design-layer-ui.test.mjs ohne große permanente Menüwand.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Abbruch- und Fehlerfällen erfüllt; zugeordnete Tests bestanden.",
@@ -2087,7 +2093,8 @@
       ],
       "evidence": [
         "[Planungsbasis 2026-09-27] Das heutige Assetcatalog beschreibt nur prozedurale Generatoren; ein Master-/Layerstapel fehlt.",
-        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet."
+        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet.",
+        "[2026-09-28] Sparse Sculpt-/Paint-/Detail-Ebenen: Sichtbarkeit, Stärke, Sperre, Reihenfolge, Löschen und Bake sind undo-fähig; Browserworkflow geprüft. Rig-/Animationslayer, allgemeine Blendmodi und Multires bleiben offen."
       ]
     },
     {
@@ -3166,7 +3173,7 @@
       "milestone_id": "DM-AI",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 45,
+      "progress_percent": 55,
       "dependencies": [
         "DM-AI-CONTRACT",
         "DM-GEN-DRAGON",
@@ -3180,7 +3187,9 @@
         "tests/design/test_protocol.py",
         "server/orbit_server/design/ai/generators.py",
         "server/orbit_server/design/generation/registry.py",
-        "shared/schemas/design/v1/generation-request.schema.json"
+        "shared/schemas/design/v1/generation-request.schema.json",
+        "server/orbit_server/design/http.py",
+        "tests/design/test_generation_provider.py"
       ],
       "description": "CreatureGenerator mit parametrischem Fallback und austauschbaren 3D-Providern einführen. Ausgangspunkt: Dialog-/Sprach-Ports sind vorhanden; ein GeometryGenerator ist noch nicht implementiert.",
       "implementation_plan": [
@@ -3195,7 +3204,8 @@
       ],
       "tests": [
         "tests/design/test_generation_providers.py mit Mockprovider, ungültigem Mesh, Timeout und fehlendem Modell.",
-        "Ohne externe KI entsteht ein klar als Template gekennzeichnetes Grundmodell; kein simulierter KI-Erfolg."
+        "Ohne externe KI entsteht ein klar als Template gekennzeichnetes Grundmodell; kein simulierter KI-Erfolg.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Abbruch- und Fehlerfällen erfüllt; zugeordnete Tests bestanden.",
@@ -3204,7 +3214,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] Dialog-/Sprach-Ports sind vorhanden; ein GeometryGenerator ist noch nicht implementiert.",
         "[Implementierung] Geschlossener lokaler Editing-Vertrag und begrenzter HTTP-Planungsadapter; Fakeprovider validiert. Original/Vorschlag, Annahme, Verwerfen, Undo, erneute Planung und Blend bei stabiler Topologie vorhanden. Ohne Dienst ausdrücklich lokaler Befehlsparser. Reale Ananta/Jev-Designanbindung, freie 3D-Generierung, Sprache mit echten Diensten und mehrere Varianten nicht nachgewiesen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Modellgeplante Auswahl aus acht prozeduralen Vorlagen und begrenzten Körperparametern als Preview/Accept/Undo umgesetzt und am realen Jev-Dienst geprüft. Freie neuronale 3D-Generierung/Bilder und Varianten bleiben offen."
       ]
     },
     {
@@ -3215,7 +3226,7 @@
       "milestone_id": "DM-AI",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 45,
+      "progress_percent": 70,
       "dependencies": [
         "DM-AI-CONTEXT",
         "DM-AI-GENERATOR"
@@ -3228,7 +3239,9 @@
         "tests/design/test_protocol.py",
         "server/orbit_server/design/ai/ananta.py",
         "docs/design-mode/ananta-api.md",
-        "server/orbit_server/design/ai/jobs.py"
+        "server/orbit_server/design/ai/jobs.py",
+        "tests/design/test_generation_provider.py",
+        "tools/diagnostics/check-services.py"
       ],
       "description": "Ananta-Orchestrierung für Designaufträge getrennt vom Drachen-Dialog anbinden. Ausgangspunkt: AnantaAdapter.request erlaubt aktuell nur decide/speak/transcribe unter /api/game-dragon/; ein Designendpoint fehlt.",
       "implementation_plan": [
@@ -3243,7 +3256,8 @@
       ],
       "tests": [
         "tests/design/test_ananta_design_adapter.py gegen lokalen Fakehub: erlaubte Antwort, Timeout, falsche Jobrevision und widerrufener Token.",
-        "Contracttest gegen tatsächlich implementierten Hub vor Kennzeichnung der realen Integration als done."
+        "Contracttest gegen tatsächlich implementierten Hub vor Kennzeichnung der realen Integration als done.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Abbruch- und Fehlerfällen erfüllt; zugeordnete Tests bestanden.",
@@ -3252,7 +3266,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] AnantaAdapter.request erlaubt aktuell nur decide/speak/transcribe unter /api/game-dragon/; ein Designendpoint fehlt.",
         "[Implementierung] Geschlossener lokaler Editing-Vertrag und begrenzter HTTP-Planungsadapter; Fakeprovider validiert. Original/Vorschlag, Annahme, Verwerfen, Undo, erneute Planung und Blend bei stabiler Topologie vorhanden. Ohne Dienst ausdrücklich lokaler Befehlsparser. Reale Ananta/Jev-Designanbindung, freie 3D-Generierung, Sprache mit echten Diensten und mehrere Varianten nicht nachgewiesen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Eigener Ananta/Jev-Designendpunkt mit geschlossener Werkzeug-/Templateauswahl im separaten Ananta-Repo implementiert. Echte lokale Änderung (Kopf größer) und parametrisierter Drachenentwurf beobachtet. Keine erfundenen Hub-Evidence-IDs; technische Beobachtung, keine Produktionsfreigabe."
       ]
     },
     {
@@ -3314,7 +3329,7 @@
       "milestone_id": "DM-AI",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 45,
+      "progress_percent": 65,
       "dependencies": [
         "DM-AI-PREVIEW",
         "DM-GEN-JOIN",
@@ -3342,7 +3357,8 @@
       ],
       "tests": [
         "tests/design/test_ai_local_edit.py: Halsanschluss, geschützte Augen, einseitiger Flügel und symmetrisches Hornpaar.",
-        "Qualitätsvergleich dokumentiert auch verschlechterte Fälle und lehnt nichtplausible Artefakte ab."
+        "Qualitätsvergleich dokumentiert auch verschlechterte Fälle und lehnt nichtplausible Artefakte ab.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Abbruch- und Fehlerfällen erfüllt; zugeordnete Tests bestanden.",
@@ -3350,7 +3366,8 @@
       ],
       "evidence": [
         "[Implementierung] Geschlossener lokaler Editing-Vertrag und begrenzter HTTP-Planungsadapter; Fakeprovider validiert. Original/Vorschlag, Annahme, Verwerfen, Undo, erneute Planung und Blend bei stabiler Topologie vorhanden. Ohne Dienst ausdrücklich lokaler Befehlsparser. Reale Ananta/Jev-Designanbindung, freie 3D-Generierung, Sprache mit echten Diensten und mehrere Varianten nicht nachgewiesen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Ausgewählte lokale Form-/Materialänderung und kontrolliertes Horn-/Flügelanfügen über eigene Allowlist; maskierte Anfügeziele werden abgelehnt. Weitergehende lokale anatomische Generierung offen."
       ]
     },
     {
@@ -3361,7 +3378,7 @@
       "milestone_id": "DM-AI",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 45,
+      "progress_percent": 65,
       "dependencies": [
         "DM-AI-CONTRACT",
         "DM-XR-INPUT"
@@ -3375,7 +3392,9 @@
         "client/webxr/src/design/interaction/voice.js",
         "server/orbit_server/design/ai/intent.py",
         "client/webxr/src/audio/recording.js",
-        "server/orbit_server/speech/adapters.py"
+        "server/orbit_server/speech/adapters.py",
+        "tools/diagnostics/check-services.py",
+        "docs/ai/speech.md"
       ],
       "description": "Natürliche Designbefehle über bestehende Whisper-/Ananta-Pipeline verarbeiten. Ausgangspunkt: audio/recording.js begrenzt Aufnahme auf 20 Sekunden; speech/adapters.py bietet AnantaSpeech, WhisperCppHTTP und FallbackRecognizer.",
       "implementation_plan": [
@@ -3391,7 +3410,8 @@
       ],
       "tests": [
         "tests/design/test_design_intents.py mit den acht genannten Beispielsätzen und numerischen Einheiten.",
-        "Mock-ASR, Abbruch bei Fokusverlust und Controller-/Textalternative; physischer Mikrofontest separat."
+        "Mock-ASR, Abbruch bei Fokusverlust und Controller-/Textalternative; physischer Mikrofontest separat.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Abbruch- und Fehlerfällen erfüllt; zugeordnete Tests bestanden.",
@@ -3400,7 +3420,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] audio/recording.js begrenzt Aufnahme auf 20 Sekunden; speech/adapters.py bietet AnantaSpeech, WhisperCppHTTP und FallbackRecognizer.",
         "[Implementierung] Geschlossener lokaler Editing-Vertrag und begrenzter HTTP-Planungsadapter; Fakeprovider validiert. Original/Vorschlag, Annahme, Verwerfen, Undo, erneute Planung und Blend bei stabiler Topologie vorhanden. Ohne Dienst ausdrücklich lokaler Befehlsparser. Reale Ananta/Jev-Designanbindung, freie 3D-Generierung, Sprache mit echten Diensten und mehrere Varianten nicht nachgewiesen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Realer Ananta-/Jev-/Piper-/Whisper-Pfad mit erzeugtem Audio geprüft. Dienst meldet AMD Radeon 780M / Vulkan ohne Fallback. Kein echtes Quest-Mikrofon; echtes Sprach-/Referentendesign und Fehler-Fallback am Gerät bleiben offen."
       ]
     },
     {
@@ -3546,7 +3567,7 @@
       "milestone_id": "DM-RIG",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 35,
+      "progress_percent": 60,
       "dependencies": [
         "DM-RIG-SCHEMA",
         "DM-GEN-DRAGON"
@@ -3558,7 +3579,9 @@
         "tools/diagnostics/check-design-assets.mjs",
         "server/orbit_server/design/rigging/dragon.py",
         "content/design/rigs/dragon.json",
-        "client/webxr/src/design/rigging/skeleton-view.js"
+        "client/webxr/src/design/rigging/skeleton-view.js",
+        "server/orbit_server/design/skeleton.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "Kontrolliertes Dragon-Rig für Arin mit stabiler Restpose bauen. Ausgangspunkt: Arins feste Gruppe-/Flügel-/Schwanzstruktur liefert Zuordnungswissen, aber noch keine allgemein nutzbare Bonehierarchie.",
       "implementation_plan": [
@@ -3572,7 +3595,8 @@
       ],
       "tests": [
         "tests/design/test_dragon_rig.py: kurze/lange Halsvariante und verschiedene Spannweiten.",
-        "Restpose verändert Silhouette nicht; einfache Flügelöffnung verursacht keine falsche Seite/negative Skalierung."
+        "Restpose verändert Silhouette nicht; einfache Flügelöffnung verursacht keine falsche Seite/negative Skalierung.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -3581,7 +3605,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] Arins feste Gruppe-/Flügel-/Schwanzstruktur liefert Zuordnungswissen, aber noch keine allgemein nutzbare Bonehierarchie.",
         "[Implementierung] Validiertes semantisches Rig mit starren Regionsgewichten, korrekter Miniatur-Bindpose und GLB-Erhalt. Anatomischer Dragon-Rig, organische Gewichte, IK/Constraints und breites Auto-Rigging noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Hierarchischer Rumpf-/Hals-/Kopf-/Flügel-/Schwanz-Rig mit weichen Übergängen und kanonischer Bindpose umgesetzt. Anatomische universelle Erkennung und räumliche Joint-Editor-Abnahme fehlen."
       ]
     },
     {
@@ -3592,7 +3617,7 @@
       "milestone_id": "DM-RIG",
       "priority": "P2",
       "risk": "high",
-      "progress_percent": 35,
+      "progress_percent": 55,
       "dependencies": [
         "DM-RIG-DRAGON",
         "DM-AI-PREVIEW",
@@ -3604,7 +3629,9 @@
         "tests/design/test_invariants.py",
         "tools/diagnostics/check-design-assets.mjs",
         "server/orbit_server/design/rigging/auto_rig.py",
-        "server/orbit_server/design/rigging/providers.py"
+        "server/orbit_server/design/rigging/providers.py",
+        "server/orbit_server/design/skeleton.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "Auto-Rigging-Port mit Typvorschlag, Jointplacement und Qualitätsbericht implementieren. Ausgangspunkt: Für den Editor fehlt diese Funktion im geprüften Checkout.",
       "implementation_plan": [
@@ -3619,7 +3646,8 @@
       ],
       "tests": [
         "tests/design/test_autorig.py mit falsch erkanntem Typ, fehlendem Bein und abgebrochenem Job.",
-        "Preview/Reject/Accept und Undo eines vollständigen Rigwechsels."
+        "Preview/Reject/Accept und Undo eines vollständigen Rigwechsels.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -3627,7 +3655,8 @@
       ],
       "evidence": [
         "[Implementierung] Validiertes semantisches Rig mit starren Regionsgewichten, korrekter Miniatur-Bindpose und GLB-Erhalt. Anatomischer Dragon-Rig, organische Gewichte, IK/Constraints und breites Auto-Rigging noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Deterministisches semantisches Auto-Rig statt starrer Regionen umgesetzt; generische anatomische Provider und schwierige Importfälle bleiben offen."
       ]
     },
     {
@@ -3638,7 +3667,7 @@
       "milestone_id": "DM-RIG",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 35,
+      "progress_percent": 75,
       "dependencies": [
         "DM-RIG-DRAGON",
         "DM-PAINT-BRUSHES"
@@ -3649,7 +3678,9 @@
         "tests/design/test_invariants.py",
         "tools/diagnostics/check-design-assets.mjs",
         "server/orbit_server/design/rigging/weights.py",
-        "client/webxr/src/design/rigging/weight-paint.js"
+        "client/webxr/src/design/rigging/weight-paint.js",
+        "server/orbit_server/design/skeleton.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "Skin-Weights erzeugen, prüfen und räumlich korrigieren. Ausgangspunkt: Für den Editor fehlt diese Funktion im geprüften Checkout.",
       "implementation_plan": [
@@ -3664,7 +3695,8 @@
       ],
       "tests": [
         "tests/design/test_skin_weights.py: Normalisierung, zero-sum, Bones ohne Einfluss und gespiegelt korrigierte Flügel.",
-        "Pose-Verformung von Ellenbogen/Flügelansatz mit Gewichtsbildvergleich."
+        "Pose-Verformung von Ellenbogen/Flügelansatz mit Gewichtsbildvergleich.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -3672,24 +3704,27 @@
       ],
       "evidence": [
         "[Implementierung] Validiertes semantisches Rig mit starren Regionsgewichten, korrekter Miniatur-Bindpose und GLB-Erhalt. Anatomischer Dragon-Rig, organische Gewichte, IK/Constraints und breites Auto-Rigging noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Vier normalisierte Einflüsse, maskierte/sperrbare Gewichtsmalerei, weiche Flügel-/Schwanzgewichte und exakter GLB-Rundlauf geprüft. Heatmap, anspruchsvoller Skin-Transfer und Gerätebildvergleich bleiben offen."
       ]
     },
     {
       "id": "DM-RIG-CONSTRAINTS",
       "title": "IK und Gelenkconstraints mit stabilen Fehlergrenzen vorbereiten und ausführen",
-      "status": "todo",
+      "status": "partial",
       "type": "implementation",
       "milestone_id": "DM-RIG",
       "priority": "P2",
       "risk": "high",
-      "progress_percent": 0,
+      "progress_percent": 60,
       "dependencies": [
         "DM-RIG-WEIGHTS"
       ],
       "affected_files": [
         "server/orbit_server/design/rigging/constraints.py",
-        "client/webxr/src/design/rigging/ik.js"
+        "client/webxr/src/design/rigging/ik.js",
+        "server/orbit_server/design/skeleton.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "IK und Gelenkconstraints mit stabilen Fehlergrenzen vorbereiten und ausführen. Ausgangspunkt: Für den Editor fehlt diese Funktion im geprüften Checkout.",
       "implementation_plan": [
@@ -3703,14 +3738,16 @@
       ],
       "tests": [
         "tests/design/test_ik_constraints.py: vollständig gestrecktes Bein, unerreichbares Ziel, gespiegelte Kette und Framewechsel.",
-        "Kontrolliertes Rauschen am Handziel verursacht keine divergierenden oder NaN-Bonetransforms."
+        "Kontrolliertes Rauschen am Handziel verursacht keine divergierenden oder NaN-Bonetransforms.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
         "Dokumentierte Verträge und Bedienung stimmen mit dem ausführbaren Verhalten überein; vorhandene Gameplay-Regressionen bleiben gültig."
       ],
       "evidence": [
-        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet."
+        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet.",
+        "[2026-09-28] Begrenzte IK für bis zu vier Elterngelenke und Rotationslimits implementiert; Posen und Clips außerhalb der Grenzen abgelehnt. Vollständige anatomische Constraints/Fußkontakte bleiben offen."
       ]
     },
     {
@@ -3855,7 +3892,7 @@
       "milestone_id": "DM-ANIMATION",
       "priority": "P2",
       "risk": "high",
-      "progress_percent": 35,
+      "progress_percent": 55,
       "dependencies": [
         "DM-RIG-DRAGON",
         "DM-POSE-HANDS"
@@ -3866,7 +3903,9 @@
         "client/webxr/src/design/assets.js",
         "shared/schemas/design/v1/animation.schema.json",
         "server/orbit_server/design/animation/clips.py",
-        "content/design/animations"
+        "content/design/animations",
+        "server/orbit_server/design/document.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "Versionierte Clips für alle zentralen Kreaturenbewegungen vorbereiten. Ausgangspunkt: Für den Editor fehlt diese Funktion im geprüften Checkout.",
       "implementation_plan": [
@@ -3880,7 +3919,8 @@
       ],
       "tests": [
         "tests/design/test_animation_clips.py: fehlender Bone, nichtmonotone Zeit, extreme Rotation und Loopnaht.",
-        "Goldenclips für Flug, Landung und Kopfneigen auf dem Dragon-Rig."
+        "Goldenclips für Flug, Landung und Kopfneigen auf dem Dragon-Rig.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -3888,25 +3928,28 @@
       ],
       "evidence": [
         "[Implementierung] Lebende Kopf-/Flügel-/Schwanzvorschau, Blinzeln und interpolierte Clipdaten mit GLB-Export. Breathing/Look-at, umfassende Clipbibliothek, räumliches Authoring und KI-Animation noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Benannte validierte Clips überleben Speichern/Optimierung/GLB; doppelte Keys und Gelenkverletzungen abgelehnt. Vollständige Bewegungsbibliothek und Root Motion fehlen."
       ]
     },
     {
       "id": "DM-ANIM-AUTHORING",
       "title": "Einfache Poseaufnahme und Keyframe-Bearbeitung in VR ermöglichen",
-      "status": "todo",
+      "status": "partial",
       "type": "implementation",
       "milestone_id": "DM-ANIMATION",
       "priority": "P2",
       "risk": "medium",
-      "progress_percent": 0,
+      "progress_percent": 60,
       "dependencies": [
         "DM-ANIM-CLIPS",
         "DM-HISTORY-UI"
       ],
       "affected_files": [
         "client/webxr/src/design/rigging/animation-authoring.js",
-        "server/orbit_server/design/animation/authoring.py"
+        "server/orbit_server/design/animation/authoring.py",
+        "client/webxr/src/design/workspace.js",
+        "tools/diagnostics/check-designer-authoring.mjs"
       ],
       "description": "Einfache Poseaufnahme und Keyframe-Bearbeitung in VR ermöglichen. Ausgangspunkt: Für den Editor fehlt diese Funktion im geprüften Checkout.",
       "implementation_plan": [
@@ -3920,14 +3963,16 @@
       ],
       "tests": [
         "tests/client/design-animation-ui.test.mjs: drei Posen zu Clip, Undo, Save/Reload und Playback.",
-        "tests/design/test_animation_authoring.py prüft Interpolation und begrenzte Keyframedaten."
+        "tests/design/test_animation_authoring.py prüft Interpolation und begrenzte Keyframedaten.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
         "Dokumentierte Verträge und Bedienung stimmen mit dem ausführbaren Verhalten überein; vorhandene Gameplay-Regressionen bleiben gültig."
       ],
       "evidence": [
-        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet."
+        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet.",
+        "[2026-09-28] Pose-Aufzeichnung mit Zeitpunkten, benannten Clips und Quaternion-Wiedergabe über UI geprüft. Räumliche Timeline, Retargeting und Kontaktanalyse bleiben offen."
       ]
     },
     {
@@ -3977,7 +4022,7 @@
       "milestone_id": "DM-MOUNT",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 30,
+      "progress_percent": 60,
       "dependencies": [
         "DM-RIG-DRAGON",
         "DM-DOC-COORDINATES",
@@ -3988,7 +4033,9 @@
         "client/webxr/src/design/workspace.js",
         "shared/schemas/design/v1/mount-points.schema.json",
         "client/webxr/src/design/rigging/mount-tools.js",
-        "server/orbit_server/design/rigging/mounts.py"
+        "server/orbit_server/design/rigging/mounts.py",
+        "server/orbit_server/design/publication.py",
+        "client/webxr/src/rendering/creature-assets.js"
       ],
       "description": "Rider Seat, Orientierung, Handkontakte, Sattel und Camera Safe Zone editieren. Ausgangspunkt: DragonMount setzt Reiter und Hände bisher mit fest codierten lokalen Offsets; kein Mount-Assetvertrag existiert.",
       "implementation_plan": [
@@ -4003,7 +4050,8 @@
       ],
       "tests": [
         "tests/design/test_mount_points.py: ungültiger Bone, Safe-Zone-Overlap, skalierter Drache und spiegelverkehrter Handkontakt.",
-        "Life-Size-Test prüft Blickfreiheit mit großen/kleinen Sitzhöhen."
+        "Life-Size-Test prüft Blickfreiheit mit großen/kleinen Sitzhöhen.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -4012,7 +4060,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] DragonMount setzt Reiter und Hände bisher mit fest codierten lokalen Offsets; kein Mount-Assetvertrag existiert.",
         "[Implementierung] Sitzpunkt und getrennte Kugel-/Kapsel-/Box-Metadaten vorhanden. Sitzansicht ist ausdrücklich kein Flugtest. Visuelle Mount-/Collider-Handles, Camera-Safe-Volume-Prüfung und isolierter Physikflug noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Explizite Vorbereitung ergänzt fehlenden Sitz und Körperbox, verwendet Sitzorientierung im Spiel und bewahrt benutzerdefinierte Marker. Greifbare Marker/Handkontakte und Safe-Zone-Visualisierung bleiben offen."
       ]
     },
     {
@@ -4069,7 +4118,7 @@
       "milestone_id": "DM-MOUNT",
       "priority": "P2",
       "risk": "high",
-      "progress_percent": 30,
+      "progress_percent": 75,
       "dependencies": [
         "DM-MOUNT-POINTS",
         "DM-MOUNT-COLLIDERS",
@@ -4082,7 +4131,10 @@
         "client/webxr/src/design/workspace.js",
         "client/webxr/src/design/preview/test-portal.js",
         "server/orbit_server/design/preview_session.py",
-        "client/webxr/src/rendering/dragon.js"
+        "client/webxr/src/rendering/dragon.js",
+        "server/orbit_server/networking/http.py",
+        "tools/diagnostics/check-published-creature.mjs",
+        "tests/design/test_publication.py"
       ],
       "description": "Design -> Rig Preview -> Reiterposition -> Testflug -> Editor umsetzen. Ausgangspunkt: Der vorhandene Flugpfad und DragonMount sind wiederverwendbar; ihre Kopplung an GameSession/Movement benötigt einen Previewadapter.",
       "implementation_plan": [
@@ -4097,7 +4149,8 @@
       ],
       "tests": [
         "tests/design/test_preview_session.py: Flugabbruch, Verbindungsabbruch und Rückkehr ohne Gameplay-Saveänderung.",
-        "XR-Emulation plus physische Quest-Prüfung des Reiterblicks und der unabhängigen Kopfpose."
+        "XR-Emulation plus physische Quest-Prüfung des Reiterblicks und der unabhängigen Kopfpose.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Akzeptanzkriterien einschließlich Fehler-/Abbruchfällen erfüllt; zugeordnete Prüfungen bestanden.",
@@ -4106,7 +4159,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] Der vorhandene Flugpfad und DragonMount sind wiederverwendbar; ihre Kopplung an GameSession/Movement benötigt einen Previewadapter.",
         "[Implementierung] Sitzpunkt und getrennte Kugel-/Kapsel-/Box-Metadaten vorhanden. Sitzansicht ist ausdrücklich kein Flugtest. Visuelle Mount-/Collider-Handles, Camera-Safe-Volume-Prüfung und isolierter Physikflug noch offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Editor -> exakte veröffentlichte Revision -> echte Flugsimulation -> gespeicherter Editorstand geprüft; regulärer Save bleibt unverändert. Vollständige UI-Auswahlwiederherstellung, echte Quest-Komfortabnahme und detaillierte Körperkollision fehlen."
       ]
     },
     {
@@ -4160,12 +4214,12 @@
     {
       "id": "DM-OPT-PIPELINE",
       "title": "'Für Quest optimieren' als reversible Ableitungspipeline implementieren",
-      "status": "todo",
+      "status": "partial",
       "type": "implementation",
       "milestone_id": "DM-OPT",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 0,
+      "progress_percent": 50,
       "dependencies": [
         "DM-OPT-ANALYZE",
         "DM-PIPELINE-REMESH",
@@ -4174,7 +4228,11 @@
       ],
       "affected_files": [
         "server/orbit_server/design/optimization/pipeline.py",
-        "client/webxr/src/design/ui/optimization.js"
+        "client/webxr/src/design/ui/optimization.js",
+        "server/orbit_server/design/optimization.py",
+        "tools/geometry/optimize.mjs",
+        "tests/design/test_optimization.py",
+        "tools/diagnostics/check-designer-authoring.mjs"
       ],
       "description": "'Für Quest optimieren' als reversible Ableitungspipeline implementieren. Ausgangspunkt: Der geprüfte Checkout enthält dafür noch keinen Creature-Design-Pfad.",
       "implementation_plan": [
@@ -4190,14 +4248,16 @@
       ],
       "tests": [
         "tests/design/test_optimization.py: Hornsilhouette, bewegte Flügel, verborgener Kieferinnenraum und wichtige Gelenkzonen.",
-        "Vorher/Nachher-Messung von Dreiecken, Drawcalls, Materialanzahl, Bytes und visuellen Abweichungen."
+        "Vorher/Nachher-Messung von Dreiecken, Drawcalls, Materialanzahl, Bytes und visuellen Abweichungen.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle Akzeptanzkriterien samt Fehler-/Abbruchpfaden durch die zugeordneten Tests belegt.",
         "Verträge, Benutzerabläufe und Grenzen dokumentiert; Fortschrittsstatus beruht auf tatsächlichen Ergebnissen."
       ],
       "evidence": [
-        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet."
+        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet.",
+        "[2026-09-28] Meshoptimizer 1.3.0 liefert reversible indexbasierte Vorschau mit Formfehlerbudget, Masken-/Sitzschutz, erhaltenen Skin-/Rig-/Clipdaten. Vereinfachung, Annahme und Undo geprüft. LOD, UV/Atlas-Bake, Reparaturkette und Codec-Auswertung fehlen."
       ]
     },
     {
@@ -4252,7 +4312,7 @@
       "milestone_id": "DM-OPT",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 30,
+      "progress_percent": 55,
       "dependencies": [
         "DM-OPT-PIPELINE",
         "DM-NET-DELTAS",
@@ -4265,7 +4325,9 @@
         "server/orbit_server/design/http.py",
         "client/webxr/src/design/rendering/budgets.js",
         "client/webxr/src/design/rendering/renderer.js",
-        "server/orbit_server/design/optimization/lod.py"
+        "server/orbit_server/design/optimization/lod.py",
+        "client/webxr/src/rendering/creature-assets.js",
+        "tools/diagnostics/check-published-creature.mjs"
       ],
       "description": "LOD, Culling, Instancing und begrenzte GPU-Uploads für den Editor abstimmen. Ausgangspunkt: Die vorhandene Inselwelt kennt Distanzdetail und Chunkentladung; ein Creature-LOD-/Uploadbudget fehlt.",
       "implementation_plan": [
@@ -4280,7 +4342,8 @@
       ],
       "tests": [
         "Physische Quest-Lastprüfung mit drei Assetprofilen und gleichzeitigem Serverremeshing.",
-        "Automatisierter Wiederholungstest für Regionenwechsel und Material-/Texture-Disposal."
+        "Automatisierter Wiederholungstest für Regionenwechsel und Material-/Texture-Disposal.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle Akzeptanzkriterien samt Fehler-/Abbruchpfaden durch die zugeordneten Tests belegt.",
@@ -4289,7 +4352,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] Die vorhandene Inselwelt kennt Distanzdetail und Chunkentladung; ein Creature-LOD-/Uploadbudget fehlt.",
         "[Implementierung] Strukturierte Geometrieanalyse und selektive GPU-Updates/BVH-Refit vorhanden. Vollständige Validatorabnahme, LOD-/Kompressions-/Bake-Pipeline und gemessene Questprofile fehlen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Runtimecache mit höchstens acht Assets, begrenztem Streaming-Download, Hashprüfung und geteilter unveränderlicher GPU-Geometrie geprüft. Progressive Uploads, umfassende LODs und Quest-Frametime-Abnahme offen."
       ]
     },
     {
@@ -4347,7 +4411,7 @@
       "milestone_id": "DM-IO",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 45,
+      "progress_percent": 65,
       "dependencies": [
         "DM-IO-FORMAT",
         "DM-DOC-REGIONS",
@@ -4375,7 +4439,8 @@
       ],
       "tests": [
         "tests/design/test_glb_roundtrip.py: statisches Mesh, Skin, Clip und Morph; Khronos-glTF-Validator auf Exportfixture ausführen.",
-        "tests/client/design-gltf.test.mjs: Loaderfehler, Compressed-Extension ohne Decoder und Resource-Cleanup."
+        "tests/client/design-gltf.test.mjs: Loaderfehler, Compressed-Extension ohne Decoder und Resource-Cleanup.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle Akzeptanzkriterien samt Fehler-/Abbruchpfaden durch die zugeordneten Tests belegt.",
@@ -4384,18 +4449,19 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] tools/vendor-client.mjs kopiert aktuell nur three.core.js, three.module.js und LICENSE; GLTFLoader/Exporter/Decoder sind noch nicht Teil der lokalen Assetbereitstellung.",
         "[Implementierung] Native JSON-Sicherung und GLB-Rundlauf eigener Geometrie, Materialien, Skin, Clips und Metadaten. Fremde Textur-/Skin-/Morphprofile werden abgelehnt statt still verworfen. Runtime-Pakete und Veröffentlichung im Spiel fehlen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Eigener GLB-Rundlauf erhält weiche Float32-Gewichte exakt mit geprüftem _ORBIT_SKINWEIGHT neben Standard-Skin; Semantik, Clips und Materialien bleiben erhalten. Allgemeiner Textur-/Skin-/Morph-Import noch nicht implementiert."
       ]
     },
     {
       "id": "DM-IO-RUNTIME",
       "title": "Gespeicherte CreatureRevision im Orbit-Spiel testbar registrieren",
-      "status": "todo",
+      "status": "partial",
       "type": "implementation",
       "milestone_id": "DM-IO",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 0,
+      "progress_percent": 80,
       "dependencies": [
         "DM-IO-GLB",
         "DM-SAVE-REVISIONS",
@@ -4407,7 +4473,12 @@
         "server/orbit_server/entities/asset_creature.py",
         "content/assets/catalog.json",
         "client/webxr/src/rendering/creature-assets.js",
-        "server/orbit_server/missions/packages.py"
+        "server/orbit_server/missions/packages.py",
+        "server/orbit_server/design/publication.py",
+        "tests/design/test_publication.py",
+        "shared/schemas/design/v1/runtime-creature.schema.json",
+        "tests/client/creature-assets.test.mjs",
+        "tools/diagnostics/check-published-creature.mjs"
       ],
       "description": "Gespeicherte CreatureRevision im Orbit-Spiel testbar registrieren. Ausgangspunkt: content/assets/catalog.json und mission-objects.js enthalten bisher feste prozedurale Generatoren/Kind-Switches; creatures.js kennt deer/boar/alien.",
       "implementation_plan": [
@@ -4423,7 +4494,8 @@
       ],
       "tests": [
         "tests/design/test_publish_creature.py: ungültiger Collider, fehlender Behaviour-Typ, Revisionwechsel und Rollback.",
-        "Spieltest lädt zwei Instanzen derselben Revision und bewahrt getrennte Spielzustände."
+        "Spieltest lädt zwei Instanzen derselben Revision und bewahrt getrennte Spielzustände.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle Akzeptanzkriterien samt Fehler-/Abbruchpfaden durch die zugeordneten Tests belegt.",
@@ -4431,7 +4503,9 @@
       ],
       "evidence": [
         "[Planungsbasis 2026-09-27] content/assets/catalog.json und mission-objects.js enthalten bisher feste prozedurale Generatoren/Kind-Switches; creatures.js kennt deer/boar/alien.",
-        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet."
+        "Umsetzungsstand: weiterhin offen; keine Fertigstellung durch vorhandene Nachbarfunktionen behauptet.",
+        "Implementierung läuft: unveränderliche Spielmodelle, Besitzerprüfung, Hashbindung und isolierter Probeflug.",
+        "[2026-09-28] Explizite Veröffentlichung, SHA-256/Revision, Besitzergrenze, Rückwahl, geteilte GPU-Geometrie und getrennte Skelette umgesetzt. Echter Browserflug und Save-Isolation geprüft. Allgemeine NPC-/Missionsregistrierung und aus editierbaren Collidern abgeleitete Körperphysik bleiben offen."
       ]
     },
     {
@@ -4804,7 +4878,7 @@
       "milestone_id": "DM-TEST",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 55,
+      "progress_percent": 70,
       "dependencies": [
         "DM-AI-LOCAL-IMPROVE",
         "DM-IO-GLB",
@@ -4822,7 +4896,10 @@
         "tools/diagnostics/check-design-xr.mjs",
         "tools/diagnostics/check-design-assets.mjs",
         "tests/design/test_ai_asset_e2e.py",
-        "tests/design/test_glb_roundtrip.py"
+        "tests/design/test_glb_roundtrip.py",
+        "tools/diagnostics/check-services.py",
+        "tests/design/test_publication.py",
+        "tests/design/test_skeleton.py"
       ],
       "description": "KI-Masken, Undo und Asset-/Rig-/GLB-Roundtrips prüfen. Ausgangspunkt: tests/test_speech.py nutzt bereits lokale Fakeprovider; diese Trennung kann übernommen werden.",
       "implementation_plan": [
@@ -4837,7 +4914,8 @@
       ],
       "tests": [
         "python -m pytest tests/design/test_ai_asset_e2e.py mit Fake ASR/Ananta/Generator/AutoRig.",
-        "Separater opt-in Lauf gegen konfigurierte lokale Dienste protokolliert tatsächlichen Provider und Hardware."
+        "Separater opt-in Lauf gegen konfigurierte lokale Dienste protokolliert tatsächlichen Provider und Hardware.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle genannten Abnahmekriterien sind durch konkrete Artefakte und ausgeführte Prüfungen belegt.",
@@ -4846,7 +4924,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] tests/test_speech.py nutzt bereits lokale Fakeprovider; diese Trennung kann übernommen werden.",
         "[Implementierung] Unit-, Contract-, Prozessabbruch-, Provider-, Browser-, GLB- und XR-Emulationstests vorhanden. Physische Quest-/WLAN-/ASR-/GPU-/Komfortprüfungen sind nicht durchgeführt; umfangreiche Last-/Memory- und zukünftige Featuretests bleiben offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] 147 Python-Tests mit 16 Untertests und 11 JS-Tests lokal bestanden; neue Rig-/Layer-/Publish-/Optimierungs-/Providerfälle enthalten. Echte lokale Dienste zusätzlich opt-in geprüft, keine Headsetabnahme."
       ]
     },
     {
@@ -4951,7 +5030,7 @@
       "milestone_id": "DM-TEST",
       "priority": "P0",
       "risk": "medium",
-      "progress_percent": 55,
+      "progress_percent": 70,
       "dependencies": [
         "DM-TEST-GEOMETRY",
         "DM-TEST-XR",
@@ -4984,7 +5063,8 @@
       ],
       "tests": [
         "Neuer Checkout kann Pflichtprüfungen anhand dokumentierter Setupbefehle ausführen.",
-        "Kontrolliert defekter Masken-/Deltafixture lässt die relevante CI-Prüfung fehlschlagen."
+        "Kontrolliert defekter Masken-/Deltafixture lässt die relevante CI-Prüfung fehlschlagen.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Reproduzierbarer erfolgreicher CI-Lauf nachgewiesen; tatsächliche Versionen und Laufbefehle dokumentiert.",
@@ -4993,7 +5073,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] pyproject.toml sammelt tests/; package.json führt Syntax-/Nodechecks und separate Browser-/XR-Diagnostik aus. Der parallel entstehende CI-Workflow ist vor Änderung erneut zu prüfen.",
         "[Implementierung] Unit-, Contract-, Prozessabbruch-, Provider-, Browser-, GLB- und XR-Emulationstests vorhanden. Physische Quest-/WLAN-/ASR-/GPU-/Komfortprüfungen sind nicht durchgeführt; umfangreiche Last-/Memory- und zukünftige Featuretests bleiben offen.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Python-Matrix installiert Node/npm für den echten Meshoptimizer-Test; Browserjob nimmt Authoring und echten Probeflug auf. GitHub-Lauf wird separat nach Push beobachtet."
       ]
     },
     {
@@ -5123,7 +5204,10 @@
         "docs/design-mode/rigging.md",
         "docs/design-mode/performance.md",
         "docs/design-mode/networking.md",
-        "AGENTS.md"
+        "AGENTS.md",
+        "docs/design-mode/publication.md",
+        "docs/design-mode/verification.md",
+        "docs/architecture/adr/design-003-runtime-and-optimization.md"
       ],
       "description": "Geforderte Design-Mode-Dokumentation mit ausführbaren Beispielen schreiben. Ausgangspunkt: README nennt momentan Spielstart und Grundarchitektur; ein Design-Mode-Dokumentationssatz fehlt.",
       "implementation_plan": [
@@ -5138,7 +5222,8 @@
       ],
       "tests": [
         "Dokumentierte Befehle und JSONbeispiele in separaten temporären Testprojekten validieren.",
-        "Verweise und behauptete Featurestatus gegen Code/Capabilityantworten überprüfen."
+        "Verweise und behauptete Featurestatus gegen Code/Capabilityantworten überprüfen.",
+        "Aktueller beobachteter Prüfumfang: docs/design-mode/verification.md; Restumfang ausdrücklich von ausgeführten Tests getrennt."
       ],
       "definition_of_done": [
         "Alle genannten Abnahmekriterien sind durch konkrete Artefakte und ausgeführte Prüfungen belegt.",
@@ -5147,7 +5232,8 @@
       "evidence": [
         "[Planungsbasis 2026-09-27] README nennt momentan Spielstart und Grundarchitektur; ein Design-Mode-Dokumentationssatz fehlt.",
         "[Implementierung] Alle acht Dokumente, Integrationskarte, Anforderungszuordnung, ADRs und Erweiterungsregeln vorhanden. Verträge und Anleitungen bleiben an die noch offenen Vollausbau-Milestones gebunden.",
-        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
+        "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks.",
+        "[2026-09-28] Bedienung, Runtime-Vertrag, Ebenen, Skin/IK/Clips, Meshoptimizer und konkrete Ananta-Integration aktualisiert. Offene Geräte-/Vollausbauteile bleiben benannt."
       ]
     },
     {
@@ -5403,9 +5489,9 @@
   "tasks_status_summary": {
     "total": 108,
     "by_status": {
-      "todo": 15,
+      "todo": 10,
       "in_progress": 0,
-      "partial": 91,
+      "partial": 96,
       "blocked": 0,
       "done": 2
     },
@@ -5446,6 +5532,7 @@
     "Historische evidence ist als Planungsbasis datiert; Implementierungsbelege nennen konkrete neue Dateien. affected_files enthält weiterhin geplante Ausbaupfade zusätzlich zu aktuellen Artefakten.",
     "Task-Done verlangt alle Abnahmekriterien und abgeschlossene Abhängigkeiten. Teilimplementierungen bleiben partial, auch wenn ihre vorhandenen Unit- und Browserprüfungen bestehen.",
     "Der Core-Foundation-Track bleibt separat und wurde nicht umgeschrieben. Diese Datei wird separat aktualisiert und gegen das vorhandene TODO-Schema validiert.",
-    "Ausgeführte Prüfungen: 125 Python-Tests und 16 Untertests, neun JavaScript-Tests, drei Designer-Browserprogramme, zwei Foundation-/Missions-Browserprogramme, mypy, ruff, Content- und TODO-Validierung. Nachweis: docs/design-mode/verification.md. Kein GitHub-Push in diesem Nebenauftrag."
+    "Ausgeführte Prüfungen: 125 Python-Tests und 16 Untertests, neun JavaScript-Tests, drei Designer-Browserprogramme, zwei Foundation-/Missions-Browserprogramme, mypy, ruff, Content- und TODO-Validierung. Nachweis: docs/design-mode/verification.md. Kein GitHub-Push in diesem Nebenauftrag.",
+    "2026-09-28: Runtime-Veröffentlichung/Probeflug, Ebenen, weiches Rig/IK, Clip-Aufzeichnung, reversible Meshopt-Vorschau und echte Ananta-Planung ergänzt. Hardwareprüfungen auf Nutzerwunsch zurückgestellt. Der vollständige 108-Aufgaben-Creator-Track bleibt ein Ausbauplan, kein pauschal abgeschlossener Lieferumfang."
   ]
 }

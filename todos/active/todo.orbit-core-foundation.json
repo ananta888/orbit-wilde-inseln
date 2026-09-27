@@ -1100,12 +1100,12 @@
     {
       "id": "SPEECH-GPU",
       "title": "Radeon-780M-Vulkan-Pipeline am neuen Checkout end-to-end abnehmen",
-      "status": "todo",
+      "status": "partial",
       "type": "hardware",
       "milestone_id": "SPEECH",
       "priority": "P1",
       "risk": "high",
-      "progress_percent": 0,
+      "progress_percent": 70,
       "dependencies": [
         "REPO-BOOT",
         "SPEECH-ADAPTERS"
@@ -1113,7 +1113,8 @@
       "affected_files": [
         "server/orbit_server/speech",
         "client/webxr/src/audio",
-        "docs/ai/speech.md"
+        "docs/ai/speech.md",
+        "tools/diagnostics/check-services.py"
       ],
       "acceptance_criteria": [
         "Tatsächlich gewähltes Vulkan-Gerät wird nachgewiesen; Ausfall wechselt kontrolliert auf CPU."
@@ -1125,7 +1126,9 @@
         "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
         "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
       ],
-      "evidence": []
+      "evidence": [
+        "2026-09-28: Reale lokale Ananta/Jev-Entscheidung, Piper -> Whisper mit erzeugtem Audio erfolgreich; Dienst meldet AMD Radeon 780M / Vulkan und fallback=false. Quest-Mikrofon und realer CPU-Ausfallpfad nicht abgenommen."
+      ]
     },
     {
       "id": "AI-BOUNDS",
@@ -1572,9 +1575,9 @@
   "tasks_status_summary": {
     "total": 45,
     "by_status": {
-      "todo": 18,
+      "todo": 17,
       "in_progress": 0,
-      "partial": 0,
+      "partial": 1,
       "blocked": 0,
       "done": 27
     },

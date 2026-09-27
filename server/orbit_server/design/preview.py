@@ -7,6 +7,8 @@ from .document import DesignError, finite, floats, normals, validate
 
 
 def blendable(before, after):
+    for field in ("rig", "clips", "layers", "mount_points", "colliders", "behaviour_profile"):
+        if before[field] != after[field]: return False
     if [r["id"] for r in before["regions"]] != [r["id"] for r in after["regions"]]: return False
     for a, b in zip(before["regions"], after["regions"]):
         for field in ("indices", "topology_revision", "mask", "material", "solid", "locked", "part"):

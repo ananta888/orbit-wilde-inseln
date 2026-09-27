@@ -22,6 +22,7 @@ export class Stroke {
       this.samples.push(point.slice());
   }
   operation() {
+    if (this.tool === 'ik') return { tool: 'ik', bone: this.settings.bone || this.region, position: this.last };
     if (this.tool === 'pose') return { tool: 'pose', bone: this.region,
       rotation: [0, Math.max(-1.5, Math.min(1.5, (this.last[0] - this.start[0]) * 2)),
         Math.max(-1.5, Math.min(1.5, (this.last[1] - this.start[1]) * 2))] };

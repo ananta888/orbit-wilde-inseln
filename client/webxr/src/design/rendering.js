@@ -28,8 +28,12 @@ function materialFor(region) {
 }
 
 export class CreatureView {
-  constructor(parent) { this.root = new THREE.Group(); parent.add(this.root); this.meshes = new Map(); this.bones = new Map(); }
+  constructor(parent, { sharedGeometry = null } = {}) {
+    this.root = new THREE.Group(); parent.add(this.root); this.meshes = new Map(); this.bones = new Map();
+    this.sharedGeometry = sharedGeometry;
+  }
   update(doc) {
+    if (this.sharedGeometry) throw Error('Veröffentlichte Geometrie ist unveränderlich');
     const old = this.document;
     if (!old || old.id !== doc.id || old.regions.size !== doc.regions.size ||
         JSON.stringify(old.rig) !== JSON.stringify(doc.rig) ||
@@ -57,7 +61,7 @@ export class CreatureView {
     this.document = doc;
   }
   clear() {
-    for (const mesh of this.meshes.values()) { mesh.geometry.dispose(); mesh.material.dispose(); }
+    for (const mesh of this.meshes.values()) { if (!this.sharedGeometry) mesh.geometry.dispose(); mesh.material.dispose(); }
     this.root.clear(); this.meshes.clear(); this.bones.clear(); this.skeleton?.dispose(); this.skeleton = null;
   }
   load(doc) {
@@ -75,24 +79,29 @@ export class CreatureView {
       this.skeleton.calculateInverses();
     }
     for (const [id, item] of doc.regions) {
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(item.positions.slice(), 3));
-      geometry.setAttribute('normal', new THREE.BufferAttribute(item.normals.slice(), 3));
-      geometry.setAttribute('color', new THREE.BufferAttribute(item.colors.slice(), 3));
-      geometry.setAttribute('editMask', new THREE.BufferAttribute(item.mask.slice(), 1));
-      geometry.setAttribute('surface', new THREE.BufferAttribute(item.surface.slice(), 4));
-      geometry.setIndex(new THREE.BufferAttribute(item.indices.slice(), 1));
-      geometry.computeBoundingSphere();
       const weights = rig?.weights[id];
+      let geometry = this.sharedGeometry?.get(id);
+      if (!geometry) {
+        geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(item.positions.slice(), 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(item.normals.slice(), 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(item.colors.slice(), 3));
+        geometry.setAttribute('editMask', new THREE.BufferAttribute(item.mask.slice(), 1));
+        geometry.setAttribute('surface', new THREE.BufferAttribute(item.surface.slice(), 4));
+        geometry.setIndex(new THREE.BufferAttribute(item.indices.slice(), 1));
+        geometry.computeBoundingSphere();
+        if (this.skeleton && weights) {
+          geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(weights.joints, 4));
+          geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(weights.weights, 4));
+        } else geometry.boundsTree = new MeshBVH(geometry, { indirect: true });
+        this.sharedGeometry?.set(id, geometry);
+      }
       let mesh;
       if (this.skeleton && weights) {
-        geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(weights.joints, 4));
-        geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(weights.weights, 4));
         mesh = new THREE.SkinnedMesh(geometry, materialFor(item));
       } else {
         mesh = new THREE.Mesh(geometry, materialFor(item));
         // Preserve canonical triangle ordering; never install global prototype patches.
-        geometry.boundsTree = new MeshBVH(geometry, { indirect: true });
         mesh.raycast = acceleratedRaycast;
       }
       mesh.name = id; mesh.userData.region = id; this.root.add(mesh); this.meshes.set(id, mesh);
@@ -128,6 +137,11 @@ export class CreatureView {
         bone.quaternion.copy(a.slerp(b, blend));
       }
     }
+    for (const source of this.document.rig.bones) if (source.limits) {
+      const bone = this.bones.get(source.id);
+      for (const [i, axis] of ['x', 'y', 'z'].entries())
+        bone.rotation[axis] = THREE.MathUtils.clamp(bone.rotation[axis], source.limits.min[i], source.limits.max[i]);
+    }
   }
   restPose() {
     for (const bone of this.bones.values()) { bone.quaternion.identity(); bone.scale.setScalar(1); }
@@ -141,6 +155,7 @@ export class CreatureView {
     }
   }
   localPreview(operation) {
+    if (this.sharedGeometry) throw Error('Veröffentlichte Geometrie ist unveränderlich');
     this.resetPreview();
     if (operation.tool === 'pose') {
       const bone = this.bones.get(operation.bone);

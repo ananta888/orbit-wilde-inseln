@@ -15,6 +15,7 @@ Transport: gleiche HTTPS-Origin, `/ws`, JSON-Text, Meter/Sekunden, +Y oben, −Z
 | C→S | `dragon {message}` | Kommentar/freier Dialog im Flug |
 | C→S | `ping {time}` | Monotone Clientzeit für RTT |
 | S→C | `hello` | Version, Physik-/Snapshotrate, installierte Missions-IDs |
+| S→C | `mount_asset` | Nach hello: optionale gepinnte Kreaturenreferenz `{hash,asset_id,revision,url,...}` und `test_flight`; null verwendet den ursprünglichen Arin, ein gesetztes `error` behält das bisherige Modell |
 | S→C | `state` | tick/time/phase, Spielerposition/velocity/moveAck, Flugdaten, Tiere, Pfeile, Treffer und Strecke |
 | S→C | `environment` | Chunk-upsert/remove, Revision, Regeln, optional Planet |
 | S→C | `mission` | Katalogrevision, aktive Phase/Ziele/Inventar, Weltobjekte, Einstellungen, Abschlussliste |

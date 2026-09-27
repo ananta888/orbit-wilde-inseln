@@ -34,7 +34,15 @@ function orbitDocument(scene) {
     }
     if (!mesh.geometry.index) throw Error('Orbit-GLB ohne Indizes');
     region.indices = Array.from(mesh.geometry.index.array);
-    if (a.skinIndex && a.skinWeight) weights[region.id] = { joints: Array.from(a.skinIndex.array), weights: Array.from(a.skinWeight.array) };
+    if (a.skinIndex && a.skinWeight) {
+      // GLTFLoader normalizes WEIGHTS_0 in place. Keep the canonical Float32 bits
+      // for reversible editing, alongside the interoperable standard attribute.
+      const canonical = a._orbit_skinweight || a.skinWeight;
+      if (canonical.itemSize !== 4 || canonical.count !== a.skinWeight.count || canonical.isInterleavedBufferAttribute ||
+          Array.from(canonical.array).some((value, i) => !Number.isFinite(value) ||
+            Math.abs(value - a.skinWeight.array[i]) > 1e-6)) throw Error('Widersprüchliche Orbit-GLB-Gelenkgewichte');
+      weights[region.id] = { joints: Array.from(a.skinIndex.array), weights: Array.from(canonical.array) };
+    }
     regions.push(region);
   });
   if (!regions.length) throw Error('Orbit-GLB ohne bearbeitbare Regionen');
@@ -122,6 +130,8 @@ export async function exportGLBBytes(document) {
   for (const region of regions) {
     const meta = Object.fromEntries(Object.entries(region).filter(([key]) => !BUFFERS.includes(key)));
     const mesh = view.meshes.get(region.id); mesh.userData.orbitRegion = meta;
+    if (mesh.geometry.hasAttribute('skinWeight'))
+      mesh.geometry.setAttribute('orbit_skinweight', mesh.geometry.getAttribute('skinWeight').clone());
     // Standard glTF carries the base PBR material; per-vertex channels remain custom attributes.
     mesh.material.emissive.setRGB(...region.material.emissive);
   }

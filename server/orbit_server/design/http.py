@@ -48,7 +48,7 @@ class DesignService:
         return web.json_response({"protocol": 1, "templates": TEMPLATES,
                                   "assets": await asyncio.to_thread(self.repository.list, request[self.profile_key]),
                                   "capabilities": {"mesh_delta": True, "sdf_master": False, "triangle_sculpt": True,
-                                                   "boolean_solids": True, "auto_rig": "semantic-rigid",
+                                                   "boolean_solids": True, "auto_rig": "weighted-semantic-chains",
                                                    "ai_provider": bool(__import__("os").getenv("ORBIT_DESIGN_AI_URL")),
                                                    "max_vertices": 100000, "max_triangles": 180000}},
                                  headers={"Cache-Control": "no-store"})
@@ -143,14 +143,34 @@ class DesignService:
                         if current:
                             current = await asyncio.to_thread(self.repository.load, owner, current["id"])
                             await self.send_document(socket, owner, current)
-                    elif kind == "proposal":
-                        fields(data, {"type", "instruction", "regions", "base_revision"}, {"instruction", "regions", "base_revision"})
+                    elif kind in {"proposal", "optimize", "generate_proposal"}:
+                        if kind == "generate_proposal":
+                            fields(data, {"type", "instruction", "base_revision"}, {"instruction", "base_revision"})
+                        elif kind == "proposal":
+                            fields(data, {"type", "instruction", "regions", "base_revision"}, {"instruction", "regions", "base_revision"})
+                        else:
+                            fields(data, {"type", "base_revision"}, {"base_revision"})
                         if current is None or data["base_revision"] != current["revision"]: raise Conflict("Auswahl veraltet")
-                        if not isinstance(data["regions"], list) or not 1 <= len(data["regions"]) <= 16: raise DesignError("Auswahlbudget")
-                        valid_ids = {r["id"] for r in current["regions"] if not r["locked"]}
-                        if not set(data["regions"]) <= valid_ids: raise DesignError("Ungültige oder geschützte KI-Auswahl")
-                        result, source = await ai.plan(self.session, current, data["regions"], data["instruction"])
-                        candidate = await self.workers.run(current, result["operations"])
+                        if kind == "generate_proposal":
+                            if any(r["locked"] or any(r["mask"]) for r in current["regions"]):
+                                raise DesignError("Neuentwurf würde geschützte Teile ersetzen; zuerst eine neue Kreatur öffnen")
+                            result = await ai.generate_plan(self.session, data["instruction"])
+                            spec = result["generation"]
+                            candidate = await asyncio.to_thread(generate, spec["template"], current["id"], spec["parameters"])
+                            candidate["revision"] = current["revision"]
+                            result["operations"] = []
+                            source = "ananta-parametric-generation"
+                        elif kind == "proposal":
+                            if not isinstance(data["regions"], list) or not 1 <= len(data["regions"]) <= 16: raise DesignError("Auswahlbudget")
+                            valid_ids = {r["id"] for r in current["regions"] if not r["locked"]}
+                            if not set(data["regions"]) <= valid_ids: raise DesignError("Ungültige oder geschützte KI-Auswahl")
+                            result, source = await ai.plan(self.session, current, data["regions"], data["instruction"])
+                        else:
+                            result = {"speech": "Optimierte Spielversion: Vergleiche die Form und übernimm den Vorschlag bei Bedarf.",
+                                      "operations": [{"tool": "optimize", "value": .5, "tolerance": .008}]}
+                            source = "meshoptimizer"
+                        if kind != "generate_proposal":
+                            candidate = await self.workers.run(current, result["operations"])
                         proposal = {"id": secrets.token_hex(8), "base_revision": current["revision"], "candidate": candidate,
                                     "operations": result["operations"]}
                         await socket.send_json({"type": "proposal", "id": proposal["id"], "speech": result["speech"],
@@ -215,3 +235,5 @@ def register(app, data_path, profile_key, check_origin):
     app.router.add_get("/api/design/assets/{ident}/analysis", service.analysis)
     app.on_startup.append(service.start)
     app.on_shutdown.append(service.close)
+    from .publication import register as register_publication
+    return register_publication(app, service, profile_key, check_origin)

@@ -119,13 +119,19 @@ function send(message) {
 }
 function connect() {
   clearTimeout(reconnectTimer);
-  socket = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+  const testAsset = new URLSearchParams(location.search).get('test_asset');
+  socket = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws` +
+    (testAsset ? '?test_asset=' + encodeURIComponent(testAsset) : ''));
   socket.addEventListener('open', () => { send({ type: 'enter', mode: view.mode }); });
   socket.addEventListener('message', ({ data }) => {
     let message;
     try { message = JSON.parse(data); } catch { return; }
     if (message.type === 'hello' && message.protocol !== PROTOCOL_VERSION) {
       $('fatal').hidden = false; $('fatal').textContent = 'Client und Server verwenden unterschiedliche Protokollversionen. Bitte neu laden.'; socket.close();
+    } else if (message.type === 'mount_asset') {
+      $('return-designer').hidden = !message.test_flight;
+      if (message.error) $('xr-status').textContent = message.error;
+      else dragon.setAsset(message.asset).catch(error => { $('xr-status').textContent = error.message + ' · Der bisherige Arin bleibt erhalten.'; });
     } else if (message.type === 'mission') {
       missions.receive(message);
     } else if (message.type === 'oracle') {

@@ -18,7 +18,7 @@ from orbit_server.missions.packages import Catalog
 from orbit_server.missions.schema import read_json, validate
 from orbit_server.networking.session import GameSession
 from orbit_server.paths import ROOT
-from orbit_server.persistence.store import SQLiteStore
+from orbit_server.persistence.store import SQLiteStore, new_save
 from orbit_server.physics.ballistics import STEP
 from orbit_server.physics.flight import CONFIG as FLIGHT
 from orbit_server.world.environment import DEFAULT_PATH, LiveWorld
@@ -61,6 +61,7 @@ class Service:
         self.watcher: asyncio.Task | None = None
         self.oracle = AnantaOracle()
         self.asr_slots = asyncio.Semaphore(2)
+        self.publications = None
 
     async def startup(self, app):
         await self.dragon.start()
@@ -83,6 +84,24 @@ class Service:
     async def websocket(self, request):
         same_origin(request)
         profile = request[PROFILE]
+        test_asset = request.query.get("test_asset")
+        mount_asset = None
+        mount_error = None
+        if self.publications:
+            try:
+                if test_asset:
+                    artifact = await asyncio.to_thread(self.publications.load, profile, test_asset)
+                    mount_asset = self.publications.descriptor(test_asset, artifact)
+                    if not mount_asset["behavior"]["mountable"]: raise ValueError("Kein Reittier")
+                else:
+                    mount_asset = await asyncio.to_thread(self.publications.active, profile)
+            except (ValueError, sqlite3.Error) as error:
+                if test_asset:
+                    raise web.HTTPBadRequest(text="Probeflugmodell kann nicht geladen werden") from error
+                LOG.error("mount_asset_load_failed: %s", type(error).__name__)
+                mount_error = "Gespeichertes Spielmodell nicht verfügbar; die bisherige Figur bleibt erhalten."
+        elif test_asset:
+            raise web.HTTPBadRequest(text="Kreaturenwerkstatt nicht verfügbar")
         if len(self.clients) >= 4: raise web.HTTPServiceUnavailable(text="Maximal vier Sitzungen")
         if profile in self.profiles: raise web.HTTPConflict(text="Dieses Spielerprofil ist bereits geöffnet")
         self.profiles.add(profile)
@@ -94,7 +113,7 @@ class Service:
         chat = None
         try:
             try:
-                save = await asyncio.to_thread(self.store.load, profile)
+                save = new_save() if test_asset else await asyncio.to_thread(self.store.load, profile)
             except (ValueError, OSError, sqlite3.Error) as error:
                 LOG.error("save_load_failed: %s", type(error).__name__)
                 raise web.HTTPServiceUnavailable(text="Lokaler Spielstand kann nicht geladen werden; vorhandene Datei bleibt erhalten.") from error
@@ -105,8 +124,10 @@ class Service:
             chat = DragonConversation(self.dragon, socket, game.world)
             await socket.send_json({"type": "hello", "simulation": "Framework / Python", "physicsHz": 60,
                                     "snapshotHz": 30, "protocol": 4, "features": sorted(self.catalog.packages)})
+            await socket.send_json({"type": "mount_asset", "asset": mount_asset, "test_flight": bool(test_asset), "error": mount_error})
             ticker = asyncio.create_task(self.stream(socket, game), name="orbit-session")
-            saver = asyncio.create_task(self.save_loop(game, profile, stop_saving), name="orbit-autosave")
+            if not test_asset:
+                saver = asyncio.create_task(self.save_loop(game, profile, stop_saving), name="orbit-autosave")
             received: list[float] = []
             async for message in socket:
                 if message.type != WSMsgType.TEXT: continue
@@ -131,7 +152,7 @@ class Service:
                 with contextlib.suppress(asyncio.CancelledError, ConnectionError): await ticker
             stop_saving.set()
             if saver: await saver
-            if game:
+            if game and not test_asset:
                 game.checkpoint()
                 try:
                     await asyncio.to_thread(self.store.save, profile, copy.deepcopy(game.save))
@@ -273,7 +294,7 @@ def make_app(urls=(), world_path=DEFAULT_PATH, *, content_root=ROOT / "content",
     from importlib.util import find_spec
     if all(find_spec(name) is not None for name in ("numpy", "trimesh", "manifold3d")):
         from orbit_server.design.http import register
-        register(app, data_path, PROFILE, same_origin)
+        service.publications = register(app, data_path, PROFILE, same_origin)
     app.router.add_get("/{path:.*}", service.static)
     app.on_startup.append(service.startup)
     app.on_shutdown.append(service.shutdown)

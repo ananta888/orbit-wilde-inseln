@@ -7,17 +7,8 @@ from .document import DesignError, finite, floats, identifier, vec
 
 
 def propose(doc):
-    bones = [{"id": "root", "parent": None, "position": [0., 0., 0.], "rotation": [0., 0., 0.]}]
-    weights = {}
-    for item in doc["regions"]:
-        center = np.asarray(item["positions"]).reshape(-1, 3).mean(axis=0)
-        index = len(bones)
-        bones.append({"id": item["id"], "parent": "root", "position": floats(center), "rotation": [0., 0., 0.]})
-        # Rigid semantic weights are an honest initial proposal, editable in Pose.
-        # Organic shoulder blending requires the later weight-painting milestone.
-        weights[item["id"]] = {"joints": [index, 0, 0, 0] * (len(item["positions"]) // 3),
-                               "weights": [1., 0., 0., 0.] * (len(item["positions"]) // 3)}
-    return {"bones": bones, "weights": weights}
+    from .skeleton import weighted_rig
+    return weighted_rig(doc)
 
 
 def validate_rig(doc):
@@ -29,10 +20,17 @@ def validate_rig(doc):
         raise DesignError("Gewichte für unbekannte Region")
     seen = set()
     for bone in bones:
-        if set(bone) != {"id", "parent", "position", "rotation"}: raise DesignError("Knochenformat")
+        if set(bone) - {"id", "parent", "position", "rotation", "limits"} or not {"id", "parent", "position", "rotation"} <= set(bone):
+            raise DesignError("Knochenformat")
         ident = identifier(bone["id"])
         if ident in seen or (bone["parent"] is not None and bone["parent"] not in seen): raise DesignError("Knochenhierarchie")
         vec(bone["position"]); vec(bone["rotation"], math.pi * 2); seen.add(ident)
+        if "limits" in bone:
+            limits = bone["limits"]
+            if set(limits) != {"min", "max"}: raise DesignError("Gelenkgrenzen")
+            lower, upper = vec(limits["min"], math.pi), vec(limits["max"], math.pi)
+            if np.any(lower > upper) or np.any(np.asarray(bone["rotation"]) < lower) or np.any(np.asarray(bone["rotation"]) > upper):
+                raise DesignError("Gelenkwinkel außerhalb der Grenzen")
     for item in doc["regions"]:
         weights = rig["weights"].get(item["id"])
         if not bones:
@@ -50,6 +48,18 @@ def validate_rig(doc):
 def edit_rig(doc, op):
     tool = op["tool"]
     if tool == "rig": doc["rig"] = propose(doc); doc["clips"] = []
+    elif tool == "weight":
+        from .skeleton import paint_weights
+        paint_weights(doc, op)
+    elif tool == "ik":
+        from .skeleton import solve_ik
+        solve_ik(doc, op.get("bone"), op.get("position"))
+    elif tool == "joint_limits":
+        bone = next((b for b in doc["rig"]["bones"] if b["id"] == op.get("bone")), None)
+        if not bone: raise DesignError("Knochen nicht gefunden")
+        limit = finite(op.get("angle", 1.4), 0, math.pi, "Gelenkgrenze")
+        bone["limits"] = {"min": [-limit]*3, "max": [limit]*3}
+        bone["rotation"] = np.clip(bone["rotation"], -limit, limit).tolist()
     elif tool == "pose":
         bone = next((b for b in doc["rig"]["bones"] if b["id"] == op.get("bone")), None)
         if not bone: raise DesignError("Knochen nicht gefunden")

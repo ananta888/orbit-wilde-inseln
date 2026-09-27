@@ -39,7 +39,7 @@ const ray = new THREE.Raycaster(); ray.firstHitOnly = true;
 let lastHit = null, stroke = null, activeSource = null, living = false, clip = null, proposal = null, originalShown = false, flight = false;
 let micStream = null, mixed = false;
 const grips = new Map(), navigation = new WorkpieceNavigation(stage);
-let beforeFlight = null;
+let beforeFlight = null, recordedKeys = [], recordedAsset = null;
 export const workspace = { scene, camera, renderer, creature, client, selected, get stroke() { return stroke; } };
 
 function status(text) { $('status').textContent = text; palette.status(text); }
@@ -51,7 +51,8 @@ function settings() {
   return { radius: +$('radius').value, strength: +$('strength').value, symmetry: $('symmetry').value,
     radial: +$('radial').value, axis: 1, color: [color.r, color.g, color.b], channel: $('channel').value,
     value: $('tool').value === 'mask' ? ($('erase-mask').checked ? 0 : 1) : $('tool').value === 'scale' ? 1.2 : +$('channel-value').value,
-    paint_tool: $('paint-tool').value };
+    paint_tool: $('paint-tool').value, ...(['weight', 'ik'].includes($('tool').value) ? { bone: $('bone').value } : {}),
+    ...($('active-layer').value && !['mask', 'pose', 'weight', 'ik', 'select'].includes($('tool').value) ? { layer: $('active-layer').value } : {}) };
 }
 function choose(hit, multiple = false) {
   if (!hit) return;
@@ -122,6 +123,16 @@ client.addEventListener('status', event => status(event.detail));
 client.addEventListener('error', event => { error(event.detail); $('conflict').hidden = !event.detail.command_id; creature.resetPreview(); });
 client.addEventListener('document', event => {
   const doc = event.detail; cancel(); creature.update(doc); creature.root.visible = true; ghost.root.visible = false; proposal = null; $('proposal').hidden = true;
+  for (const [id, values] of [['bone', doc.rig.bones], ['clips', doc.clips]]) {
+    const previous = $(id).value; $(id).replaceChildren(...values.map(value => new Option(value.id, value.id)));
+    if (values.some(value => value.id === previous)) $(id).value = previous;
+  }
+  if (recordedAsset !== doc.id) { recordedAsset = doc.id; recordedKeys = []; $('recording-info').textContent = ''; }
+  const activeLayer = $('active-layer').value;
+  $('active-layer').replaceChildren(new Option('Grundform direkt bearbeiten', ''), ...doc.layers.map(l => new Option(
+    `${l.visible ? '◉' : '○'} ${l.name}${l.locked ? ' · gesperrt' : ''} · ${Math.round(l.strength*100)} %`, l.id)));
+  if (doc.layers.some(l => l.id === activeLayer)) $('active-layer').value = activeLayer;
+  if (workspace.nextLayer && doc.layers.some(l => l.id === workspace.nextLayer)) { $('active-layer').value = workspace.nextLayer; workspace.nextLayer = null; }
   for (const id of selected) if (!doc.regions.has(id)) selected.delete(id);
   creature.highlight(selected);
   $('undo').disabled = !doc.history.undo; $('redo').disabled = !doc.history.redo; $('conflict').hidden = true;
@@ -132,7 +143,7 @@ client.addEventListener('document', event => {
 });
 client.addEventListener('proposal', event => {
   proposal = event.detail; $('assistant-text').textContent = event.detail.speech +
-    (event.detail.source === 'local-command-parser' ? ' · Lokaler Befehlsmodus, kein LLM.' : ' · Design-KI');
+    (event.detail.source === 'local-command-parser' ? ' · Lokaler Befehlsmodus, kein LLM.' : event.detail.source === 'meshoptimizer' ? ' · Geometrieoptimierung' : ' · Design-KI');
   $('blend').value = 1; $('blend').disabled = !proposal.blendable;
 });
 client.addEventListener('preview', event => {
@@ -144,6 +155,21 @@ function targets() { if (!selected.size) throw Error('Zuerst einen Bereich ausw�
 function op(tool, extra = {}) { return client.command({ tool, regions: targets(), ...extra }); }
 action('undo', () => client.command(null, 'undo')); action('redo', () => client.command(null, 'redo'));
 action('discard', () => client.discardPending());
+function activeLayer() {
+  const layer = client.document.layers.find(l => l.id === $('active-layer').value);
+  if (!layer) throw Error('Zuerst eine Ebene auswählen');
+  return layer;
+}
+action('new-layer', async () => {
+  const id = 'layer_' + crypto.randomUUID().slice(0, 8); workspace.nextLayer = id;
+  await client.command({ tool: 'layer_add', id, kind: $('layer-kind').value, name: $('layer-kind').selectedOptions[0].text + ' ' + (client.document.layers.length + 1) });
+});
+action('layer-visible', () => { const l = activeLayer(); return client.command({ tool: 'layer_visibility', id: l.id, value: !l.visible }); });
+action('layer-lock', () => { const l = activeLayer(); return client.command({ tool: 'layer_lock', id: l.id, value: !l.locked }); });
+action('apply-layer-strength', () => client.command({ tool: 'layer_strength', id: activeLayer().id, value: +$('layer-strength').value }));
+action('delete-layer', () => client.command({ tool: 'layer_delete', id: activeLayer().id }));
+action('layer-up', () => client.command({ tool: 'layer_order', id: activeLayer().id, value: Math.max(0, client.document.layers.indexOf(activeLayer()) - 1) }));
+action('bake-layers', () => client.command({ tool: 'layer_bake' }));
 action('mini', () => { stage.scale.setScalar(.075); stage.position.set(0, .87, -1.1); });
 action('life', () => { stage.scale.setScalar(1); stage.position.set(0, 0, -3); });
 action('reset', () => { stage.scale.setScalar(.25); stage.position.set(0, .87, -1.1); stage.rotation.set(0, Math.PI, 0); controls.target.set(0, 1.1, -1.1); });
@@ -154,7 +180,41 @@ action('add-part', () => client.command({ tool: 'add', kind: $('part').value, id
 for (const tool of ['refine', 'simplify', 'union', 'subtract', 'delete']) action(tool, () => op(tool));
 action('cut', () => { if (!lastHit) throw Error('Zuerst eine Schnittfläche markieren'); return op('cut', { position: lastHit.point, normal: lastHit.normal }); });
 action('rig', () => client.command({ tool: 'rig' }));
-action('pose', () => { $('tool').value = 'pose'; return client.command({ tool: 'pose', bone: targets()[0], rotation: [0, 0, +$('pose-angle').value] }); });
+action('prepare-flight', () => client.command({ tool: 'prepare_mount' }));
+async function publishCreature(activate) {
+  if (client.pending || (await client.journal.list()).length) throw Error('Zuerst ausstehende Änderungen bestätigen');
+  const response = await fetch('/api/design/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ asset_id: client.document.id, revision: client.document.revision, activate }) });
+  if (!response.ok) throw Error(await response.text());
+  return response.json();
+}
+action('publish', async () => { await publishCreature(true); status('Dein Arin ist übernommen. Er erscheint beim nächsten Spielstart.'); });
+action('test-flight', async () => {
+  if (mixed) throw Error('Für den Probeflug zuerst Mixed Reality beenden');
+  const asset = await publishCreature(false);
+  if (renderer.xr.isPresenting) await renderer.xr.getSession().end();
+  location.href = '/?test_asset=' + encodeURIComponent(asset.hash);
+});
+action('restore-arin', async () => {
+  const response = await fetch('/api/creatures/active', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"hash":null}' });
+  if (!response.ok) throw Error(await response.text());
+  status('Der ursprüngliche Arin erscheint beim nächsten Spielstart.');
+});
+action('pose', () => { $('tool').value = 'pose'; return client.command({ tool: 'pose', bone: $('bone').value || targets()[0], rotation: [0, 0, +$('pose-angle').value] }); });
+action('joint-limits', () => client.command({ tool: 'joint_limits', bone: $('bone').value, angle: 1.4 }));
+action('record-pose', () => {
+  if (!client.document.rig.bones.length || client.pending) throw Error('Zuerst eine bestätigte Pose mit Rig erstellen');
+  const time = +$('key-time').value;
+  if (!Number.isFinite(time) || time < 0 || time > 30) throw Error('Zeit muss zwischen 0 und 30 Sekunden liegen');
+  const next = recordedKeys.filter(k => k.time !== time).concat(client.document.rig.bones.map(b => ({ bone: b.id, time, rotation: b.rotation.slice() })));
+  if (next.length > 512) throw Error('Animationsbudget erreicht');
+  recordedKeys = next; $('recording-info').textContent = new Set(next.map(k => k.time)).size + ' Posen aufgenommen';
+});
+action('save-clip', async () => {
+  if (new Set(recordedKeys.map(k => k.time)).size < 2) throw Error('Mindestens zwei Posen zu verschiedenen Zeiten aufnehmen');
+  await client.command({ tool: 'clip', id: $('clip-name').value, duration: Math.max(...recordedKeys.map(k => k.time)), loop: true, keys: recordedKeys });
+});
+action('play-clip', () => { clip = client.document.clips.find(c => c.id === $('clips').value); if (!clip) throw Error('Animation auswählen'); living = true; });
 action('living', () => { cancel(); living = !living; clip = null; $('living').textContent = living ? 'Statisch formen' : 'Lebendig ansehen'; });
 action('clip', () => {
   const names = client.document.rig.bones.filter(b => b.id.includes('wing')).map(b => b.id);
@@ -198,6 +258,8 @@ action('regenerate', () => $('propose').click());
 action('reject', () => { client.send({ type: 'reject_proposal' }); ghost.root.visible = false; creature.root.visible = true; });
 action('propose', () => { targets(); client.send({ type: 'proposal', instruction: $('instruction').value,
   regions: [...selected], base_revision: client.document.revision }); status('Ananta bereitet eine Vorschau vor …'); });
+action('generate', () => { client.send({ type: 'generate_proposal', instruction: $('instruction').value,
+  base_revision: client.document.revision }); status('Ananta entwirft eine neue Körperform …'); });
 async function ingest(doc) {
   const response = await fetch('/api/design/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(doc) });
   if (!response.ok) throw Error(await response.text());
@@ -216,6 +278,7 @@ action('analyze', async () => {
   const text = report.issues.map(i => (i.region ? i.region + ': ' : '') + i.message).join(' · ') || 'Keine strukturellen Geometrieprobleme gefunden';
   $('analysis-result').textContent = text; status(text);
 });
+action('optimize', () => { client.send({ type: 'optimize', base_revision: client.document.revision }); status('Spielmodell wird optimiert …'); });
 action('new', async () => { if ((await client.journal.list()).length) throw Error('Zuerst ausstehende Änderungen sichern'); client.send({ type: 'new', template: $('template').value }); });
 action('save', async () => {
   const response = await fetch('/api/design/assets/' + client.document.id);
@@ -255,7 +318,15 @@ const pages = [spatial, [
   ], [['Formart', () => cycle('part')], ['Form hinzufügen', () => $('add-part').click()], ['Verbinden', () => $('union').click()],
     ['Abziehen', () => $('subtract').click()], ['Verfeinern', () => $('refine').click()], ['Vereinfachen', () => $('simplify').click()],
     ['Rig vorbereiten', () => $('rig').click()], ['Lebendig / statisch', () => $('living').click()], ['Flügelbewegung', () => $('clip').click()],
-    ['Sitz setzen', () => $('mount').click()], ['Sitzansicht', () => $('flight').click()], ['Original ansehen', () => $('before').click()]]];
+    ['Sitz setzen', () => $('mount').click()], ['Sitzansicht', () => $('flight').click()], ['Original ansehen', () => $('before').click()]],
+  [['Flugmodell vorbereiten', () => $('prepare-flight').click()], ['In Orbit probefliegen', () => $('test-flight').click()],
+    ['Als Arin übernehmen', () => $('publish').click()], ['Ursprünglicher Arin', () => $('restore-arin').click()],
+    ['Gelenk wählen', () => cycle('bone')], ['Gelenk begrenzen', () => $('joint-limits').click()],
+    ['Pose aufnehmen', () => $('record-pose').click()], ['Zeit +½ Sekunde', () => { $('key-time').value = Math.min(30, +$('key-time').value + .5); status('Zeit ' + $('key-time').value); }],
+    ['Animation speichern', () => $('save-clip').click()], ['Animation wählen', () => cycle('clips')], ['Animation abspielen', () => $('play-clip').click()]],
+  [['Ebenenart', () => cycle('layer-kind')], ['Neue Ebene', () => $('new-layer').click()], ['Ebene wählen', () => cycle('active-layer')],
+    ['Ebene sichtbar', () => $('layer-visible').click()], ['Ebene sperren', () => $('layer-lock').click()],
+    ['Ebene entfernen', () => $('delete-layer').click()], ['Ebenen zusammenfassen', () => $('bake-layers').click()], ['Für Quest optimieren', () => $('optimize').click()]]];
 let palettePage = 0;
 function showPalette() {
   palette.actions([...pages[palettePage], ['Werkzeugseite →', () => { palettePage = (palettePage + 1) % pages.length; showPalette(); }]]);
