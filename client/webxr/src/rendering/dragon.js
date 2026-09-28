@@ -128,7 +128,7 @@ export class DragonMount {
     this.blend = THREE.MathUtils.damp(this.blend, mounted ? 1 : 0, 7, dt);
     const velocity = new THREE.Vector3(...movement.velocity), speed = Math.hypot(velocity.x, velocity.z);
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
-    this.companion.update(dt, movement.rig.position, velocity, Math.atan2(-forward.x, -forward.z), mounted,
+    this.companion.update(dt, movement.rig.position, Math.atan2(-forward.x, -forward.z), mounted,
       (x, z) => environment?.sample(x, z) ?? null);
     this.root.visible = mounted || this.blend > .02 || this.companion.ready;
     if (!this.root.visible) return;

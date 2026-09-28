@@ -1787,8 +1787,10 @@
         "Übernahme ins Hauptrepository und Browserprüfung getrennt vom lokalen Änderungsstand ausweisen."
       ],
       "evidence": [
-        "2026-09-28: 23 JavaScript-Tests einschließlich echtem GLB-Rig sowie 65 relevante Python-Tests und 11 Subtests bestanden (TODO-Tests nach Korrektur der Milestone-Zuordnung erneut grün). Ruff, Mypy, Content-, Asset- und TODO-Validierung bestanden. Vollständige Browserregression noch in GitHub CI auszuführen.",
-        "Arbeitskopie in /home/krusty/3d-games/orbit-next. Hauptcheckout ist in dieser Sitzung schreibgeschützt; Live-Server unverändert. Lokale Server-/Chromium-Starts sind eingeschränkt; keine neue Quest-Hardwareprüfung."
+        "2026-09-28: 23 JavaScript-Tests einschließlich echtem GLB-Rig sowie 65 relevante Python-Tests und 11 Subtests bestanden. Ruff, Mypy, Content-, Asset- und TODO-Validierung bestanden.",
+        "Geh-Richtung aus Positionsdeltas abgeleitet, da die vorhandene Bodenbewegung Geschwindigkeit null meldet. Regression prüft Richtungswechsel, begrenzte Folgegeschwindigkeit, stabiles Umsehen, Klippen, Originalclips und Standhöhe unter Elterntransformationen.",
+        "Browserdiagnose für Desktop-Dialog, schmale Menüs, VR-Landung und MR-B-Taster erweitert, in dieser Sitzung noch nicht ausgeführt. Lokale Server-/Chromium-Starts sind eingeschränkt. GitHub-Schreibwerkzeug verlangt eine nicht verfügbare Genehmigung; dadurch auch keine neue CI-Ausführung.",
+        "Implementierung in isolierter Arbeitskopie committed. Hauptcheckout und laufender HTTPS-Server bleiben unverändert, da außerhalb des beschreibbaren Arbeitsordners. Keine neue Quest-, Mikrofon-, LLM- oder TTS-Hardwareprüfung."
       ]
     }
   ],

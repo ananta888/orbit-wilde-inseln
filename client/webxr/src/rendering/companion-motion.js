@@ -8,6 +8,7 @@ export class CompanionMotion {
   reset() {
     this.position = new THREE.Vector3(); this.heading = 0; this.followHeading = 0;
     this.ready = false; this.walking = false; this.speed = 0; this.wasMounted = false;
+    this.lastPlayer = null;
   }
   ground(x, z, sample) {
     const y = sample(x, z);
@@ -29,13 +30,16 @@ export class CompanionMotion {
     }
     return null;
   }
-  update(dt, player, velocity, headYaw, mounted, sample) {
+  update(dt, player, headYaw, mounted, sample) {
     dt = THREE.MathUtils.clamp(Number.isFinite(dt) ? dt : 0, 0, .05);
+    // Ground locomotion reports zero velocity; infer travel from actual position changes.
+    const displacement = this.lastPlayer ? player.clone().sub(this.lastPlayer).setY(0) : new THREE.Vector3();
+    this.lastPlayer = player.clone();
     if (mounted) { this.wasMounted = true; this.walking = false; this.speed = 0; return; }
     if (this.wasMounted) { this.ready = false; this.wasMounted = false; }
-    const travel = Math.hypot(velocity.x, velocity.z);
+    const distanceMoved = displacement.length(), travel = dt > 0 ? distanceMoved / dt : 0;
     if (!this.ready) this.followHeading = headYaw;
-    else if (travel > .35) this.followHeading = turn(this.followHeading, Math.atan2(-velocity.x, -velocity.z), 1 - Math.exp(-2 * dt));
+    else if (travel > .35 && distanceMoved < 2) this.followHeading = turn(this.followHeading, Math.atan2(-displacement.x, -displacement.z), 1 - Math.exp(-2 * dt));
     const target = this.destination(player, sample);
     if (!target) { this.speed = 0; this.walking = false; return; }
     if (!this.ready) {

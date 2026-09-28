@@ -99,7 +99,7 @@ try {
   await page.waitForFunction(() => v.dragon.rigged.error && !document.getElementById('desktop').disabled);
   await page.locator('#desktop').click(); await page.waitForFunction(() => v.state.phase === 'playing');
   await page.locator('#flight').click();
-  await page.waitForFunction(() => v.dragon.root.visible);
+  await page.waitForFunction(() => v.dragon.root.visible && v.state.flying);
   assert(await page.evaluate(() => !v.dragon.rigged.ready && v.dragon.proceduralVisuals.every(mesh => mesh.visible)), 'Asset load failure retains a visible dragon');
   assert.deepEqual(errors, []); assert.deepEqual(shaderErrors, []);
   console.log('XR presence passed: ground companion/dialogue, desktop controls, MR conversation, landing, grip placement, controller finger poses, knees/crouch, safe stale UI, animated GLB, articulated creatures, asset failure fallback.');
