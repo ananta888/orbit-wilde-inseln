@@ -103,7 +103,8 @@
       "status": "in_progress",
       "task_ids": [
         "BOW-BALLISTICS",
-        "BOW-MATERIALS"
+        "BOW-MATERIALS",
+        "BOW-GRIP"
       ]
     },
     {
@@ -1800,6 +1801,60 @@
         "Chromium/IWER: Desktop-Dialog, schmale Menüs, Bodenbegleiter, VR-Landung und MR-B-Taster bestanden. Foundation, Missions-XR, Flug-/Bogen-XR, Werkstatt, GLB-Rundlauf, Authoring, veröffentlichte Kreatur im Probeflug und Design-XR bestanden. Desktop-Maustreffer separat mit stationärer Tier-Fixture; Grenzen in docs/testing.md.",
         "Produktiver HTTPS-Server nach SQLite-Sicherung neu gestartet. Native Windows-Adresse localhost:8443 liefert neue Dateien bytegenau; Browser-Smoke bestätigt sichtbaren Begleiter, vier Originalclips und Gesprächsmenü ohne JavaScript-Fehler. Keine neue physische Quest-, Mikrofon-, Whisper-/GPU-, Ananta-/LLM- oder Piper-Abnahme."
       ]
+    },
+    {
+      "id": "BOW-GRIP",
+      "title": "Bogen anatomisch an Handgriff und Fingerpose ausrichten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "BOW",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 100,
+      "dependencies": [
+        "BOW-BALLISTICS",
+        "XR-EMBODIMENT"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr/input-visuals.js",
+        "client/webxr/src/xr/hand-pose.js",
+        "client/webxr/src/input/bow.js",
+        "tests/client",
+        "tools/diagnostics/check-presence.mjs",
+        "tools/diagnostics/check-xr.mjs",
+        "docs/vr/presence.md",
+        "tools/diagnostics/check-bow-grip.mjs",
+        "tools/diagnostics/check-mission-xr.mjs",
+        "package.json",
+        ".github/workflows/ci.yml",
+        "docs/testing.md"
+      ],
+      "implementation_plan": [
+        "Gemeinsamen anatomischen Griff für Bogen und synthetische Controllerhand definieren; Finger um den Griff statt durch ihn schließen.",
+        "Handtracking an gültigen Handflächengelenken ausrichten; echte Trackingdaten unverändert lassen.",
+        "Linke/rechte Hand, Menüwechsel, Auszug, Abschuss und Trackingverlust gegen reale Handgeometrie sowie Chromium/IWER prüfen."
+      ],
+      "acceptance_criteria": [
+        "Griff liegt außerhalb des Handflächenvolumens und wird bei Controllern mit Daumen und Fingern umfasst.",
+        "Linke und rechte Bogenhand behalten korrekte Orientierung und stabile Verbindung bei Controllerrotation.",
+        "Getrackte Hände werden nicht künstlich verbogen; fehlende notwendige Gelenke brechen die Bogeninteraktion ab.",
+        "Ausziehen, Zielen, Loslassen sowie Menübedienung bleiben funktionsfähig."
+      ],
+      "tests": [
+        "Geometrische Regression mit beiden gebündelten Hand-GLBs; Nahaufnahmen von Griff und Fingern.",
+        "npm test; npm run test:xr; check-presence.mjs und check-mission-xr.mjs gegen getrennte Testdaten.",
+        "Dokumentierte Foundation-Prüfungen; physische Quest-Abnahme weiterhin separat."
+      ],
+      "definition_of_done": [
+        "Fehler behoben, geometrisch und im Browser geprüft, im laufenden Checkout ausgeliefert und auf main veröffentlicht.",
+        "TODO-/Dokumentationsstand unterscheidet Emulation von physischer Quest."
+      ],
+      "evidence": [
+        "2026-09-28: Vier Node-Regressionen mit beiden tatsächlichen Hand-GLBs bestanden: Hautabstand inklusive Dreiecksproben, unveränderte Fingerlängen, gedrehter Handflächenrahmen und ungültiges Tracking. Vollständiger Lauf: 27 JavaScript-Tests, Syntax und Asset-Prüfsummen bestanden.",
+        "Chromium: Nahaufnahmen beider Griffhände sowie Präsenztest mit hoher Grafikstufe bestanden. IWER: Missionsmenü, Controller-/Handauswahl, Handflächenanker, Trackingabbruch ohne Schuss sowie vollständiger MR-/VR-Lauf mit Bogentreffern, Flug, Landung, Bewegung, Streaming und Fokusabbruch bestanden.",
+        "XR-Testschütze wartet auf verarbeitete Posen und kompensiert Schwerkraft sowie Zielbewegung bei niedriger SwiftShader-Bildrate. Normale bewegte Tierwelt und Spielphysik unverändert. Keine automatische Zielhilfe im Spiel. Einzelheiten in docs/testing.md.",
+        "Python: 156 Tests und 16 Subtests ohne Skips; Ruff, Mypy und Validierung/Bau aller drei Missionspakete bestanden. Native Windows-Adresse localhost:8443 liefert alle drei geänderten Clientmodule bytegenau. Keine physische Quest-, Mikrofon- oder KI-Abnahme."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -1821,24 +1876,24 @@
     "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
   ],
   "tasks_status_summary": {
-    "total": 50,
+    "total": 51,
     "by_status": {
       "todo": 16,
       "in_progress": 1,
       "partial": 1,
       "blocked": 0,
-      "done": 32
+      "done": 33
     },
-    "progress_percent_done": 64.0,
+    "progress_percent_done": 64.71,
     "by_priority": {
       "P0": 30,
-      "P1": 6,
+      "P1": 7,
       "P2": 14,
       "P3": 0
     },
     "by_risk": {
       "low": 27,
-      "medium": 18,
+      "medium": 19,
       "high": 5
     },
     "critical_path": {

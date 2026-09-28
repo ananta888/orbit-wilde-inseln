@@ -14,7 +14,9 @@ Arin lässt sich zu Fuß, im Flug und in MR ansprechen. B rechts startet bei vor
 
 Die lokal gebündelten WebXR-Profile zeigen zum verbundenen Controller passende Hardware, etwa Quest Touch Plus. Echte Hand-Eingaben steuern das Hautmodell anhand der 25 WebXR-Gelenke. Bei Controllern sind Fingerstellungen **berechnete Greifposen**, abhängig von Trigger, Griff und Bogenrolle; keine Behauptung von erfasstem Fingertracking.
 
-Der Bogen sitzt an `gripSpace` statt am Zeigestrahl. Bei Händen werden Handfläche und Fingerspitzen verwendet. Auszug und Zielrichtung bleiben aus zwei physischen Handpositionen bestimmt. Trackingausfall bricht den Auszug ab.
+Der Bogen sitzt an `gripSpace` statt am Zeigestrahl. Die Controllerhand hat einen gemeinsamen anatomischen Griffpunkt mit dem 29 mm breiten Bogengriff. Handfläche, Daumen und Finger umfassen ihn; die berechneten Fingerwinkel berücksichtigen die einzelnen Gelenklängen. Das Handgelenk wird passend versetzt, Finger werden dabei nicht gestreckt. Der Bogen bleibt innerhalb des Griffstücks gerade, damit die Wurfarme nicht durch die Finger laufen.
+
+Bei echtem Handtracking bestimmen Handgelenk und Fingergrundgelenke die Lage vor der Handfläche sowie die Griffachse. Die angezeigten Finger folgen weiterhin unverändert den erfassten Gelenken; es wird keine künstliche Faust darübergelegt. Die Zughand verwendet Daumen-/Zeigefingerspitzen. Auszug und Zielrichtung bleiben aus zwei physischen Handpositionen bestimmt. Fehlende oder degenerierte notwendige Handgelenke blenden den Bogen aus und brechen den Auszug ohne Schuss ab.
 
 Der VR-Körper verwendet Kopf und Handgelenke als Eingabe für Ellbogen-/Knieberechnung. Beine setzen abwechselnd auf, schwingen über den Boden und federn beim Ducken ein; Gangrichtung folgt der Bewegung. Der Reiter bleibt auf Arins Rücken ausgerichtet, während die Kamera frei dem Kopf folgt. In MR ist dieser geschätzte Ganzkörper ausgeblendet. Fuß- und Hüftpositionen sind **Animation, kein Body Tracking**; echtes Beintracking und eine Nutzerkalibrierung bleiben Erweiterungen.
 
@@ -36,7 +38,7 @@ Die Quest rendert diese Materialien selbst. Laptop und optionale eGPU übernehme
 
 ## Nachweise und offene Hardwareprüfung
 
-Automatische Prüfungen: `npm test`, `node tools/diagnostics/check-mission-xr.mjs`, `npm run test:xr` und `node tools/diagnostics/check-presence.mjs` gegen einen separaten lokalen Server. IWER emuliert Quest-Eingaben einschließlich Handgelenken. Screenshots und Renderstatistik aus Chromium belegen Darstellung und Funktionspfade, **keine** Quest-FPS, reale Passthrough-Bilder oder ergonomische Abnahme.
+Automatische Prüfungen: `npm test`, `node tools/diagnostics/check-mission-xr.mjs`, `npm run test:xr` und `node tools/diagnostics/check-presence.mjs` gegen einen separaten lokalen Server. `npm run test:bow` ergänzt Nahaufnahmen der linken und rechten Greifhand von Handfläche und Handrücken; die echten Hand-GLBs werden auf Abstand zur Griffoberfläche geprüft. IWER emuliert Quest-Eingaben einschließlich Handgelenken. Screenshots und Renderstatistik aus Chromium belegen Darstellung und Funktionspfade, **keine** Quest-FPS, reale Passthrough-Bilder oder ergonomische Abnahme.
 
 Auf echter Quest verbleiben: Textgröße aus normaler Armhaltung, Hand-/Controller-Wechsel, Fingerkuppen-Treffer, Bogen-Griffausrichtung, Trackingverlust, Haptik und GPU-/Frametime-Messungen bei dichtem Dschungel. Der Nutzer hat die Weiterentwicklung vorerst ohne Headset gewählt.
 

@@ -38,15 +38,22 @@ try {
   await page.selectOption('#graphics-quality', 'high');
   await page.locator('#vr').click();
   await page.waitForFunction(() => v.avatar.knees.length === 2 && v.inputVisuals.entries.every(entry => entry.model.children.length > 0));
+  await page.waitForFunction(() => v.inputVisuals.skins.get(v.bow.hand).curls.middle > .9999);
   const status = await page.evaluate(async () => {
     const T = await import('three'), position = v.bow.root.getWorldPosition(new T.Vector3());
     const grip = v.controllers.find(c => c.userData.source.handedness === v.bow.hand).userData.bowGrip.getWorldPosition(new T.Vector3());
-    return { gripError: position.distanceTo(grip), skins: [...v.inputVisuals.skins.values()].map(s => s.bones.size),
+    const skin = v.inputVisuals.skins.get(v.bow.hand), wrist = skin.bones.get('wrist').getWorldPosition(new T.Vector3());
+    const finger = skin.bones.get('middle-finger-tip').getWorldPosition(new T.Vector3());
+    const localWrist = v.bow.root.worldToLocal(wrist), localFinger = v.bow.root.worldToLocal(finger);
+    const sign = v.bow.hand === 'left' ? 1 : -1;
+    return { gripError: position.distanceTo(grip), enclosesGrip: localWrist.x * sign < -.03 && localFinger.x * sign > .02,
+      skins: [...v.inputVisuals.skins.values()].map(s => s.bones.size),
       knees: v.avatar.knees.map(k => k.y), feet: v.avatar.feet.map(k => k.y), tracking: v.avatar.tracking,
       models: v.inputVisuals.entries.map(e => e.model.motionController.xrInputSource.profiles[0]),
       qualityLocked: document.getElementById('graphics-quality').disabled };
   });
-  assert(status.gripError < .001); assert.deepEqual(status.skins, [25, 25]); assert(status.qualityLocked);
+  assert(status.gripError < .001); assert(status.enclosesGrip, 'Palm and fingertips must enclose the handle');
+  assert.deepEqual(status.skins, [25, 25]); assert(status.qualityLocked);
   assert(status.models.every(name => name.includes('touch'))); assert.equal(status.tracking, 'head-hands-only');
   await page.evaluate(() => { window.xrDevice.position.y = 1.1; });
   await page.waitForFunction(knees => v.avatar.knees.every((k, i) => k.y < knees[i] - .1), status.knees);

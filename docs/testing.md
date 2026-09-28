@@ -2,6 +2,17 @@
 
 Die Prüfungen verwenden Python 3.12, Node.js, Chromium/Playwright und für XR IWER. Eine physische Quest war bei dieser Abnahme nicht angeschlossen.
 
+## Bogengriff und Handhaltung, 28. September 2026
+
+- Griff und Controllerhand teilen einen anatomischen Griffpunkt. Der 29-mm-Griff bleibt außerhalb der Handfläche; Fingerwinkel berücksichtigen die tatsächlichen Gelenklängen. Echtes Handtracking bleibt unverändert und liefert über Handflächengelenke einen getrennten Griffrahmen.
+- Python: 156 Tests und 16 Subtests ohne Skips bestanden. JavaScript: 27 Tests, Syntax und Asset-Prüfsummen bestanden. Vier neue Regressionen verwenden beide tatsächlichen Hand-GLBs: Hautabstand einschließlich Dreiecksproben, unveränderte Fingerlängen, gedrehte Griffe und Ablehnung fehlender, degenerierter oder nicht endlicher Trackingdaten. Ruff, Mypy, alle drei Missionspakete und beide TODO-Tracks bestanden.
+- Chromium: `npm run test:bow` prüft die integrierten Hand-/Bogenmodule und erstellt Nahaufnahmen beider Hände von Handfläche und Handrücken. Der Präsenztest mit hoher Grafikstufe besteht einschließlich Griffhaltung, Menüwechsel und Arin.
+- IWER: Missionsmenü, Controller-/Handauswahl, Handflächenanker und Abbruch bei fehlendem Fingergelenk ohne versehentlichen Schuss bestanden. Der vollständige XR-Lauf besteht für MR und VR einschließlich Bogentreffern, Flug, Landung, Bewegung, Streaming und Fokusabbruch.
+- Der XR-Funktionstest verwendet ein kleineres Browserfenster und das Leistungsprofil für SwiftShader. Er wartet auf die tatsächlich verarbeiteten Controllerposen und den Auszug. Der automatische Testschütze berücksichtigt Schwerkraft und Vorhalt anhand aktueller Serversamples. Die normale Testwelt mit bewegten Tieren und die Spielphysik bleiben unverändert; das Spiel erhält keine automatische Zielhilfe. Zuvor verfehlte der Testschütze bei etwa zwei emulierten Bildern pro Sekunde sein Ziel.
+- Native Windows-Abfragen an `https://localhost:8443/` bestätigen die bytegenaue Auslieferung von `bow.js`, `input-visuals.js` und `hand-pose.js`. Die laufende Sitzung benötigt zum Laden der neuen Module ein Neuladen der Seite.
+
+Die Browserprüfungen verwenden einen separaten lokalen Server mit isoliertem Spielstand und Offline-Dialogadapter. Screenshots liegen unter `.local/bow-grip-contact.png`. Die reale Quest-Griffhaltung, Haptik und Trackingqualität sind weiterhin physisch zu prüfen; diese Ergebnisse belegen keine Quest-Framerate.
+
 ## Arin als Bodenbegleiter, 28. September 2026
 
 - Hauptcheckout: Begleiterbewegung, Originalclips, Blick-/Sprechgesten und Gespräche am Boden, im Flug und in MR integriert. Eigenständige veröffentlichte Kreaturen bleiben unverändert nutzbar.

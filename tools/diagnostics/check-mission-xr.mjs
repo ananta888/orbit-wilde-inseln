@@ -104,6 +104,20 @@ try {
   assert.deepEqual(await page.evaluate(() => window.orbitView.state.player), [0, 0, 0]);
   assert.equal(await page.evaluate(() => window.orbitView.renderer.getClearAlpha()), 0);
   await page.screenshot({ path: '.local/mission-hand-menu-emulated.png' });
+  await page.evaluate(() => window.orbitView.handMenu.close());
+  await page.waitForFunction(() => window.orbitView.bow.root.visible);
+  assert(await page.evaluate(async () => {
+    const T = await import('three'), v = window.orbitView;
+    const entry = v.inputVisuals.entries.find(item => item.source?.handedness === v.bow.hand);
+    const middle = entry.hand.joints['middle-finger-phalanx-proximal'].getWorldPosition(new T.Vector3());
+    const grip = v.bow.root.getWorldPosition(new T.Vector3());
+    if (grip.distanceTo(middle) < .03) return false;
+    const joint = entry.hand.joints['pinky-finger-phalanx-proximal']; joint.visible = false;
+    v.bow.drawing = true;
+    v.inputVisuals.update(1 / 60, true, v.bow, false); v.bow.update(v.controllers, true, true, performance.now());
+    const cancelled = !v.bow.root.visible && !v.bow.drawing && v.state.shots === 0;
+    joint.visible = true; return cancelled;
+  }), 'Tracked palm stays outside the handle; missing knuckle cancels without firing');
   assert.deepEqual(errors, []);
   console.log('Emulated Quest checks passed: wrist menu, stable readable panel, native cancellation, release confirmation, 25 tracked joints, hand pinch and direct fingertip touch, no accidental arrow, stationary MR.');
 } catch (error) {

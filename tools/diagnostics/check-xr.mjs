@@ -6,9 +6,11 @@ const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM_PATH || chromium.executablePath(),
   headless: true, args: ['--no-sandbox', '--enable-unsafe-swiftshader'],
 });
-const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1100, height: 780 } });
+const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 720, height: 520 }, deviceScaleFactor: .5 });
 const emulator = await readFile(new URL('../../node_modules/iwer/build/iwer.min.js', import.meta.url), 'utf8');
 await context.addInitScript({ content: emulator + `
+  // Functional input/physics checks on SwiftShader; high quality is covered by check-presence.
+  localStorage.setItem('orbit-quality', 'performance');
   window.xrDevice = new IWER.XRDevice(IWER.metaQuest3);
   window.xrDevice.installRuntime({ forceInstall: true });
   window.xrDevice.position.set(0.5, 1.65, 0.3);
@@ -29,8 +31,18 @@ async function placeHands(bowHand, drawDistance = 0) {
     const view = window.orbitView;
     view.scene.updateMatrixWorld(true);
     const from = view.rig.localToWorld(new THREE.Vector3(-0.2, 1.4, -0.7));
-    const target = view.bodies.find(body => body.active).group.getWorldPosition(new THREE.Vector3());
-    target.y += 0.025; // Small elevation for the physical drop, no auto-aim in the app.
+    // This test archer compensates gravity and the two input frames needed to
+    // apply a pose then release. The game itself has no auto-aim. Use the latest
+    // authoritative sample rather than the intentionally delayed render pose.
+    const creature = view.state.creatures.find(body => body.active);
+    const target = view.contentRoot.localToWorld(new THREE.Vector3(...creature.position));
+    const flightTime = target.distanceTo(from) / (.6 * Math.sqrt(6000));
+    const fps = Number(document.getElementById('telemetry').textContent.match(/(\d+) FPS/)?.[1] || 30);
+    const lead = flightTime + 2 / Math.max(2, fps);
+    const velocity = new THREE.Vector3(Math.sin(creature.heading), 0, Math.cos(creature.heading))
+      .transformDirection(view.contentRoot.matrixWorld).multiplyScalar(creature.speed);
+    target.addScaledVector(velocity, lead); target.y += .5 * 9.81 * flightTime ** 2;
+    window.testAim = { creature: creature.id, sample: creature.position, point: target.toArray(), fps, lead };
     const direction = target.sub(from).normalize();
     const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, -1), direction);
     const drawHand = bowHand === 'left' ? 'right' : 'left';
@@ -48,9 +60,19 @@ async function placeHands(bowHand, drawDistance = 0) {
     }
     const localFrom = view.rig.worldToLocal(from.clone());
     const localDirection = direction.clone().transformDirection(new THREE.Matrix4().copy(view.rig.matrixWorld).invert());
-    window.testBowPose = { from: localFrom.toArray(), direction: localDirection.toArray(), drawHand };
+    window.testBowPose = { from: localFrom.toArray(), direction: localDirection.toArray(), drawHand, drawDistance };
   }, { bowHand, drawDistance });
-  await page.waitForTimeout(220);
+  // A fixed sleep can expire before even one XR frame on a software renderer.
+  // Releasing at that point fires along the previous aim from before the screenshot.
+  await page.waitForFunction(() => {
+    const v = window.orbitView, expected = window.testBowPose;
+    const bow = v.rig.worldToLocal(v.bow.bowPosition.clone()).toArray();
+    const string = v.rig.worldToLocal(v.bow.stringPosition.clone()).toArray();
+    const direction = v.bow.forward.clone().transformDirection(v.rig.matrixWorld.clone().invert()).toArray();
+    return Math.hypot(...bow.map((x, i) => x - expected.from[i])) < .002
+      && Math.hypot(...string.map((x, i) => x - expected.from[i] + expected.direction[i] * (.12 + expected.drawDistance))) < .002
+      && direction.reduce((sum, x, i) => sum + x * expected.direction[i], 0) > .9999;
+  });
 }
 async function pull(distance) {
   await page.evaluate(async distance => {
@@ -60,7 +82,7 @@ async function pull(distance) {
     const ray = new THREE.Matrix4().compose(gripP, new THREE.Quaternion().fromArray(quaternion), new THREE.Vector3(1, 1, 1)).multiply(new THREE.Matrix4().fromArray(offset).invert());
     window.xrDevice.controllers[drawHand].position.set(...new THREE.Vector3().setFromMatrixPosition(ray).toArray());
   }, distance);
-  await page.waitForTimeout(180);
+  await page.waitForFunction(distance => Math.abs(window.orbitView.bow.draw - distance) < .005, distance);
 }
 let originalWorld;
 const worldFile = process.env.ORBIT_TEST_WORLD;
@@ -223,6 +245,15 @@ try {
   await page.evaluate(() => window.xrDevice.activeSession.end());
   assert.deepEqual(errors, []);
   console.log('Emulated Quest 3 checks passed. Real passthrough image and physical controller feel still require headset testing.');
+} catch (error) {
+  console.error('XR diagnostic failure:', await page.evaluate(() => {
+    const v = window.orbitView;
+    return { mode: v?.mode, phase: v?.state?.phase, shots: v?.state?.shots, hits: v?.state?.hits,
+      draw: v?.bow.draw, aim: v?.bow.aim.toArray(), forward: v?.bow.forward.toArray(),
+      bow: v?.bow.bowPosition.toArray(), string: v?.bow.stringPosition.toArray(),
+      expected: window.testBowPose, target: window.testAim, telemetry: document.getElementById('telemetry')?.textContent };
+  }));
+  throw error;
 } finally {
   if (originalWorld) await writeFile(worldFile, originalWorld);
   await browser.close();

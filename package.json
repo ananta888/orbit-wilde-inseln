@@ -14,7 +14,8 @@
     "test:xr": "node tools/diagnostics/check-xr.mjs",
     "test:game": "node tools/diagnostics/check-browser.mjs",
     "test:design": "node tools/diagnostics/check-design.mjs && node tools/diagnostics/check-design-assets.mjs && node tools/diagnostics/check-designer-authoring.mjs && node tools/diagnostics/check-published-creature.mjs",
-    "test:design:xr": "node tools/diagnostics/check-design-xr.mjs"
+    "test:design:xr": "node tools/diagnostics/check-design-xr.mjs",
+    "test:bow": "node tools/diagnostics/check-bow-grip.mjs"
   },
   "dependencies": {
     "@webxr-input-profiles/assets": "1.0.20",

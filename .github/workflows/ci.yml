@@ -55,6 +55,7 @@ jobs:
           npm run test:browser
           node tools/diagnostics/check-mission-xr.mjs
           node tools/diagnostics/check-presence.mjs
+          npm run test:bow
           npm run test:xr
           npm run test:design
           npm run test:design:xr

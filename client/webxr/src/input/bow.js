@@ -1,5 +1,6 @@
 import * as THREE from '/vendor/three.module.js';
 import { surfaceMaterial } from '../rendering/materials.js';
+import { BOW_GRIP_RADIUS, BOW_GRIP_LENGTH } from '../xr/hand-pose.js';
 
 const shaft = new THREE.CylinderGeometry(0.004, 0.004, 0.68, 6);
 shaft.rotateX(Math.PI / 2);
@@ -31,14 +32,14 @@ export class Bow {
     this.root.visible = false;
     scene.add(this.root);
     const limbMaterial = surfaceMaterial('wood', { color: 0x8e552e, roughness: .65 });
-    const limbGeometry = new THREE.CylinderGeometry(0.013, 0.017, 1, 10);
+    const limbGeometry = new THREE.CylinderGeometry(0.010, 0.012, 1, 10);
     this.limbs = Array.from({ length: 24 }, () => {
       const limb = new THREE.Mesh(limbGeometry, limbMaterial); this.root.add(limb); return limb;
     });
-    const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.028, 0.15, 8), new THREE.MeshStandardMaterial({ color: 0x263c36 }));
+    const grip = new THREE.Mesh(new THREE.CylinderGeometry(BOW_GRIP_RADIUS, BOW_GRIP_RADIUS, BOW_GRIP_LENGTH, 12), new THREE.MeshStandardMaterial({ color: 0x263c36 }));
     this.root.add(grip);
     for (let i = 0; i < 9; i++) {
-      const wrap = new THREE.Mesh(new THREE.TorusGeometry(.026, .0022, 4, 12), grip.material);
+      const wrap = new THREE.Mesh(new THREE.TorusGeometry(BOW_GRIP_RADIUS, .0012, 4, 16), grip.material);
       wrap.rotation.x = Math.PI / 2; wrap.position.y = (i - 4) * .015; this.root.add(wrap);
     }
     const positions = new Float32Array(9);
@@ -128,7 +129,9 @@ export class Bow {
     const points = [];
     for (let i = 0; i <= 24; i++) {
       const y = (i / 12 - 1) * half;
-      const bend = Math.sin(Math.abs(y / half) * Math.PI) * -0.11 + Math.abs(y / half) ** 3 * (0.12 + amount * 0.10);
+      // Keep the riser straight inside the handle instead of bending through fingers.
+      const t = Math.max(0, (Math.abs(y) - BOW_GRIP_LENGTH / 2) / (half - BOW_GRIP_LENGTH / 2));
+      const bend = Math.sin(t * Math.PI) * -0.11 + t ** 3 * (0.12 + amount * 0.10);
       points.push(new THREE.Vector3(0, y, bend));
     }
     this.limbs.forEach((limb, i) => {
