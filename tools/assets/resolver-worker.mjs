@@ -15,8 +15,9 @@ import { BoxGeometry } from 'three';
 const workspace = process.cwd();
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 const allowedExtensions = new Set(ALL_EXTENSIONS.map(e => e.EXTENSION_NAME));
-// These require separately configured codecs; reject rather than dropping them.
-for (const name of ['KHR_draco_mesh_compression', 'EXT_meshopt_compression', 'KHR_texture_basisu']) allowedExtensions.delete(name);
+// These require configured codecs or an instance-aware bounds analyzer.
+// Reject rather than dropping their data or underestimating rendered resources.
+for (const name of ['KHR_draco_mesh_compression', 'EXT_meshopt_compression', 'KHR_texture_basisu', 'EXT_mesh_gpu_instancing']) allowedExtensions.delete(name);
 const MAX = 64 * 1024 * 1024;
 function assert(condition, message) { if (!condition) throw Error(message); }
 function local(name) {
@@ -176,13 +177,15 @@ async function analyze(doc, fileBytes) {
     time: Array.from(c.getSampler().getInput().getArray()), values: Array.from(c.getSampler().getOutput().getArray()) })))).digest('hex'), index, name: a.getName() || 'Clip ' + index,
     duration: Math.max(0, ...a.listSamplers().map(s => Math.max(...s.getInput().getMax([])))), channels: a.listChannels().length,
     targets: a.listChannels().map(c => c.getTargetNode()?.getName() || ''), tags: animationTags(a.getName()) }));
+  const drawCalls = nodes.reduce((n, node) => n + (node.getMesh()?.listPrimitives().length || 0), 0);
+  const renderTriangles = nodes.reduce((n, node) => n + (node.getMesh()?.listPrimitives() || []).reduce((sum, p) => sum + (p.getIndices() || p.getAttribute('POSITION')).getCount() / 3, 0), 0);
+  // Count ordinary node instances before the vertex-by-vertex bounds traversal.
+  assert(drawCalls <= 2048 && renderTriangles <= 2000000, 'Instantiated geometry budget');
   const bounds = meshes.length && root.getDefaultScene() ? getBounds(root.getDefaultScene()) : { min: [0, 0, 0], max: [0, 0, 0] };
   assert([...bounds.min, ...bounds.max].every(Number.isFinite), 'Invalid bounding box');
   const joints = [...new Set(skins.flatMap(s => s.listJoints()))];
   const bones = joints.map((n, index) => ({ index, name: n.getName(), parent: joints.indexOf(n.getParentNode()),
     translation: n.getTranslation(), rotation: n.getRotation(), scale: n.getScale() }));
-  const drawCalls = nodes.reduce((n, node) => n + (node.getMesh()?.listPrimitives().length || 0), 0);
-  const renderTriangles = nodes.reduce((n, node) => n + (node.getMesh()?.listPrimitives() || []).reduce((sum, p) => sum + (p.getIndices() || p.getAttribute('POSITION')).getCount() / 3, 0), 0);
   return { geometry: { vertices, triangles, renderTriangles, meshes: meshes.length, primitives }, bounds: { ...bounds, size: bounds.max.map((x, i) => x - bounds.min[i]), pose: 'rest' },
     materials: root.listMaterials().map(m => ({ name: m.getName(), pbr: !m.getExtension('KHR_materials_unlit'), alphaMode: m.getAlphaMode(), doubleSided: m.getDoubleSided() })),
     textures, skeleton: { present: skins.length > 0, bones: bones.length, joints: bones, skins: skins.length, skinning: nodes.some(n => n.getSkin()) },

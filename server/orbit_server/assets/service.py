@@ -197,7 +197,7 @@ class Resolver:
         value["license"] = next_license
         value["sourceLicenses"] = report["sourceLicenses"]
         value["provenance"].append({"operation": operation, "input": [sha256(b) for b in files.values()], "output": key,
-                                    "parameters": parameters, "tool": "orbit-assets/1; gltf-transform/4.5.0; meshoptimizer/1.3.0", "date": now()})
+                                    "parameters": parameters, "tool": "orbit-assets/1; gltf-transform/4.5.0; meshoptimizer/1.3.0; pipeline/" + self.fingerprint, "date": now()})
         LOG.info("asset_derived operation=%s asset=%s sha256=%s triangles=%s", operation, ident, key, report["geometry"]["triangles"])
         return self.store.save(owner, value)
 
@@ -234,6 +234,8 @@ class Resolver:
         value = self.store.get(owner, ident); self.enforce(value)
         if not value["verified"]: raise AssetError("Asset noch nicht geprüft", "not_ready")
         if not value["geometry"]["meshes"]: raise AssetError("Animationsbibliothek ohne Vorschaugeometrie; zuerst einem kompatiblen Modell zuordnen", "animation_library")
+        if not value["performance"]["desktop-high"]["withinBudget"]:
+            raise AssetError("Vorschau überschreitet das maximale Renderbudget; zuerst eine optimierte Variante erstellen", "budget")
         return {"asset_id": value["id"], "revision": 1, "sha256": value["sha256"], "name": value["name"],
                 "url": "/api/assets/blob/" + value["id"] + "/" + value["sha256"], "report": value["report"]}
 

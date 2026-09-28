@@ -131,3 +131,43 @@ def test_plugins_are_opt_in_configurable_and_disabled_without_loading(tmp_path,m
             finally:await resolver.close()
     asyncio.run(run())
     assert calls==['fixture']
+
+
+def test_unmeasured_gpu_instances_and_excessive_node_instances_are_rejected(tmp_path):
+    def gpu_instances(d):
+        d['extensionsUsed']=['EXT_mesh_gpu_instancing']
+        d['nodes'][0]['extensions']={'EXT_mesh_gpu_instancing':{'attributes':{'TRANSLATION':0}}}
+    def repeated_nodes(d):
+        d['nodes']=[{'mesh':0} for _ in range(2049)]
+        d['scenes'][0]['nodes']=list(range(2049))
+    async def run():
+        resolver=Resolver(tmp_path,transport=Offline());await resolver.start()
+        try:
+            for change,message in [(gpu_instances,'Unsupported extension'),(repeated_nodes,'Instantiated geometry budget')]:
+                with pytest.raises(AssetError,match=message):
+                    await resolver.upload('one','instances.glb',edit_glb(triangle(),change),metadata())
+        finally:await resolver.close()
+    asyncio.run(run())
+
+
+def test_oversized_preview_is_blocked_until_texture_optimization(tmp_path):
+    import struct
+    import zlib
+    def chunk(kind,data):
+        return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data))
+    # A valid 8192x1 original RGBA texture: small file, over the display edge budget.
+    png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',8192,1,8,6,0,0,0))
+    png+=chunk(b'IDAT',zlib.compress(b'\0'+bytes([120,160,80,255])*8192))+chunk(b'IEND',b'')
+    archive=io.BytesIO()
+    with zipfile.ZipFile(archive,'w') as z:z.writestr('Surface_Color.png',png)
+    async def run():
+        resolver=Resolver(tmp_path,transport=Offline());await resolver.start()
+        try:
+            asset=(await resolver.upload('one','material.zip',archive.getvalue(),dict(metadata(),type='material')))['asset']
+            assert asset['textures'][0]['resolution']==[8192,1]
+            with pytest.raises(AssetError,match='Renderbudget'):resolver.descriptor('one',asset['id'])
+            optimized=await resolver.optimize('one',asset['id'],'quest3-balanced')
+            assert resolver.descriptor('one',optimized['id'])['sha256']==optimized['sha256']
+            assert optimized['textures'][0]['resolution']==[1024,1]
+        finally:await resolver.close()
+    asyncio.run(run())

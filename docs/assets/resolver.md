@@ -60,7 +60,7 @@ Ein Plugin implementiert `AssetProvider` aus `assets/contracts.py` und registrie
 
 ## Lizenzmodell
 
-Die Metadaten führen Lizenzfamilie **und Version**, Lizenzlink, Urheber, Quelle, Quell-ID, Quell-URL, Nachweis-URL, Notice, Downloadzeit und Änderungen. Unterstützt sind CC0, Public Domain, CC BY, SA-, NC- und ND-Kombinationen, Custom und Unknown.
+Die Metadaten führen Lizenzfamilie **und Version**, Lizenzlink, Urheber, Quelle, Quell-ID, Quell-URL, Nachweis-URL, Notice, Downloadzeit und Änderungen. Jede abgeleitete Operation nennt zusätzlich den SHA-256-Fingerabdruck aus Worker und npm-Lockfile. Unterstützt sind CC0, Public Domain, CC BY, SA-, NC- und ND-Kombinationen, Custom und Unknown.
 
 Standardmäßig sind CC0/Public Domain und CC BY freigegeben. Andere Familien müssen vom Betreiber ausdrücklich erlaubt werden. NC bleibt bei kommerziell nutzbaren Builds gesperrt; ND bleibt in der verändernden Pipeline gesperrt. Custom benötigt zusätzlich eine freigegebene Nachweis-URL. CC BY benötigt Urheber und konkreten Lizenzlink. Diese Regeln sind eine technische Veröffentlichungsrichtlinie; sie ersetzen nicht die Prüfung, ob der Upload tatsächlich berechtigt ist.
 
@@ -75,7 +75,7 @@ Provider oder Upload → Lizenzrichtlinie → unveränderte SHA-256-Quelldateien
 → Analyse/Katalog → optionale Profilableitung → Preview/Spiel/Build
 ```
 
-GLB/glTF bleiben der Master für allgemeine Assets. Direkte Leser existieren für einfaches OBJ und STL. Ein OBJ mit MTL wird in dieser Version zurückgewiesen, damit Materialdaten nicht stillschweigend verschwinden. FBX/Blend benötigen einen manuellen Export nach GLB; eingebettetes Blender-Python wird nicht ausgeführt. glTF-Ressourcen müssen im Paket liegen; externe Ressourcen, Daten-URIs und unkonfigurierte Kompressionsdecoder sind gesperrt. Unbekannte Erweiterungen werden zurückgewiesen. Ein falscher optionaler `skin.skeleton`-Hinweis kann entfernt werden; die Warnung bleibt im Report, Joints, Bind-Matrizen und Clips bleiben erhalten, und das Ergebnis muss erneut fehlerfrei validieren.
+GLB/glTF bleiben der Master für allgemeine Assets. Direkte Leser existieren für einfaches OBJ und STL. Ein OBJ mit MTL wird in dieser Version zurückgewiesen, damit Materialdaten nicht stillschweigend verschwinden. FBX/Blend benötigen einen manuellen Export nach GLB; eingebettetes Blender-Python wird nicht ausgeführt. glTF-Ressourcen müssen im Paket liegen; externe Ressourcen, Daten-URIs und unkonfigurierte Kompressionsdecoder sind gesperrt. Unbekannte Erweiterungen werden zurückgewiesen. `EXT_mesh_gpu_instancing` benötigt zunächst einen Instanzen-fähigen Bounds-Analyzer und wird deshalb ebenfalls abgelehnt; gewöhnliche Meshinstanzen über mehrere glTF-Knoten werden vollständig gezählt. Ein falscher optionaler `skin.skeleton`-Hinweis kann entfernt werden; die Warnung bleibt im Report, Joints, Bind-Matrizen und Clips bleiben erhalten, und das Ergebnis muss erneut fehlerfrei validieren.
 
 Materialpakete verwenden Color, OpenGL-Normalen, Ambient Occlusion sowie Roughness/Metallic, soweit vorhanden. Displacement, DirectX-Normalen und weitere nicht verwendete Karten bleiben in der Originalquelle; der Report nennt sie ausdrücklich. USD-, MaterialX-, Godot- und Blender-Begleitdateien werden nur als unveränderte Quelldaten aufbewahrt, nicht interpretiert.
 
@@ -97,7 +97,7 @@ Das Dragon-Profil enthält Namenshinweise für Kopf, Hals, Wirbelsäule, Schwanz
 
 Doppelte Ressourcen und kompatible statische Primitive können zusammengefasst, statische Meshes mit Fehlergrenze vereinfacht und Texturen verkleinert werden. Skin, Morphs, Animationen und eigene Attribute schützen vor dieser Topologievereinfachung. Kompressionscodecs, allgemeines Texturbaking und anatomisches Universal-Retargeting werden nicht als verfügbare Funktionen ausgewiesen. Die atomare Aktualisierung im Browser darf kurzzeitig zwei begrenzte Platzierungssätze halten; danach werden ungenutzte Meshes, Texturen, Materialien und Instanzskelette freigegeben.
 
-LOD-Erzeugung liefert separate pinbare GLBs. Die aktuelle Spielplatzierung verwendet die gewählte feste Ableitung; sie schaltet diese LOD-Kette noch nicht automatisch nach Entfernung um. Bis zu 24 zusätzliche Weltobjekte sind zulässig; zusätzlich gelten gemeinsame Budgets von 180.000 Dreiecken, 64 Draw Calls und 128 MiB geschätztem Texturspeicher. Diese Budgets sind keine Messung der Quest-Framerate.
+LOD-Erzeugung liefert separate pinbare GLBs. Die aktuelle Spielplatzierung verwendet die gewählte feste Ableitung; sie schaltet diese LOD-Kette noch nicht automatisch nach Entfernung um. Bis zu 24 zusätzliche Weltobjekte sind zulässig; zusätzlich gelten gemeinsame Budgets von 180.000 Dreiecken, 64 Draw Calls und 128 MiB geschätztem Texturspeicher. Schon die Vorschau darf höchstens das Profil `desktop-high` ausliefern; größere kanonische Assets bleiben analysierbar/optimierbar, werden aber nicht an den Renderer gegeben. Zusätzlich begrenzt der Import gewöhnliche Knoteninstanzen auf insgesamt zwei Millionen Dreiecke und 2.048 Draw Calls, bevor die Bounds berechnet werden. Diese Budgets sind keine Messung der Quest-Framerate.
 
 ## Sicherheit und Betrieb
 

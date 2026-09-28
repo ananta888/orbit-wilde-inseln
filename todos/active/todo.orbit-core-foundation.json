@@ -1993,7 +1993,8 @@
       ],
       "evidence": [
         "2026-09-28: Tatsächliche isolierte Worker mit Animations-/Morph-Fixture, Arins Original-GLB, unabhängiger Animationsbibliothek, PBR-Paket, Retarget-Erfolg/-Ablehnung und Quellenlizenzprüfung bestanden.",
-        "Original-Arin behält 32 Bones und vier Clips; ein fehlerhafter optionaler skin.skeleton-Hinweis wird dokumentiert repariert. Keine anatomische Universalzuordnung oder Quest-Framerate behauptet."
+        "Original-Arin behält 32 Bones und vier Clips; ein fehlerhafter optionaler skin.skeleton-Hinweis wird dokumentiert repariert. Keine anatomische Universalzuordnung oder Quest-Framerate behauptet.",
+        "2026-09-28: Regressionen für GPU-Instancing, 2.049 normale Meshinstanzen und eine echte 8K-Textur bestehen. Vorschau bleibt bis zur Budgeteinhaltung gesperrt; anschließende 1K-Optimierung ist darstellbar."
       ]
     },
     {
@@ -2082,7 +2083,7 @@
         "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
       ],
       "evidence": [
-        "2026-09-28: Python 202 Tests und 16 Subtests; JavaScript 29 Tests; Ruff und Mypy erfolgreich. Browser-, Design- und IWER-Prüfungen getrennt dokumentiert.",
+        "2026-09-28: Python 204 Tests und 16 Subtests; JavaScript 29 Tests; Ruff und Mypy erfolgreich. Browser-, Design- und IWER-Prüfungen getrennt dokumentiert.",
         "2026-09-28: Native Windows-HTTPS-Abnahme nach Sicherung der SQLite-Datenbanken und Neustart: API, acht Quellen, Linux-Netzwerkisolation und Bibliotheksdateien unter localhost:8443 bestätigt.",
         "2026-09-28: Tatsächlicher Remote-Browserpfad Poly Haven → texturiertes Spielobjekt erfolgreich; Foundation, Presence, Design und IWER-VR/MR bestanden."
       ]
