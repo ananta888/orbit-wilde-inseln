@@ -33,6 +33,16 @@ def owned_process(pid: int, command: list[str]) -> bool:
         return False
 
 
+def check_port_available(port: int) -> None:
+    # Match asyncio's Unix TCP server: closed connections in TIME_WAIT must not
+    # block a restart. SO_REUSEADDR alone never shares an active listening socket.
+    with socket.socket() as probe:
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try: probe.bind(("127.0.0.1", port))
+        except OSError as error:
+            raise ValueError(f"WSL-Port {port} belegt; den zugehoerigen Dienst zuerst beenden.") from error
+
+
 def start(port: int, certificate: Path, key: Path, data: Path, urls: list[str]) -> int:
     python = ROOT / ".venv/bin/python"
     if not python.is_file(): raise ValueError("Im WSL-Checkout zuerst die .venv laut README einrichten.")
@@ -48,9 +58,7 @@ def start(port: int, certificate: Path, key: Path, data: Path, urls: list[str]) 
         if state.get("command") == command and owned_process(state["pid"], command) and healthy(port, certificate):
             return int(state["pid"])
     # Never replace a foreign listener, even if it happens to report Orbit health.
-    with socket.socket() as probe:
-        try: probe.bind(("127.0.0.1", port))
-        except OSError as error: raise ValueError(f"WSL-Port {port} belegt; den zugehoerigen Dienst zuerst beenden.") from error
+    check_port_available(port)
     with (local / f"wsl-{port}.log").open("ab") as log:
         process = subprocess.Popen(command, cwd=ROOT, stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                                    start_new_session=True, close_fds=True)

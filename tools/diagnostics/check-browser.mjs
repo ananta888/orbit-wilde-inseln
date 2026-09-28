@@ -6,8 +6,11 @@ const browser = await chromium.launch({
   headless: true,
   args: ['--no-sandbox', '--enable-unsafe-swiftshader'],
 });
-const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1440, height: 900 }, deviceScaleFactor: .7 });
+const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1440, height: 900 }, deviceScaleFactor: .5 });
 await context.addInitScript(() => {
+  // This is a functional input/physics check on SwiftShader, not a GPU benchmark.
+  // Rendering quality is checked separately by check-presence.mjs using "high".
+  localStorage.setItem('orbit-quality', 'performance');
   const OriginalWebSocket = window.WebSocket;
   window.WebSocket = new Proxy(OriginalWebSocket, {
     construct(Target, args) {
@@ -58,7 +61,7 @@ try {
   await page.keyboard.press('f');
   await page.waitForFunction(() => window.orbitView.state.flying);
   await page.keyboard.down('Space');
-  await page.waitForFunction(() => window.orbitView.state.altitude > 11);
+  await page.waitForFunction(() => window.orbitView.state.altitude > 11, null, { timeout: 60000 });
   await page.keyboard.up('Space');
   await page.waitForFunction(() => !window.orbitView.movement.pending.length && !window.orbitView.movement.buffer.dt);
   const hoverY = await page.evaluate(() => window.orbitView.state.player[1]);
@@ -105,7 +108,7 @@ try {
   assert.deepEqual(errors, []);
   console.log('Browser checks passed: wildlife, ballistic hit, WASD, flight/climb/hover/descent/landing, streamed islands, mouse look, pause/resume, reconnect, mobile layout, no JavaScript errors.');
 } catch (error) {
-  console.error('Desktop diagnostic failure:', errors, await page.evaluate(() => ({ phase: window.orbitView?.state?.phase, shots: window.orbitView?.state?.shots, hits: window.orbitView?.state?.hits, altitude: window.orbitView?.state?.altitude, input: [...(window.orbitView?.movement?.keys || [])], events: window.testEvents })));
+  console.error('Desktop diagnostic failure:', errors, await page.evaluate(() => ({ phase: window.orbitView?.state?.phase, shots: window.orbitView?.state?.shots, hits: window.orbitView?.state?.hits, altitude: window.orbitView?.state?.altitude, telemetry: document.getElementById('telemetry')?.textContent, input: [...(window.orbitView?.movement?.keys || [])], events: window.testEvents })));
   await page.screenshot({ path: '.local/browser-failure.png' }); throw error;
 } finally {
   await browser.close();

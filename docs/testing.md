@@ -2,6 +2,20 @@
 
 Die Prüfungen verwenden Python 3.12, Node.js, Chromium/Playwright und für XR IWER. Eine physische Quest war bei dieser Abnahme nicht angeschlossen.
 
+## Arin als Bodenbegleiter, 28. September 2026
+
+- Hauptcheckout: Begleiterbewegung, Originalclips, Blick-/Sprechgesten und Gespräche am Boden, im Flug und in MR integriert. Eigenständige veröffentlichte Kreaturen bleiben unverändert nutzbar.
+- Python: vollständiger Lauf mit 156 Tests und 16 Subtests bestanden, ohne übersprungene Tests; Node für den Optimierer explizit über `ORBIT_NODE` ausgewählt. Enthalten sind zwei neue Linux-Sockettests für den WSL-Starthelfer: sofortige Wiederverwendung nach TIME_WAIT und Ablehnung eines weiterhin erreichbaren fremden Listeners.
+- JavaScript: 23 Tests mit echtem GLB-Skelett bestanden; Syntax und lokale Asset-Prüfsummen geprüft. Ruff, Mypy, Validierung/Bau aller drei Missionspakete und beide TODO-Tracks bestanden.
+- Chromium/Playwright: Foundation, Präsenz, Desktop-Bogen/Flug/Streaming/Reconnect, Werkstattbearbeitung, GLB-Rundlauf, Ebenen/Rig/Optimierung und Veröffentlichung → isolierter Probeflug → Werkstatt bestanden. Der Präsenztest prüft auch Bodengespräch, schmale Menüs, Landung und die unveränderte hohe Grafikstufe.
+- IWER-Emulation: Missionsmenü, Controller-/Handauswahl, MR-/VR-Bogentreffer, Flug/Schweben/Landung, Gehen/Streaming, Fokusabbruch sowie Stereo-Werkstatt, Controller-/Pinch-Bearbeitung und MR-Transparenz bestanden. Dies sind keine physischen Quest-Messungen.
+- Der Desktop-Maus-/Ballistiktest (`check-browser.mjs`) lief separat mit `rules.targetSpeed = 0`, Leistungsprofil und Pixelverhältnis 0,5. Bewegte Ziele waren bei der niedrigen SwiftShader-Bildrate für diesen Mausablauf nicht zuverlässig treffbar. Bewegte Kollisionen bleiben durch die Python-Tests abgedeckt; die XR-Treffertests liefen mit der normalen Testwelt. Diese funktionalen Tests sind kein GPU- oder Quest-Leistungsnachweis.
+- Laufender HTTPS-Dienst: beide vorhandenen SQLite-Datenbanken vor dem Neustart gesichert und ihre Integrität geprüft. Native Windows-Abfragen an `https://localhost:8443/` bestätigen Protokoll 4 und bytegenaue Übereinstimmung von HTML, `app.js`, Begleiterbewegung, Drachenanimation und Dialogmodul. Ein zusätzlicher Chromium-Lauf gegen das weitergeleitete WSL-Backend bestätigt sichtbaren Arin am Boden, vier Originalclips, zwei Hände mit je 25 Gelenken und das geöffnete Gesprächsmenü ohne JavaScript-Fehler.
+
+Die Browserdiagnosen verwenden separate lokale Testdaten und einen Offline-Dialogadapter. Zum Wiederholen der stationären Desktop-Fixture eine Kopie von `content/core/world.json` in einem ignorierten Testordner anlegen, darin `rules.targetSpeed` auf `0` setzen und den Testserver mit `--world <kopie.json> --data-dir <testordner>` starten. `ORBIT_URL` weist auf diesen Testserver; `CHROMIUM_PATH` kann einen vorhandenen Playwright-Browser auswählen. Die normale Spielwelt und bestehende Spielstände werden dabei nicht überschrieben.
+
+Neue physische Quest-, Mikrofon-, Whisper-/GPU-, Ananta-/LLM- oder Piper-Abnahmen gehören nicht zu diesem Lauf. Bildschirmfotos und Sicherungen liegen ausschließlich unter dem ignorierten `.local`-Verzeichnis.
+
 ## HTTPS-Start unter Windows, 28. September 2026
 
 - Python: 148 Tests und 16 Subtests im Gesamtlauf bestanden. Ein optionaler Optimierertest wurde wegen fehlendem Node im Shell-PATH übersprungen; danach bestanden beide Optimierertests mit explizitem `ORBIT_NODE`. Damit wurden alle 149 verschiedenen Tests ausgeführt.

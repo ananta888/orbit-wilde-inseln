@@ -1589,23 +1589,27 @@
         "docs/vr/setup.md",
         "docs/architecture/adr/005-windows-wsl-launch.md",
         "README.md",
-        "docs/testing.md"
+        "docs/testing.md",
+        "tests/test_wsl_backend.py"
       ],
       "description": "Der alte native Windows-Prototyp belegte HTTPS 8443, waehrend der neue Checkout nur auf HTTP 8444 lief. Ein reproduzierbarer Windows-Start muss dieselbe Adresse mit dem aktuellen Code bedienen.",
       "implementation_plan": [
         "Aktuellen HTTPS-Spielserver in vorhandener WSL-Umgebung betreiben; native Windows-TCP-Weiterleitung fuer denselben Clientzugang bereitstellen.",
         "Vorhandenes lokales Zertifikat und Linux-KI-Konfiguration beibehalten; eigene Backend-Prozesse nach PID, Befehl und HTTPS-Antwort erkennen.",
-        "Neuen Dienst vor Umschaltung pruefen, Spielstaende sichern und alten Launcher auf den aktuellen Checkout umstellen."
+        "Neuen Dienst vor Umschaltung pruefen, Spielstaende sichern und alten Launcher auf den aktuellen Checkout umstellen.",
+        "Sofortigen Neustart nach geschlossenen TCP-Verbindungen erlauben; aktive fremde Listener weiterhin ablehnen."
       ],
       "acceptance_criteria": [
         "HTTPS /health meldet orbit-wilde-inseln und Protokoll 4; Root und Designer stammen aus diesem Checkout.",
         "WebSockets, Geometrieprozesse und Optimierung funktionieren ueber die Windows-HTTPS-Adresse; die vorhandene WSL-Laufzeit bleibt massgeblich.",
-        "Bestehende Spielstaende bleiben erhalten; Launcher ueberschreibt keinen fremden Listener und erkennt Startfehler."
+        "Bestehende Spielstaende bleiben erhalten; Launcher ueberschreibt keinen fremden Listener und erkennt Startfehler.",
+        "Der Portcheck erlaubt TIME_WAIT nach einem eigenen Shutdown; ein aktiver fremder Listener bleibt geschützt."
       ],
       "tests": [
         "Socket-Tests fuer bidirektionale Bytes, Halb-Schliessen, Verbindungslimit und Shutdown; PowerShell-Parser und echter Start/Portkonfliktpfad unter Windows.",
         "Browserpruefung von Spiel, Werkstatt, Authoring und Probeflug gegen separate Windows-Testdaten.",
-        "Vergleich von HTTPS /health, HTML und WebSocket-Protokoll an der produktiven Adresse."
+        "Vergleich von HTTPS /health, HTML und WebSocket-Protokoll an der produktiven Adresse.",
+        "python -m pytest tests/test_launcher.py tests/test_wsl_backend.py: echte TCP-Verbindungen, TIME_WAIT und aktiver Portkonflikt."
       ],
       "definition_of_done": [
         "Aktueller Windows-Listener laeuft auf 8443; alte Startverknuepfung fuehrt zum neuen Checkout.",
@@ -1615,7 +1619,8 @@
         "2026-09-28: Windows-HTTPS auf 8443 meldet aktuellen Checkout und Protokoll 4; Root/Designer/app.js bytegenau verglichen.",
         "Native Windows-Chrome-Tests fuer Authoring und Veroeffentlichung/Probeflug gegen getrennte Testdaten bestanden.",
         "SQLite-Backups geprueft, dieselben WSL-Daten weiterverwendet; lokalen Prototyp-Starter nach Sicherung umgeleitet.",
-        "Socket-, Portkonflikt-, Backend-Wiederverwendungs- und Foundation-Pruefungen: docs/testing.md."
+        "Socket-, Portkonflikt-, Backend-Wiederverwendungs- und Foundation-Pruefungen: docs/testing.md.",
+        "2026-09-28: Neustart nach gesichertem SQLite-Backup; unveränderte Windows-Weiterleitung liefert aktuellen Stand. Neuer Portcheck erlaubt TIME_WAIT und schützt aktive Listener; vier lokale Socket-/Relaytests bestanden."
       ]
     },
     {
@@ -1740,12 +1745,12 @@
     {
       "id": "ARIN-COMPANION",
       "title": "Arin am Boden sichtbar machen und Gespräche in allen Spielmodi ermöglichen",
-      "status": "partial",
+      "status": "done",
       "type": "implementation",
       "milestone_id": "ARIN",
       "priority": "P1",
       "risk": "medium",
-      "progress_percent": 90,
+      "progress_percent": 100,
       "dependencies": [
         "ARIN-FLIGHT",
         "XR-HAND-UI"
@@ -1768,7 +1773,9 @@
         "tools/diagnostics/check-presence.mjs",
         "docs/architecture/adr/007-ground-companion.md",
         "README.md",
-        "ARCHITECTURE.md"
+        "ARCHITECTURE.md",
+        "tools/diagnostics/check-browser.mjs",
+        "docs/testing.md"
       ],
       "acceptance_criteria": [
         "Arin bleibt in VR nach der Landung neben dem Spieler sichtbar; Originalclips idle/walk werden passend und ohne Kamerabewegung überblendet.",
@@ -1780,17 +1787,18 @@
       "tests": [
         "Node-Tests mit echtem GLB-Skelett ohne Texturdekodierung; Folgebewegung, Clipmischung und Pose-Drift",
         "Python-Dialogtests mit kontrolliertem Provider: Boden/MR/Flug, Abbruch, Warteschlange",
-        "check-presence.mjs: Desktop-Gespräch, schmale Menüs, VR-Landung und MR-Controlleranfrage; Chromium/IWER in GitHub CI"
+        "check-presence.mjs: Desktop-Gespräch, schmale Menüs, VR-Landung und MR-Controlleranfrage; Chromium/IWER in GitHub CI",
+        "Vollständige Python-/JavaScript-Suite; Foundation, Präsenz, XR, Werkstatt/GLB/Authoring/Probeflug und Design-XR; native Windows-HTTPS-Dateivergleich und Browser-Smoke."
       ],
       "definition_of_done": [
         "Getestete Implementierung und tatsächliche Ausführungsgrenzen dokumentiert.",
-        "Übernahme ins Hauptrepository und Browserprüfung getrennt vom lokalen Änderungsstand ausweisen."
+        "Implementierung im Hauptcheckout übernommen; Browserprüfung, produktiver HTTPS-Stand und verbleibende Hardware-Abnahme getrennt dokumentiert."
       ],
       "evidence": [
-        "2026-09-28: 23 JavaScript-Tests einschließlich echtem GLB-Rig sowie 65 relevante Python-Tests und 11 Subtests bestanden. Ruff, Mypy, Content-, Asset- und TODO-Validierung bestanden.",
+        "2026-09-28: Hauptcheckout main enthält 6b11238 und a081047. Vollständiger Python-Lauf: 156 Tests und 16 Subtests ohne Skips; 23 JavaScript-Tests samt echtem GLB-Rig. Ruff, Mypy, drei Content-Pakete und Asset-Validierung bestanden.",
         "Geh-Richtung aus Positionsdeltas abgeleitet, da die vorhandene Bodenbewegung Geschwindigkeit null meldet. Regression prüft Richtungswechsel, begrenzte Folgegeschwindigkeit, stabiles Umsehen, Klippen, Originalclips und Standhöhe unter Elterntransformationen.",
-        "Browserdiagnose für Desktop-Dialog, schmale Menüs, VR-Landung und MR-B-Taster erweitert, in dieser Sitzung noch nicht ausgeführt. Lokale Server-/Chromium-Starts sind eingeschränkt. GitHub-Schreibwerkzeug verlangt eine nicht verfügbare Genehmigung; dadurch auch keine neue CI-Ausführung.",
-        "Implementierung in isolierter Arbeitskopie committed. Hauptcheckout und laufender HTTPS-Server bleiben unverändert, da außerhalb des beschreibbaren Arbeitsordners. Keine neue Quest-, Mikrofon-, LLM- oder TTS-Hardwareprüfung."
+        "Chromium/IWER: Desktop-Dialog, schmale Menüs, Bodenbegleiter, VR-Landung und MR-B-Taster bestanden. Foundation, Missions-XR, Flug-/Bogen-XR, Werkstatt, GLB-Rundlauf, Authoring, veröffentlichte Kreatur im Probeflug und Design-XR bestanden. Desktop-Maustreffer separat mit stationärer Tier-Fixture; Grenzen in docs/testing.md.",
+        "Produktiver HTTPS-Server nach SQLite-Sicherung neu gestartet. Native Windows-Adresse localhost:8443 liefert neue Dateien bytegenau; Browser-Smoke bestätigt sichtbaren Begleiter, vier Originalclips und Gesprächsmenü ohne JavaScript-Fehler. Keine neue physische Quest-, Mikrofon-, Whisper-/GPU-, Ananta-/LLM- oder Piper-Abnahme."
       ]
     }
   ],
@@ -1817,11 +1825,11 @@
     "by_status": {
       "todo": 16,
       "in_progress": 1,
-      "partial": 2,
+      "partial": 1,
       "blocked": 0,
-      "done": 31
+      "done": 32
     },
-    "progress_percent_done": 62.0,
+    "progress_percent_done": 64.0,
     "by_priority": {
       "P0": 30,
       "P1": 6,
