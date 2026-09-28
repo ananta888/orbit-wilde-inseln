@@ -1,4 +1,5 @@
 import * as THREE from '/vendor/three.module.js';
+import { NOISE } from './materials.js';
 
 export const clock = { value: 0 };
 const shadowCanvas = document.createElement('canvas'); shadowCanvas.width = shadowCanvas.height = 64;
@@ -45,8 +46,18 @@ function leaf(length = 3, width = 0.45, droop = 1, segments = 12) {
   return g;
 }
 const cylinder = new THREE.CylinderGeometry(0.13, 0.21, 1, 9);
-const sphere = new THREE.SphereGeometry(1, 10, 7);
-export function floraGeometry(kind) {
+const sphere = new THREE.SphereGeometry(1, 16, 10);
+function palmFrond() {
+  const pieces = [], stem = leaf(3.9, .035, 1.6, 10), leaflet = leaf(1, .065, .12, 2);
+  pieces.push(part(stem, '#9aae67'));
+  for (let j = 1; j <= 13; j++) for (const side of [-1, 1]) {
+    const t = j / 15, length = .28 + Math.sin(t * Math.PI) * .63;
+    const y = Math.sin(t * Math.PI * .9) * .5 - t * t * 1.6;
+    pieces.push(part(leaflet, j % 3 ? '#569750' : '#75aa56', [side * .016, y, -t * 3.9], [1, 1, length], [.12, side * 1.1, side * .12]));
+  }
+  const result = mergeParts(pieces); stem.dispose(); leaflet.dispose(); return result;
+}
+export function floraGeometry(kind, detailed = true) {
   const parts = [];
   if (kind === 'palm' || kind === 'broadleaf') {
     const palm = kind === 'palm', height = palm ? 6.5 : 4.2;
@@ -54,8 +65,8 @@ export function floraGeometry(kind) {
       const t = i / 7;
       parts.push(part(cylinder, i % 2 ? '#846847' : '#967553', [Math.sin(t * 1.4) * 0.65, t * height + height / 14, 0], [1 - t * 0.2, height / 7 + 0.035, 1 - t * 0.2], [0, 0, -0.1]));
     }
-    const blade = leaf(palm ? 3.9 : 2.8, palm ? 0.32 : 0.78, palm ? 1.6 : 0.6);
-    for (let i = 0; i < (palm ? 12 : 13); i++) {
+    const blade = palm ? (detailed ? palmFrond() : leaf(3.9, .52, 1.6, 5)) : leaf(2.8, .78, .6, detailed ? 12 : 4);
+    for (let i = 0; i < (palm ? 10 : 11); i++) {
       parts.push(part(blade, ['#397644', '#52984a', '#6ca451'][i % 3], [0.65, height - (i % 2) * 0.45, 0], [1, 1, 1], [(i % 3 - 1) * 0.17, i * 2.399, 0]));
     }
     if (palm) for (let i = 0; i < 3; i++) parts.push(part(sphere, '#655536', [0.65 + Math.cos(i * 2) * 0.2, height - 0.2, Math.sin(i * 2) * 0.2], [0.18, 0.23, 0.18]));
@@ -72,7 +83,7 @@ export function floraGeometry(kind) {
     }
     blade.dispose();
   } else {
-    const rock = new THREE.IcosahedronGeometry(1, 1);
+    const rock = new THREE.IcosahedronGeometry(1, detailed ? 2 : 0);
     const p = rock.attributes.position;
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
@@ -92,12 +103,17 @@ export function floraGeometry(kind) {
 }
 
 export function foliageMaterial() {
-  const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, side: THREE.DoubleSide });
+  const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.79, side: THREE.DoubleSide });
   material.forceSinglePass = true;
   material.onBeforeCompile = shader => {
     shader.uniforms.uTime = clock;
-    shader.vertexShader = 'uniform float uTime;\n' + shader.vertexShader;
+    shader.vertexShader = 'uniform float uTime; varying vec3 vLeaf;\n' + shader.vertexShader;
+    shader.fragmentShader = 'varying vec3 vLeaf;\n' + NOISE + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+      float veins=.97+.03*sin(vLeaf.z*52.+vLeaf.x*29.);
+      diffuseColor.rgb*=veins*(.9+.2*orbitNoise(vLeaf*7.));`);
     shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      vLeaf=position;
       float sway = sin(uTime * 0.8 + position.y * 0.45);
       transformed.x += sway * max(0.0, position.y - 1.0) * 0.018;
       transformed.z += cos(uTime * 0.55 + position.y) * max(0.0, position.y - 2.0) * 0.012;`);
@@ -108,18 +124,25 @@ export function foliageMaterial() {
 export function waterMaterial() {
   return new THREE.ShaderMaterial({ uniforms: { uTime: clock, uOpacity: { value: 1 } },
     vertexShader: `attribute float depth; varying vec3 vWorld; varying float vDepth; uniform float uTime;
-    void main(){ vec3 p=position; p.y += sin(p.x*.65+uTime)*.035+cos(p.z*.9-uTime*1.2)*.025;
-      vec4 world=modelMatrix*vec4(p,1.); vWorld=world.xyz; vDepth=depth;
-      gl_Position=projectionMatrix*viewMatrix*world; }`,
-    fragmentShader: `uniform float uTime; uniform float uOpacity; varying vec3 vWorld; varying float vDepth;
-    void main(){float ripple=sin(vWorld.x*2.+uTime*1.3+sin(vWorld.z*1.6))*sin(vWorld.z*2.4-uTime);
-      float depth=clamp(vDepth/5.,0.,1.); vec3 c=mix(vec3(.18,.64,.55),vec3(.018,.27,.34),depth);
-      float fresnel=pow(1.-max(0.,normalize(cameraPosition-vWorld).y),4.);
-      c=mix(c,vec3(.65,.83,.8),fresnel*.6); c+=pow(max(0.,ripple),18.)*.28;
-      float foam=(1.-smoothstep(.05,.5,vDepth))*(.4+.2*sin(vWorld.x*3.+vWorld.z*2.+uTime*2.));
-      c=mix(c,vec3(.83,.91,.79),foam);
-      c=mix(c,vec3(.61,.79,.73),smoothstep(35.,100.,length(cameraPosition-vWorld)));
-      gl_FragColor=vec4(c,uOpacity);
+    void main(){vec3 p=position;float shore=smoothstep(0.,1.,depth);p.y+=(sin(p.x*.62+uTime)*.045+cos(p.z*.83-uTime*1.2)*.03)*shore;
+      vec4 world=modelMatrix*vec4(p,1.);vWorld=world.xyz;vDepth=depth;gl_Position=projectionMatrix*viewMatrix*world;}`,
+    fragmentShader: NOISE + `uniform float uTime;uniform float uOpacity;varying vec3 vWorld;varying float vDepth;
+    void main(){
+      if(vDepth<.012)discard;
+      vec2 p=vWorld.xz;
+      float swell=sin(p.x*.62+uTime),crossWave=sin(p.y*.83-uTime*1.2);
+      float detail=orbitFbm(vec3(p*1.8,uTime*.32));
+      vec3 n=normalize(vec3(-cos(p.x*.62+uTime)*.045+sin(p.y*5.+uTime)*.027,1.,crossWave*.04+cos(p.x*6.-uTime)*.032));
+      vec3 view=normalize(cameraPosition-vWorld), reflected=reflect(-view,n), light=normalize(vec3(-22.,38.,-28.));
+      float fresnel=.035+.965*pow(1.-max(0.,dot(view,n)),5.);
+      vec3 water=mix(vec3(.055,.48,.39),vec3(.008,.10,.145),smoothstep(0.,9.,vDepth));
+      vec3 sky=mix(vec3(.67,.80,.78),vec3(.16,.36,.56),max(0.,reflected.y));
+      float spec=pow(max(0.,dot(n,normalize(light+view))),180.);
+      float caustic=pow(max(0.,sin(p.x*3.+detail*8.)*sin(p.y*3.7-detail*6.+uTime)),7.)*exp(-vDepth*.8);
+      float foam=(1.-smoothstep(.02,.75,vDepth))*(.25+smoothstep(.45,.75,detail)*.65);
+      vec3 color=mix(water,sky,fresnel*.85)+vec3(1.,.82,.57)*spec*2.5+caustic*vec3(.12,.27,.18);
+      color=mix(color,vec3(.82,.92,.86),foam);color=mix(color,vec3(.55,.72,.70),smoothstep(45.,160.,length(cameraPosition-vWorld))*.7);
+      gl_FragColor=vec4(color,uOpacity);
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
     }`, transparent: true, depthWrite: false });
@@ -141,10 +164,10 @@ export function addSky(parent) {
   const sky = new THREE.Mesh(new THREE.SphereGeometry(210, 32, 20), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false,
     uniforms: { uTime: clock, uSpace: { value: 0 } },
     vertexShader: `varying vec3 vPos;void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-    fragmentShader: `varying vec3 vPos;uniform float uTime;uniform float uSpace;
+    fragmentShader: NOISE + `varying vec3 vPos;uniform float uTime;uniform float uSpace;
     void main(){vec3 d=normalize(vPos);float h=max(0.,d.y);vec3 c=mix(vec3(.70,.83,.76),vec3(.18,.51,.66),pow(h,.55));
       float sun=pow(max(0.,dot(d,normalize(vec3(-.45,.52,-.7)))),200.);c+=vec3(1.,.8,.4)*sun*.7;
-      float cloud=sin(d.x*12.+d.z*4.+uTime*.008)*sin(d.z*16.-d.x*3.);cloud=smoothstep(.2,.8,cloud)*(1.-smoothstep(.2,.65,h))*smoothstep(0.,.12,h);
+      float cloud=orbitFbm(vec3(d.xz/max(.12,h)*1.8+vec2(uTime*.008,0.),.5));cloud=smoothstep(.47,.74,cloud)*(1.-smoothstep(.4,.85,h))*smoothstep(0.,.12,h);
       c=mix(c,vec3(.89,.91,.8),cloud*.65);
       vec3 cell=floor(d*650.);float star=step(.9987,fract(sin(dot(cell,vec3(17.13,93.7,41.9)))*43758.5453));
       vec3 night=vec3(.008,.016,.043)+star*vec3(.7,.8,1.);c=mix(c,night,uSpace);gl_FragColor=vec4(c,1.);

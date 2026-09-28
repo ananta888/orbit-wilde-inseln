@@ -1,5 +1,6 @@
 import * as THREE from '/vendor/three.module.js';
 import { clock, floraGeometry, foliageMaterial, waterMaterial, waterfallMaterial, shadowGeometry, shadowTexture } from '/src/rendering/jungle.js';
+import { surfaceMaterial } from './materials.js';
 import { FLIGHT, coordinates, accelerate } from '/src/input/flight.js';
 
 export class LiveScene {
@@ -8,6 +9,7 @@ export class LiveScene {
     this.geometry = { box: new THREE.BoxGeometry(1, 1, 1), sphere: new THREE.SphereGeometry(.5, 12, 8),
       cylinder: new THREE.CylinderGeometry(.5, .5, 1, 8), cone: new THREE.ConeGeometry(.5, 1, 8), crystal: new THREE.OctahedronGeometry(.5) };
     for (const kind of ['palm', 'broadleaf', 'fern', 'rock', 'cliff']) this.geometry[kind] = floraGeometry(kind);
+    this.lowGeometry = Object.fromEntries(['palm', 'broadleaf', 'rock', 'cliff'].map(kind => [kind, floraGeometry(kind, false)]));
     this.floraMaterial = foliageMaterial();
     this.chunks = new Map(); this.data = new Map(); this.queue = new Map(); this.retiring = [];
     this.mixed = false; this.revision = 0; this.appliedRevision = 0; this.areas = 0; this.title = '';
@@ -47,10 +49,10 @@ export class LiveScene {
     g.setIndex(indices); g.computeVertexNormals(); g.computeBoundingSphere(); return g;
   }
   build(chunk) {
-    const group = new THREE.Group(); Object.assign(group.userData, { id: chunk.id, version: chunk.version });
+    const group = new THREE.Group(); Object.assign(group.userData, { id: chunk.id, version: chunk.version, terrain: chunk.terrain });
     if (chunk.terrain) {
-      const ground = new THREE.Mesh(this.terrainGeometry(chunk.terrain, false, chunk.palette), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }));
-      ground.userData.ownedGeometry = true; ground.userData.vrOnly = true; group.add(ground);
+      const ground = new THREE.Mesh(this.terrainGeometry(chunk.terrain, false, chunk.palette), surfaceMaterial('terrain', { vertexColors: true, roughness: .96 }));
+      ground.receiveShadow = true; ground.userData.ownedGeometry = true; ground.userData.vrOnly = true; group.add(ground);
       if (chunk.terrain.heights.some(h => h < .1)) {
         const water = new THREE.Mesh(this.terrainGeometry(chunk.terrain, true), waterMaterial());
         water.userData.ownedGeometry = true; water.userData.vrOnly = true; group.add(water);
@@ -65,14 +67,15 @@ export class LiveScene {
         shadows.instanceMatrix.needsUpdate = true; shadows.computeBoundingSphere(); shadows.userData.vrOnly = true; group.add(shadows);
       }
       for (const [kind, props] of kinds) {
-        const material = ['rock', 'cliff'].includes(kind) ? new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }) : this.floraMaterial.clone();
+        const material = ['rock', 'cliff'].includes(kind) ? surfaceMaterial('stone', { vertexColors: true, roughness: .91 }) : this.floraMaterial.clone();
         if (!['rock', 'cliff'].includes(kind)) material.onBeforeCompile = this.floraMaterial.onBeforeCompile;
         const stone = ['rock', 'cliff'].includes(kind), base = new THREE.Color(stone ? '#647a70' : '#39854c');
         const tint = new THREE.Color(chunk.palette[stone ? 'stone' : 'foliage']);
         material.color.setRGB(Math.min(2, tint.r / base.r), Math.min(2, tint.g / base.g), Math.min(2, tint.b / base.b));
         const batch = new THREE.InstancedMesh(this.geometry[kind], material, props.length);
         props.forEach((p, i) => { transform.position.set(...p.position); transform.rotation.set(0, p.yaw, 0); transform.scale.setScalar(p.scale); transform.updateMatrix(); batch.setMatrixAt(i, transform.matrix); });
-        batch.instanceMatrix.needsUpdate = true; batch.computeBoundingSphere(); batch.userData.vrOnly = true; group.add(batch);
+        batch.userData.flora = kind;
+        batch.castShadow = kind !== 'fern'; batch.receiveShadow = true; batch.instanceMatrix.needsUpdate = true; batch.computeBoundingSphere(); batch.userData.vrOnly = true; group.add(batch);
       }
       for (const fall of chunk.falls) {
         const [x, y, z] = fall.position;
@@ -90,11 +93,11 @@ export class LiveScene {
     }
     for (const object of chunk.objects) {
       const mesh = new THREE.Mesh(this.geometry[object.kind], new THREE.MeshStandardMaterial({ color: object.color, roughness: .9 }));
-      mesh.position.set(...object.position); mesh.rotation.set(...object.rotation); mesh.scale.set(...object.scale); mesh.userData.vrOnly = object.space === 'vr'; group.add(mesh);
+      mesh.castShadow = mesh.receiveShadow = true; mesh.position.set(...object.position); mesh.rotation.set(...object.rotation); mesh.scale.set(...object.scale); mesh.userData.vrOnly = object.space === 'vr'; group.add(mesh);
     }
     group.traverse(object => {
       if (object.userData.vrOnly) object.visible = !this.mixed;
-      if (object.material) { object.userData.opacity = object.material.opacity; object.material.transparent = true; object.material.opacity = 0; if (object.material.uniforms?.uOpacity) object.material.uniforms.uOpacity.value = 0; }
+      if (object.material) { object.userData.opacity = object.material.opacity; object.userData.transparent = object.material.transparent; object.material.transparent = true; object.material.opacity = 0; if (object.material.uniforms?.uOpacity) object.material.uniforms.uOpacity.value = 0; }
     });
     group.userData.fade = 0;
     return group;
@@ -103,10 +106,12 @@ export class LiveScene {
     group.userData.fade = amount;
     for (const object of group.children) if (object.material) {
       object.material.opacity = amount * object.userData.opacity * this.detailOpacity;
+      const transparent = object.userData.transparent || object.material.opacity < .999;
+      if (object.material.transparent !== transparent) { object.material.transparent = transparent; object.material.needsUpdate = true; }
       if (object.material.uniforms?.uOpacity) object.material.uniforms.uOpacity.value = amount * this.detailOpacity;
     }
   }
-  tick(dt, now) {
+  tick(dt, now, viewer = null, detailDistance = 24) {
     clock.value = now / 1000;
     this.root.visible = this.detailOpacity > .001;
     if (this.queue.size) {
@@ -119,6 +124,16 @@ export class LiveScene {
     }
     if (!this.queue.size) this.appliedRevision = this.revision;
     for (const group of this.chunks.values()) if (group.userData.fade < 1 || this.lastOpacity !== this.detailOpacity) this.fade(group, Math.min(1, group.userData.fade + dt * 3));
+    if (viewer) for (const group of this.chunks.values()) {
+      const terrain = group.userData.terrain; if (!terrain) continue;
+      const near = Math.hypot(viewer.x - (terrain.x + terrain.size / 2), viewer.z - (terrain.z + terrain.size / 2)) < detailDistance + terrain.size / 2;
+      for (const batch of group.children) {
+        const kind = batch.userData.flora; if (!kind || !this.lowGeometry[kind]) continue;
+        const geometry = near ? this.geometry[kind] : this.lowGeometry[kind];
+        if (batch.geometry !== geometry) { batch.geometry = geometry; batch.computeBoundingSphere(); }
+        batch.castShadow = near;
+      }
+    }
     this.lastOpacity = this.detailOpacity;
     this.retiring = this.retiring.filter(group => {
       this.fade(group, Math.max(0, group.userData.fade - dt * 3));

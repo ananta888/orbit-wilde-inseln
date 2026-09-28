@@ -6,13 +6,14 @@ const browser = await chromium.launch({
   headless: true,
   args: ['--no-sandbox', '--enable-unsafe-swiftshader'],
 });
-const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1440, height: 900 } });
+const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1440, height: 900 }, deviceScaleFactor: .7 });
 await context.addInitScript(() => {
   const OriginalWebSocket = window.WebSocket;
   window.WebSocket = new Proxy(OriginalWebSocket, {
     construct(Target, args) {
       const socket = new Target(...args);
-      window.testSocket = socket;
+      window.testSocket = socket; window.testEvents = [];
+      socket.addEventListener('message', event => { const m = JSON.parse(event.data); if (['hit', 'miss', 'ignored', 'error'].includes(m.type)) { window.testEvents.push(m); if (window.testEvents.length > 20) window.testEvents.shift(); } });
       return socket;
     },
   });
@@ -103,6 +104,9 @@ try {
   assert.equal(await page.locator('dialog').evaluate(element => element.open), true);
   assert.deepEqual(errors, []);
   console.log('Browser checks passed: wildlife, ballistic hit, WASD, flight/climb/hover/descent/landing, streamed islands, mouse look, pause/resume, reconnect, mobile layout, no JavaScript errors.');
+} catch (error) {
+  console.error('Desktop diagnostic failure:', errors, await page.evaluate(() => ({ phase: window.orbitView?.state?.phase, shots: window.orbitView?.state?.shots, hits: window.orbitView?.state?.hits, altitude: window.orbitView?.state?.altitude, input: [...(window.orbitView?.movement?.keys || [])], events: window.testEvents })));
+  await page.screenshot({ path: '.local/browser-failure.png' }); throw error;
 } finally {
   await browser.close();
 }

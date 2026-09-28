@@ -10,13 +10,15 @@ Das ausführbare Fundament verbindet tropische Inseln, Bogen, Drachenflug und Pl
 
 - Offene Inselwelt mit 32-m-Chunks, Vegetation, Wasserfällen, Rehen, Wildschweinen und fremden Wesen; neue Regionen und lokale Weltänderungen werden nachgeladen.
 - VR und Passthrough-MR als getrennte Modi; lokales Kopftracking, Controller-Bogen, Haptik und Hand-Pinch für Dialog-/Missionsfelder.
+- Kleine Menüs am Handgelenk mit stabilen, blätterbaren Panels; Controllerauswahl beim Loslassen, Hand-Pinch und direktes Antippen. Lokale Hand-/Controllermodelle und berechnete Knie/Ellbogen.
+- CC0-Drache von Cethiel/Drummyfish als GLB mit Skelett; dynamische Flügel, gegliederte Tiergänge, Materialdetails, Schatten, Wasser und drei Grafikprofile.
 - Gehen, Drachenflug, höhenabhängige Beschleunigung, Schweben, Landung und vereinfachte Globusübersicht.
 - **Pfeile im Wind:** Wind beobachten, echte ballistische Treffer, bewegtes Finale. **Die verlorene Brücke:** englische Anweisungen, Bohlen sammeln, freie Antwort, Reparatur. **Das Tier am Tempel:** beobachten und über Ablenkung, Seitenpfad oder Umweltinteraktion lösen.
 - Geschlossene Paketschemas, Validator, reproduzierbarer Paketbau und atomarer Katalogwechsel mit gebundenen Versionen laufender Missionen.
 - Lokale SQLite-Spielstände, Episoden-Resume, Lernbeobachtungen, Arins Erinnerungen, manuelle Fitness-/Schwierigkeitsprofile und Anantas vier Hilfestufen.
 - Optionale Ananta-/Jev-, Whisper.cpp- und Piper-Adapter. Ohne externe Dienste bleibt das Spiel ausführbar; Arin verwendet dann als solche gekennzeichnete Autorentexte.
 
-Das ist Version **0.1.0**, ein weiterentwickelbares Fundament. Die drei Episoden sind kompakte Mechanikbeispiele mit einem 15-Minuten-Designziel. Ausproduzierte Abenteuer, hochwertigere Assets, durchgehend sphärische Physik, Raumverständnis und die erneute Abnahme des neuen Checkouts auf echter Quest stehen im [TODO-Track](todos/active/todo.orbit-core-foundation.json).
+Das ist Version **0.1.0**, ein weiterentwickelbares Fundament. Die drei Episoden sind kompakte Mechanikbeispiele mit einem 15-Minuten-Designziel. Ausproduzierte Abenteuer, weitere hochwertige Umgebungs-/Tierassets, durchgehend sphärische Physik, Raumverständnis und die erneute Abnahme des neuen Checkouts auf echter Quest stehen im [TODO-Track](todos/active/todo.orbit-core-foundation.json).
 
 ## Verteilte Berechnung
 
@@ -75,4 +77,6 @@ Die Kernmodule liegen in `server/orbit_server`, der XR-Client in `client/webxr/s
 
 ## Lizenz
 
-Projektcode, Beispielmissionen und eigene prozedurale Geometrien: **BSD-3-Clause**, Copyright 2026 Peter Stuiber. Three.js und weitere Abhängigkeiten behalten ihre eigenen Lizenzen. Modelle, Stimmen und Ananta/Piper-Installationen werden nicht mitgeliefert; Details in [THIRD_PARTY.md](THIRD_PARTY.md).
+Projektcode, Beispielmissionen und eigene prozedurale Geometrien: **BSD-3-Clause**, Copyright 2026 Peter Stuiber. Three.js und weitere Abhängigkeiten behalten ihre eigenen Lizenzen. Das mitgelieferte Drachenmodell steht unter CC0; Hand-/Controllermodelle unter MIT. KI-Modellgewichte, Stimmen und Ananta/Piper-Installationen werden nicht mitgeliefert; Details in [THIRD_PARTY.md](THIRD_PARTY.md).
+
+Modelle und Animationen: [geprüfte freie Quellen und Importpipeline](docs/assets/sources.md). [XR-Menüs, Hände und Darstellungsgrenzen](docs/vr/presence.md).

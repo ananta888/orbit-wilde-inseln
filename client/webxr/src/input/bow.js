@@ -1,4 +1,5 @@
 import * as THREE from '/vendor/three.module.js';
+import { surfaceMaterial } from '../rendering/materials.js';
 
 const shaft = new THREE.CylinderGeometry(0.004, 0.004, 0.68, 6);
 shaft.rotateX(Math.PI / 2);
@@ -29,13 +30,17 @@ export class Bow {
     this.root = new THREE.Group();
     this.root.visible = false;
     scene.add(this.root);
-    const limbMaterial = new THREE.MeshStandardMaterial({ color: 0x8e552e, roughness: 0.65 });
-    const limbGeometry = new THREE.CylinderGeometry(0.013, 0.017, 1, 6);
-    this.limbs = Array.from({ length: 12 }, () => {
+    const limbMaterial = surfaceMaterial('wood', { color: 0x8e552e, roughness: .65 });
+    const limbGeometry = new THREE.CylinderGeometry(0.013, 0.017, 1, 10);
+    this.limbs = Array.from({ length: 24 }, () => {
       const limb = new THREE.Mesh(limbGeometry, limbMaterial); this.root.add(limb); return limb;
     });
     const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.028, 0.15, 8), new THREE.MeshStandardMaterial({ color: 0x263c36 }));
     this.root.add(grip);
+    for (let i = 0; i < 9; i++) {
+      const wrap = new THREE.Mesh(new THREE.TorusGeometry(.026, .0022, 4, 12), grip.material);
+      wrap.rotation.x = Math.PI / 2; wrap.position.y = (i - 4) * .015; this.root.add(wrap);
+    }
     const positions = new Float32Array(9);
     this.stringGeometry = new THREE.BufferGeometry();
     this.stringGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -89,14 +94,16 @@ export class Bow {
 
   update(controllers, active, playing, now) {
     this.hands(controllers);
-    const tracked = active && this.bowHand?.userData.source && this.drawHand?.userData.source && this.bowHand.visible && this.drawHand.visible;
+    const bowPose = this.bowHand?.userData.bowGrip || this.bowHand;
+    const drawPose = this.drawHand?.userData.pinchPose || this.drawHand;
+    const tracked = bowPose?.visible && drawPose?.visible && active && this.bowHand?.userData.source && this.drawHand?.userData.source && this.bowHand.visible && this.drawHand.visible;
     this.root.visible = !!tracked;
-    if (!tracked) { this.cancel(); if (active) this.hint = 'Beide Controller bereithalten'; return; }
+    if (!tracked) { this.cancel(); if (active) this.hint = 'Beide Hände oder Controller bereithalten'; return; }
     if (!playing) this.cancel();
-    this.bowHand.getWorldPosition(this.bowPosition);
-    this.drawHand.getWorldPosition(this.stringPosition);
+    bowPose.getWorldPosition(this.bowPosition);
+    drawPose.getWorldPosition(this.stringPosition);
     this.root.position.copy(this.bowPosition);
-    this.root.quaternion.copy(this.bowHand.getWorldQuaternion(new THREE.Quaternion()));
+    this.root.quaternion.copy(bowPose.getWorldQuaternion(new THREE.Quaternion()));
     this.forward.copy(axis).applyQuaternion(this.root.quaternion);
     this.root.updateMatrixWorld(true);
     let nock = new THREE.Vector3(0, 0, 0.12);
@@ -119,8 +126,8 @@ export class Bow {
     }
     const amount = this.draw / 0.65, half = 0.59 - amount * 0.06;
     const points = [];
-    for (let i = 0; i <= 12; i++) {
-      const y = (i / 6 - 1) * half;
+    for (let i = 0; i <= 24; i++) {
+      const y = (i / 12 - 1) * half;
       const bend = Math.sin(Math.abs(y / half) * Math.PI) * -0.11 + Math.abs(y / half) ** 3 * (0.12 + amount * 0.10);
       points.push(new THREE.Vector3(0, y, bend));
     }

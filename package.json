@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postinstall": "node tools/vendor-client.mjs",
-    "test": "node tools/check-js.mjs && node --test tests/client/*.test.mjs",
+    "test": "node tools/check-js.mjs && node tools/assets/check-assets.mjs && node --test tests/client/*.test.mjs",
     "test:browser": "node tools/diagnostics/check-foundation.mjs",
     "test:xr": "node tools/diagnostics/check-xr.mjs",
     "test:game": "node tools/diagnostics/check-browser.mjs",
@@ -17,6 +17,7 @@
     "test:design:xr": "node tools/diagnostics/check-design-xr.mjs"
   },
   "dependencies": {
+    "@webxr-input-profiles/assets": "1.0.20",
     "meshoptimizer": "1.3.0",
     "three": "0.186.1",
     "three-mesh-bvh": "0.9.15"

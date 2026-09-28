@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "id": "arin.cethiel",
+      "path": "client/webxr/assets/creatures/arin-cethiel.glb",
+      "source": "https://opengameart.org/node/96662",
+      "download": "https://opengameart.org/sites/default/files/dragon_oga.zip",
+      "authors": [
+        "Drummyfish",
+        "Cethiel"
+      ],
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "verifiedAt": "2026-09-28",
+      "sourceArchiveSha256": "f6a8c25dd3b2abdb1e7830b0b88f9083052c0750e710e6439eceb320783a57c1",
+      "sha256": "eb6c9b2030c2c6b7b7db6a7c81a7fd162de4f4916c9ca008e0481efd6b61a4ce",
+      "bytes": 784260,
+      "triangles": 1262,
+      "bones": 32,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "die"
+      ],
+      "changes": "COLLADA and named clips converted to self-contained GLB; material converted to rough PBR. Flight overlay is original Orbit code."
+    }
+  ]
+}

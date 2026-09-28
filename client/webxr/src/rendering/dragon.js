@@ -1,14 +1,17 @@
 import * as THREE from '/vendor/three.module.js';
+import { RiggedDragon } from './rigged-dragon.js';
+import { surfaceMaterial } from './materials.js';
+import { LimbBatch, solveTwoBone } from './kinematics.js';
 import { mergeParts, part } from '/src/rendering/jungle.js';
 
-const sphere = new THREE.SphereGeometry(1, 16, 10);
+const sphere = new THREE.SphereGeometry(1, 24, 16);
 const cone = new THREE.ConeGeometry(1, 1, 8);
 const cylinder = new THREE.CylinderGeometry(1, 1, 1, 9);
 const scale = new THREE.IcosahedronGeometry(1, 0);
 const UP = new THREE.Vector3(0, 1, 0);
 function joined(parts, parent, material = null) {
-  const mesh = new THREE.Mesh(mergeParts(parts), material || new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .7 }));
-  parent.add(mesh); return mesh;
+  const mesh = new THREE.Mesh(mergeParts(parts), material || surfaceMaterial('scales', { vertexColors: true, roughness: .64 }));
+  mesh.castShadow = mesh.receiveShadow = true; parent.add(mesh); return mesh;
 }
 function bar(a, b, radius, color, target) {
   const from = new THREE.Vector3(...a), to = new THREE.Vector3(...b), delta = to.sub(from);
@@ -84,16 +87,10 @@ export class DragonMount {
     this.rider = new THREE.Group(); this.body.add(this.rider);
     const rider = [part(sphere, '#363e48', [0, .78, .42], [.25, .15, .57]),
       part(sphere, '#665347', [0, .65, 1.02], [.23, .13, .24])];
-    for (let side of [-1, 1]) {
-      bar([side * .14, .65, 1.05], [side * .36, .45, 1.55], .115, '#384552', rider);
-      bar([side * .36, .45, 1.55], [side * .26, .35, 2.04], .085, '#3e4b56', rider);
-      rider.push(part(sphere, '#3b302b', [side * .26, .31, 2.13], [.1, .075, .2]));
-    }
-    joined(rider, this.rider);
-    this.arms = [-1, 1].map(side => {
-      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(.06, .07, 1, 8), new THREE.MeshStandardMaterial({ color: '#526270' }));
-      this.rider.add(mesh); return { mesh, side };
-    });
+    joined(rider, this.rider, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .86 }));
+    this.proceduralVisuals = this.body.children.filter(child => child !== this.rider);
+    this.rigged = new RiggedDragon(this.body);
+    this.riderLegs = new LimbBatch(this.rider, new THREE.MeshStandardMaterial({ roughness: .86 }), 16);
   }
   react(state) { this.mood = state.mood || 'calm'; this.gesture = state.gesture || 'glide'; }
   async setAsset(descriptor) {
@@ -131,6 +128,9 @@ export class DragonMount {
       const clips = this.custom.artifact.document.clips;
       this.custom.view.pose(true, this.time, clips.find(c => c.id === (speed > .5 ? 'fly' : 'idle')));
     }
+    const useRigged = this.rigged.ready && !this.custom;
+    this.rigged.root.visible = useRigged;
+    this.proceduralVisuals.forEach(child => { child.visible = !this.custom && !useRigged; });
     const climbing = THREE.MathUtils.clamp(velocity.y / Math.max(5, velocity.length()), -1, 1);
     this.body.rotation.x = THREE.MathUtils.damp(this.body.rotation.x, climbing * .18, 4, dt);
     this.body.rotation.z = THREE.MathUtils.damp(this.body.rotation.z, THREE.MathUtils.clamp(-delta * .28, -.22, .22), 4, dt);
@@ -140,15 +140,18 @@ export class DragonMount {
     this.head.rotation.y = Math.sin(this.time * .65) * (this.gesture === 'look_around' ? .28 : .045);
     this.head.rotation.x = this.gesture === 'nod' ? Math.sin(this.time * 3) * .09 : -.04;
     this.eyes.material.emissiveIntensity = this.mood === 'excited' ? .9 : this.mood === 'alert' ? .7 : .35;
+    this.rigged.update(dt, speed, climbing, this.gesture);
     this.root.updateMatrixWorld(true);
-    for (const { mesh, side } of this.arms) {
-      const hand = controllers.find(c => c.userData.source?.handedness === (side < 0 ? 'left' : 'right'));
-      mesh.visible = !!hand;
-      if (!hand) continue;
-      const end = this.rider.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
-      const start = new THREE.Vector3(side * .22, .79, -.06), direction = end.clone().sub(start);
-      mesh.position.copy(start).addScaledVector(direction, .5);
-      mesh.quaternion.setFromUnitVectors(UP, direction.clone().normalize()); mesh.scale.y = Math.min(1, direction.length());
+    this.riderLegs.begin();
+    for (const side of [-1, 1]) {
+      const hip = new THREE.Vector3(side * .14, .65, 1.05);
+      const ankle = new THREE.Vector3(side * .29 + this.body.rotation.z * .15, .35 + Math.sin(this.time * 1.8) * .02, 2.0);
+      const result = solveTwoBone(hip, ankle, new THREE.Vector3(side * .45, -.5, 0), .56, .53);
+      this.riderLegs.segment(hip, result.joint, .10, '#384b57');
+      this.riderLegs.segment(result.joint, result.target, .070, '#435762');
+      this.riderLegs.sphere(result.joint, [.081, .074, .081], '#344751');
+      this.riderLegs.sphere(ankle.clone().add(new THREE.Vector3(0, -.025, .07)), [.085, .069, .18], '#3b302b');
     }
+    this.riderLegs.finish();
   }
 }

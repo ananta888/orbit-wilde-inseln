@@ -1,9 +1,11 @@
 # Herkunft und externe Komponenten
 
-Orbit-Code, Texte der Beispielmissionen, SVG-Symbol und prozedural erzeugte Geometrien stammen aus diesem Projekt von Peter Stuiber und stehen unter BSD-3-Clause. Das Fundament übernimmt und modularisiert den vorherigen lokalen Orbit-Prototyp. Es enthält keine heruntergeladenen Tier-, Drachen-, Landschaftsmodelle, Texturen oder Stimmen.
+Orbit-Code, Texte der Beispielmissionen, SVG-Symbol und prozedural erzeugte Geometrien stammen aus diesem Projekt von Peter Stuiber und stehen unter BSD-3-Clause. Das Fundament übernimmt und modularisiert den vorherigen lokalen Orbit-Prototyp. Die zusätzlichen Fremdmodelle sind nachfolgend und im [Asset-Inventar](content/assets/third-party.json) dokumentiert. Modellgewichte und Stimmen sind nicht enthalten.
 
 | Komponente | Verwendung | Lizenz / Quelle |
 |---|---|---|
+| Cethiel’s Dragon 3D, Drummyfish / Cethiel | Arins texturiertes, geriggtes GLB; vier Originalclips, lokale Konvertierung | [CC0-1.0 und Original](https://opengameart.org/node/96662), [Inventar](content/assets/third-party.json), [Lizenztext](client/webxr/assets/creatures/LICENSE-CC0.txt) |
+| @webxr-input-profiles/assets 1.0.20 | Lokale 25-Gelenk-Handmodelle und Controllerprofile, darunter Quest Touch Plus; unveränderte Hardwaredarstellung | [MIT](https://github.com/immersive-web/webxr-input-profiles/blob/main/packages/assets/LICENSE.md); Lizenz und README mit separatem Markenhinweis werden kopiert. Keine Markenrechte oder Herstellerunterstützung behauptet. |
 | Three.js | Browser-Rendering; `npm ci` kopiert lokale Module samt LICENSE in das ignorierte Vendor-Verzeichnis | [MIT](https://github.com/mrdoob/three/blob/dev/LICENSE) |
 | aiohttp | HTTP und WebSockets auf dem Laptop | [Apache-2.0](https://github.com/aio-libs/aiohttp/blob/master/LICENSE.txt) |
 | jsonschema / referencing | Lokale Schema- und Referenzprüfung | [MIT](https://github.com/python-jsonschema/jsonschema/blob/main/COPYING), [MIT](https://github.com/python-jsonschema/referencing/blob/main/COPYING) |
@@ -19,4 +21,4 @@ Orbit-Code, Texte der Beispielmissionen, SVG-Symbol und prozedural erzeugte Geom
 | Piper-Stimmen | Nicht enthalten; Lizenz je Stimme prüfen | [Voice-Dokumentation](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md) |
 | Ananta | Externer Orchestrator über HTTP; kein Ananta-Code kopiert | Die Lizenz der jeweiligen Ananta-Installation gilt; das referenzierte Projekt verwendet AGPL-3.0-or-later |
 
-Die BSD-Lizenz dieses Repositories ändert keine Lizenz externer Komponenten. Modellgewichte und Stimmen haben eigene Bedingungen und müssen getrennt beschafft werden. Bei späteren Distributionen jedes tatsächlich mitgelieferte Asset und jede Abhängigkeit einzeln inventarisieren. Das zentrale Asset-Verzeichnis enthält derzeit ausschließlich Verweise auf eigene prozedurale Generatoren.
+Die BSD-Lizenz dieses Repositories ändert keine Lizenz externer Komponenten. Modellgewichte und Stimmen haben eigene Bedingungen und müssen getrennt beschafft werden. Bei späteren Distributionen jedes tatsächlich mitgelieferte Asset und jede Abhängigkeit einzeln inventarisieren. Der Missionskatalog referenziert eigene prozedurale Generatoren. Externe Darstellungsmodelle stehen im separaten Herkunftsinventar; [Quellen und Importpipeline](docs/assets/sources.md) beschreiben den Ausbau.

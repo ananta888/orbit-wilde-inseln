@@ -25,7 +25,7 @@ try {
   await page.waitForFunction(hash => window.v.dragon.assetHash === hash, active.hash);
   assert(await page.locator('#return-designer').isVisible());
   await page.locator('#desktop').click();
-  await page.waitForFunction(() => window.v.state.phase === 'playing');
+  await page.waitForFunction(() => window.v.state.phase === 'playing' && window.v.movement.enabled);
   await page.keyboard.press('f');
   await page.waitForFunction(() => window.v.state.flying && window.v.dragon.root.visible);
   const start = await page.evaluate(() => window.v.state.player[1]);
@@ -58,4 +58,7 @@ try {
   assert.equal(await page.evaluate(() => window.w.client.document.revision), active.revision);
   assert.deepEqual(errors, []);
   console.log('Published creature: editor -> immutable asset -> real game flight -> editor, private save and independent cached instances passed.');
+} catch (error) {
+  console.error('Published flight failure:', errors, await page.evaluate(() => ({ phase: window.v?.state?.phase, flying: window.v?.state?.flying, enabled: window.v?.movement?.enabled, root: window.v?.dragon?.root.visible })));
+  throw error;
 } finally { await browser.close(); }

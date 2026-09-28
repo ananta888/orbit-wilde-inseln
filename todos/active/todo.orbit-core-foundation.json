@@ -50,7 +50,9 @@
         "XR-MODES",
         "XR-MISSIONS",
         "XR-DEVICE",
-        "XR-SPATIAL"
+        "XR-SPATIAL",
+        "XR-HAND-UI",
+        "XR-EMBODIMENT"
       ]
     },
     {
@@ -91,7 +93,8 @@
       "task_ids": [
         "WORLD-CHUNKS",
         "WORLD-ART",
-        "WORLD-PLANET"
+        "WORLD-PLANET",
+        "WORLD-VISUAL-PASS"
       ]
     },
     {
@@ -420,15 +423,19 @@
       "progress_percent": 0,
       "dependencies": [
         "REPO-BOOT",
-        "XR-MODES"
+        "XR-MODES",
+        "XR-HAND-UI",
+        "XR-EMBODIMENT"
       ],
       "affected_files": [
         "client/webxr/src/xr",
         "client/webxr/src/input",
-        "client/webxr/src/ui"
+        "client/webxr/src/ui",
+        "docs/vr/device-checklist.md"
       ],
       "acceptance_criteria": [
-        "Stereodarstellung, Passthrough, Hände, Mikrofon, Lesbarkeit und Komfort am Gerät protokolliert."
+        "Stereodarstellung, Passthrough, Hände, Mikrofon, Lesbarkeit und Komfort am Gerät protokolliert.",
+        "Handnahe Panels, direkte Zeigefinger-Auswahl, Trackingverlust, Systemgeste, Bogen-Griffausrichtung und geschätzte Körperhaltung sitzend/stehend am Gerät geprüft."
       ],
       "tests": [
         "docs/vr/device-checklist.md auf echter Quest 3 vollständig ausführen"
@@ -774,12 +781,12 @@
     {
       "id": "WORLD-ART",
       "title": "Inseln, Wasserfälle und Vegetation visuell verfeinern",
-      "status": "todo",
+      "status": "in_progress",
       "type": "implementation",
       "milestone_id": "WORLD",
       "priority": "P2",
       "risk": "medium",
-      "progress_percent": 0,
+      "progress_percent": 60,
       "dependencies": [
         "REPO-BOOT",
         "WORLD-CHUNKS"
@@ -798,7 +805,9 @@
         "Akzeptanzkriterien durch überprüfbare Ergebnisse erfüllt.",
         "Relevante Tests bestanden und Dokumentation sowie TODO-Status aktualisiert."
       ],
-      "evidence": []
+      "evidence": [
+        "2026-09-28: Eigene Materialdetails, Schatten, Wasser, zusammengesetzte Palmwedel, Distanz-LOD und manuelle Grafikprofile im Browser sichtbar. Physische Quest-Frametime und weitere hochwertige Umgebungsassets bleiben offen."
+      ]
     },
     {
       "id": "WORLD-PLANET",
@@ -1474,10 +1483,12 @@
       "affected_files": [
         "tests",
         ".github/workflows/ci.yml",
-        "tools/diagnostics"
+        "tools/diagnostics",
+        "docs/vr/device-checklist.md"
       ],
       "acceptance_criteria": [
-        "Reales Gerät wird von Emulation unterschieden; Reconnect, Frametime, MR und Audio werden erfasst."
+        "Reales Gerät wird von Emulation unterschieden; Reconnect, Frametime, MR und Audio werden erfasst.",
+        "Drei Grafikprofile bei Dschungel, Wasser und Flug am Gerät verglichen; Renderstatistik der Chromium-Emulation ersetzt keine Quest-Messung."
       ],
       "tests": [
         "docs/vr/device-checklist.md"
@@ -1605,6 +1616,125 @@
         "SQLite-Backups geprueft, dieselben WSL-Daten weiterverwendet; lokalen Prototyp-Starter nach Sicherung umgeleitet.",
         "Socket-, Portkonflikt-, Backend-Wiederverwendungs- und Foundation-Pruefungen: docs/testing.md."
       ]
+    },
+    {
+      "id": "XR-HAND-UI",
+      "title": "Handnahe kompakte Menues mit stabiler Auswahl",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "XR",
+      "priority": "P0",
+      "risk": "medium",
+      "progress_percent": 100,
+      "dependencies": [
+        "XR-MODES"
+      ],
+      "affected_files": [
+        "client/webxr/src/ui",
+        "client/webxr/src/xr",
+        "client/webxr/src/app.js"
+      ],
+      "acceptance_criteria": [
+        "Kompakte lesbare Flaechen mit Seitenwechsel, Hover, Poke und Pinch-Hysterese.",
+        "Kleine Hand-Dock-Schaltflaeche oeffnet ruhendes Menue; reservierte Meta-Geste bleibt frei.",
+        "UI konsumiert Eingaben vor dem Bogen; Trackingverlust erzeugt keine Aktion."
+      ],
+      "tests": [
+        "Gezielte Node-Tests fuer Interaktion und Gelenkloesung",
+        "Browser-/IWER-Regression und Bildpruefung mit separaten Testdaten",
+        "Dokumentierte Foundation-Pruefungen"
+      ],
+      "definition_of_done": [
+        "Implementierung, Tests, Dokumentation und versionierter TODO-Stand stimmen ueberein.",
+        "Physische Quest-Ergonomie und Bildrate bleiben explizit im Hardware-Track."
+      ],
+      "evidence": [
+        "2026-09-28: npm test: 18 Node-Tests plus Offline-Asset-Prüfung bestanden; Select-Abbruch und Layoutwechsel ohne Aktion.",
+        "2026-09-28: check-mission-xr.mjs bestanden: ruhendes 42-cm-Panel, Controller-Loslassen, native Select-Abbruchfolge, 25 Handgelenke, Pinch, direktes Antippen, kein Pfeil und keine MR-Fortbewegung. Chromium/IWER, keine physische Quest-Abnahme.",
+        "docs/vr/presence.md und ADR 006 beschreiben Meta-/WebXR-Konventionen, Bedienung und Grenzen."
+      ]
+    },
+    {
+      "id": "XR-EMBODIMENT",
+      "title": "Animierte Haende, Controller und gegliederter Spielkoerper",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "XR",
+      "priority": "P0",
+      "risk": "medium",
+      "progress_percent": 100,
+      "dependencies": [
+        "XR-MODES"
+      ],
+      "affected_files": [
+        "client/webxr/src/xr",
+        "client/webxr/src/rendering/avatar.js",
+        "client/webxr/src/input/bow.js",
+        "tools/vendor-client.mjs",
+        "THIRD_PARTY.md"
+      ],
+      "acceptance_criteria": [
+        "Lokale lizenzierte Hand-/Controller-Modelle mit 25 Gelenken und Tastenanimation.",
+        "Controller-Bogen verwendet Grip-Pose; Finger reagieren auf Griff/Trigger, Handtracking wird getrennt behandelt.",
+        "Arme mit Ellbogen sowie Beine mit Knien und Fussaufsetzen; Beine als Schaetzung gekennzeichnet, MR bleibt ohne kuenstlichen Ganzkoerper."
+      ],
+      "tests": [
+        "Gezielte Node-Tests fuer Interaktion und Gelenkloesung",
+        "Browser-/IWER-Regression und Bildpruefung mit separaten Testdaten",
+        "Dokumentierte Foundation-Pruefungen"
+      ],
+      "definition_of_done": [
+        "Implementierung, Tests, Dokumentation und versionierter TODO-Stand stimmen ueberein.",
+        "Physische Quest-Ergonomie und Bildrate bleiben explizit im Hardware-Track."
+      ],
+      "evidence": [
+        "2026-09-28: check-presence.mjs bestanden: Grip-Ausrichtung, lokale Touch-Profile, Fingerpose, Kniebeugung mit ruhenden Füßen; kinematische Node-Tests erhalten Segmentlängen bei Grenzfällen.",
+        "Lokale MIT-Hand-/Controllermodelle werden aus fixiertem NPM-Paket mit Lizenz und Markenhinweis kopiert. Beine/Ellbogen sind ausdrücklich aus Kopf/Händen geschätzte Animation.",
+        "2026-09-28: npm run test:xr nach letzter Eingabeänderung bestanden: MR-/VR-Bogentreffer, Flug, Steigen, Schweben, Sinken, Landen, Gehen, Streaming, Drehen, Fokusabbruch und Sitzungsende. IWER-Emulation."
+      ]
+    },
+    {
+      "id": "WORLD-VISUAL-PASS",
+      "title": "Detaillierte Inselmaterialien, Beleuchtung und Tiergangarten",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "WORLD",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 100,
+      "dependencies": [
+        "WORLD-CHUNKS"
+      ],
+      "affected_files": [
+        "client/webxr/src/rendering",
+        "client/webxr/index.html",
+        "client/webxr/assets/creatures",
+        "content/assets/third-party.json",
+        "tools/assets",
+        "docs/assets/sources.md"
+      ],
+      "acceptance_criteria": [
+        "Verbesserte Oberflaechen, Wasser, Vegetation und Licht im dokumentierten Bildvergleich.",
+        "Reh und Wildschwein besitzen gegliederte Beine, Knie-/Sprunggelenke und geschwindigkeitsabhaengige Phasen; Zweibeiner haben eigenen Gang.",
+        "Manuelle Qualitaetsprofile und begrenzte Geometrie-/Schattenbudgets; keine behauptete Quest-FPS-Abnahme.",
+        "Geriggter CC0-Drache mit Originalclips und berechneter Flugbewegung; Herkunft, Lizenz, Hash und Offline-GLB-Prüfung; publizierte Nutzerkreatur hat Vorrang."
+      ],
+      "tests": [
+        "Gezielte Node-Tests fuer Interaktion und Gelenkloesung",
+        "Browser-/IWER-Regression und Bildpruefung mit separaten Testdaten",
+        "Dokumentierte Foundation-Pruefungen"
+      ],
+      "definition_of_done": [
+        "Implementierung, Tests, Dokumentation und versionierter TODO-Stand stimmen ueberein.",
+        "Physische Quest-Ergonomie und Bildrate bleiben explizit im Hardware-Track."
+      ],
+      "evidence": [
+        "2026-09-28: Browser-Bildvergleich und check-presence.mjs: Materialshader ohne Fehler, gegliederte Tiere, animierter CC0-Drache, erhaltene Originalclips und prozedurale Rückfalldarstellung bei GLB-Ladefehler.",
+        "Cethiel/Drummyfish: 1.262 Dreiecke, 32 Bones, 4 Originalclips, 784.260 Bytes; GLB-Integrität, eingebettete Ressourcen und Herkunft offline geprüft.",
+        "2026-09-28: Desktop-, Missions-, Designer-, GLB-Rundlauf-, Optimierungs- und veröffentlichte-Kreatur-Probeflug-Diagnosen bestanden. Python: 149 Tests plus 16 Subtests; Ruff/Mypy und drei Content-Pakete bestanden.",
+        "Quest-Bildrate und Ergonomie bleiben XR-DEVICE / TEST-HARDWARE. Quaternius-Tierdownload durch externe Quotenbegrenzung nicht übernommen; Tiere bleiben eigene stilisierte Modelle.",
+        "2026-09-28: npm run test:xr nach letzter Eingabeänderung bestanden: MR-/VR-Bogentreffer, Flug, Steigen, Schweben, Sinken, Landen, Gehen, Streaming, Drehen, Fokusabbruch und Sitzungsende. IWER-Emulation."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -1626,24 +1756,24 @@
     "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
   ],
   "tasks_status_summary": {
-    "total": 46,
+    "total": 49,
     "by_status": {
-      "todo": 17,
-      "in_progress": 0,
+      "todo": 16,
+      "in_progress": 1,
       "partial": 1,
       "blocked": 0,
-      "done": 28
+      "done": 31
     },
-    "progress_percent_done": 60.87,
+    "progress_percent_done": 63.27,
     "by_priority": {
-      "P0": 28,
-      "P1": 4,
+      "P0": 30,
+      "P1": 5,
       "P2": 14,
       "P3": 0
     },
     "by_risk": {
       "low": 27,
-      "medium": 14,
+      "medium": 17,
       "high": 5
     },
     "critical_path": {
@@ -1663,6 +1793,7 @@
   "summary_notes": [
     "Done bezeichnet das ausführbare Fundament der jeweiligen Aufgabe, nicht die gesamte Spielvision.",
     "Die Beispielpakete besitzen ein 15-Minuten-Designziel; ihre kompakten Mechanikproben sind noch keine fertig ausproduzierten 15-Minuten-Level.",
-    "Hardware-Nachweise werden separat geführt. Es werden keine Ananta RUN_/SRC_-Nachweise erfunden."
+    "Hardware-Nachweise werden separat geführt. Es werden keine Ananta RUN_/SRC_-Nachweise erfunden.",
+    "XR-Präsenz 2026-09-28: Menüs, lokale Hand-/Controllermodelle, geschätzte Gliedmaßen, gegliederte Tiergänge und CC0-Drache sind im Browser umgesetzt. Emulierte XR-Prüfungen sind von der weiterhin offenen physischen Quest-Abnahme getrennt."
   ]
 }

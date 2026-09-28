@@ -23,8 +23,8 @@ async function press(hand, value) {
   await page.evaluate(({ hand, value }) => window.xrDevice.controllers[hand].updateButtonValue('trigger', value), { hand, value });
   await page.waitForTimeout(160);
 }
-async function placeHands(bowHand) {
-  await page.evaluate(async bowHand => {
+async function placeHands(bowHand, drawDistance = 0) {
+  await page.evaluate(async ({ bowHand, drawDistance }) => {
     const THREE = await import('/vendor/three.module.js');
     const view = window.orbitView;
     view.scene.updateMatrixWorld(true);
@@ -35,21 +35,30 @@ async function placeHands(bowHand) {
     const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, -1), direction);
     const drawHand = bowHand === 'left' ? 'right' : 'left';
     for (const hand of [bowHand, drawHand]) {
-      const p = view.rig.worldToLocal(from.clone().addScaledVector(direction, hand === bowHand ? 0 : -0.12));
-      window.xrDevice.controllers[hand].position.set(p.x, p.y, p.z);
+      const p = view.rig.worldToLocal(from.clone().addScaledVector(direction, hand === bowHand ? 0 : -0.12 - drawDistance));
       const localQ = view.rig.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(quaternion);
-      window.xrDevice.controllers[hand].quaternion.set(localQ.x, localQ.y, localQ.z, localQ.w);
+      const entry = view.inputVisuals.entries.find(entry => entry.source?.handedness === hand);
+      // IWER positions are target-ray poses. Archery uses the physical grip pose.
+      const offset = entry.controller.matrix.clone().invert().multiply(entry.grip.matrix);
+      const desiredRay = new THREE.Matrix4().compose(p, localQ, new THREE.Vector3(1, 1, 1)).multiply(offset.clone().invert());
+      const rayQ = new THREE.Quaternion(), rayP = new THREE.Vector3(); desiredRay.decompose(rayP, rayQ, new THREE.Vector3());
+      window.xrDevice.controllers[hand].position.set(...rayP.toArray());
+      window.xrDevice.controllers[hand].quaternion.set(...rayQ.toArray());
+      if (hand === drawHand) window.testDrawGrip = { offset: offset.toArray(), quaternion: localQ.toArray() };
     }
     const localFrom = view.rig.worldToLocal(from.clone());
     const localDirection = direction.clone().transformDirection(new THREE.Matrix4().copy(view.rig.matrixWorld).invert());
     window.testBowPose = { from: localFrom.toArray(), direction: localDirection.toArray(), drawHand };
-  }, bowHand);
+  }, { bowHand, drawDistance });
   await page.waitForTimeout(220);
 }
 async function pull(distance) {
-  await page.evaluate(distance => {
-    const { from, direction, drawHand } = window.testBowPose;
-    window.xrDevice.controllers[drawHand].position.set(...from.map((v, i) => v - direction[i] * (0.12 + distance)));
+  await page.evaluate(async distance => {
+    const THREE = await import('/vendor/three.module.js');
+    const { from, direction, drawHand } = window.testBowPose, { offset, quaternion } = window.testDrawGrip;
+    const gripP = new THREE.Vector3(...from.map((v, i) => v - direction[i] * (0.12 + distance)));
+    const ray = new THREE.Matrix4().compose(gripP, new THREE.Quaternion().fromArray(quaternion), new THREE.Vector3(1, 1, 1)).multiply(new THREE.Matrix4().fromArray(offset).invert());
+    window.xrDevice.controllers[drawHand].position.set(...new THREE.Vector3().setFromMatrixPosition(ray).toArray());
   }, distance);
   await page.waitForTimeout(180);
 }
@@ -105,6 +114,8 @@ try {
     assert(await page.evaluate(() => window.orbitView.bow.draw > 0.55 && window.orbitView.bow.arrow.visible));
     assert.equal(await page.evaluate(() => window.orbitView.state.shots), 0, 'Holding a drawn bow must not fire');
     await page.screenshot({ path: `.local/hybrid-${mode}-bow-emulated.png` });
+    // A software-rendered screenshot may take seconds; keep aiming at the moving animal.
+    await placeHands(bowHand, .6);
     await press(drawHand, 0);
     await page.waitForFunction(() => window.orbitView.state.hits >= 1);
     assert.equal(await page.evaluate(() => window.orbitView.state.shots), 1);

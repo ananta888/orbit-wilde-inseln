@@ -11,14 +11,18 @@ import { flightBoost } from '/src/input/flight.js';
 import { Planet } from '/src/rendering/planet.js';
 import { DragonMount } from '/src/rendering/dragon.js';
 import { DragonDialogue } from '/src/ui/dragon-dialogue.js';
+import { HandMenu } from './xr/hand-menu.js';
+import { ActionSequence } from './xr/gestures.js';
+import { InputVisuals } from './xr/input-visuals.js';
+import { PlayerAvatar } from './rendering/avatar.js';
+import { QualitySettings } from './rendering/quality.js';
 
 const $ = (id) => document.getElementById(id);
-const mint = 0xbceccc, gold = 0xefac76;
 export const view = { state: null, snapshots: [], renderTime: 0, camera: null, renderer: null, bodies: [] };
 let socket, connected = false, lastReceived = 0, serverOffset = null, sequence = 0;
 let inGame = false, xrSupported = false, mrSupported = false, xrStarting = false, rtt = null, fps = 0, sound = true;
 let needsPlacement = false, mouseDrawStarted = null;
-let audioContext, lastUi = '', lastBoard = '', lastBoardAt = 0, lastFrame = performance.now(), frameCount = 0, fpsStart = lastFrame;
+let audioContext, lastUi = '', lastBoardAt = 0, lastFrame = performance.now(), frameCount = 0, fpsStart = lastFrame;
 let address = location.origin, reconnectTimer, flashTimer;
 let ambience, nextBird = 0;
 let voiceNode = null, voiceGeneration = 0;
@@ -43,7 +47,7 @@ try {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType('local-floor');
-  renderer.xr.setFramebufferScaleFactor(0.85);
+  renderer.xr.setFramebufferScaleFactor(1);
   $('scene').appendChild(renderer.domElement);
   view.renderer = renderer;
 } catch (error) {
@@ -52,8 +56,6 @@ try {
   throw error;
 }
 
-const standard = (color) => new THREE.MeshStandardMaterial({ color, roughness: 0.9 });
-const basic = (color) => new THREE.MeshBasicMaterial({ color });
 function mesh(geometry, material, position, parent = backdrop) {
   const object = new THREE.Mesh(geometry, material);
   if (position) object.position.set(...position);
@@ -63,6 +65,7 @@ function mesh(geometry, material, position, parent = backdrop) {
 scene.add(new THREE.HemisphereLight(0xc5e8dc, 0x4b6340, 2.2));
 const sun = new THREE.DirectionalLight(0xffe1ad, 2.6);
 sun.position.set(-25, 45, -30); scene.add(sun);
+const quality = new QualitySettings(renderer, sun, scene); view.quality = quality;
 const sky = addSky(backdrop);
 sky.renderOrder = -1000;
 const planet = new Planet(scene), dragon = new DragonMount(scene);
@@ -87,26 +90,44 @@ const missions = new MissionUI(scene, contentRoot, send, () => dialogue.stream?.
 const raycaster = new THREE.Raycaster();
 const bow = new Bow(scene, loose);
 view.bow = bow;
+const inputVisuals = new InputVisuals(renderer, rig, controllers, hands);
+const handMenu = new HandMenu(scene, rig, missions, dialogue, () => bow.cancel());
+const avatar = new PlayerAvatar(scene);
+Object.assign(view, { inputVisuals, handMenu, avatar, controllers, hands });
 for (let i = 0; i < 2; i++) {
   const controller = controllers[i];
   rig.add(controller);
-  mesh(new THREE.BoxGeometry(0.025, 0.03, 0.06), standard(0x234249), [0, -0.015, 0.035], controller);
+  const action = new ActionSequence();
+  const tracked = () => {
+    const session = renderer.xr.getSession();
+    return controller.visible && session?.visibilityState === 'visible' && Array.from(session.inputSources).includes(controller.userData.source);
+  };
   controller.addEventListener('connected', (event) => { controller.userData.source = event.data; });
-  controller.addEventListener('disconnected', () => { controller.userData.source = null; bow.cancel(); });
+  controller.addEventListener('disconnected', () => { handMenu.cancel(controller); controller.userData.source = null; controller.userData.menuSelected = false; action.reset(); bow.cancel(); });
   controller.addEventListener('selectstart', () => {
-    unlockSound();
-    if (missions.select(controller) || dialogue.select(controller)) { bow.cancel(); controller.userData.dialogueSelected = true; return; }
+    action.begin(); unlockSound();
+    if (handMenu.press(controller)) { bow.cancel(); controller.userData.menuSelected = true; return; }
     if (!healthy()) return;
     if (['ready', 'ended'].includes(view.state?.phase)) send({ type: 'start' });
     else if (view.state?.phase === 'paused') send({ type: 'resume' });
     else bow.begin(controller, view.state?.phase === 'playing');
   });
-  controller.addEventListener('selectend', () => {
-    if (controller.userData.dialogueSelected) { controller.userData.dialogueSelected = false; return; }
+  const complete = () => {
+    if (!tracked()) {
+      handMenu.cancel(controller); controller.userData.menuSelected = false; bow.cancel(); return;
+    }
+    const selected = handMenu.release(controller);
+    if (controller.userData.menuSelected || selected) { controller.userData.menuSelected = false; bow.cancel(); return; }
     bow.end(controller, healthy() && view.state?.phase === 'playing');
+  };
+  controller.addEventListener('select', () => { if (action.select()) complete(); });
+  controller.addEventListener('selectend', () => {
+    if (action.end(tracked())) complete();
+    handMenu.cancel(controller); controller.userData.menuSelected = false;
+    if (controller === bow.drawHand) bow.cancel();
   });
   controller.addEventListener('squeezestart', () => {
-    if (view.mode === 'mr' && controller.userData.source?.handedness === bow.hand) {
+    if (!handMenu.open && view.mode === 'mr' && controller.userData.source?.handedness === bow.hand) {
       bow.cancel(); needsPlacement = true;
     }
   });
@@ -258,7 +279,7 @@ function setGame(active) {
   inGame = active;
   $('landing').hidden = active;
   $('hud').hidden = !active;
-  board.visible = active && renderer.xr.isPresenting;
+  board.visible = false;
   document.body.classList.toggle('playing', active);
   resize();
 }
@@ -305,7 +326,7 @@ addEventListener('keydown', (event) => {
   if (event.code === 'Escape') send({ type: view.state?.phase === 'paused' ? 'resume' : 'pause' });
   if (event.code === 'KeyR') send({ type: 'restart' });
 });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { bow.cancel(); mouseDrawStarted = null; send({ type: 'pause' }); } });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { handMenu.close(); bow.cancel(); mouseDrawStarted = null; send({ type: 'pause' }); } });
 addEventListener('blur', () => { if (inGame && !renderer.xr.isPresenting) send({ type: 'pause' }); });
 
 async function detectXR() {
@@ -329,7 +350,7 @@ function setMode(mode) {
   contentRoot.rotation.set(0, 0, 0);
   needsPlacement = mixed;
   movement.reset(mode);
-  bow.cancel();
+  handMenu.close(); bow.cancel();
 }
 
 async function startXR(mode) {
@@ -344,12 +365,12 @@ async function startXR(mode) {
     camera.clearViewOffset();
     camera.position.set(0, 0, 0); camera.rotation.set(0, 0, 0); camera.updateProjectionMatrix();
     await renderer.xr.setSession(session);
-    renderer.xr.setFoveation(1);
+    renderer.xr.setFoveation(quality.settings.foveation);
     setGame(true);
     send({ type: 'enter', mode }); send({ type: 'start' });
     document.body.classList.add('xr', mode);
     session.addEventListener('visibilitychange', () => {
-      if (session.visibilityState !== 'visible') { bow.cancel(); dialogue.finishRecording(true); missions.voice.finish(true); stopVoice(); send({ type: 'pause' }); }
+      if (session.visibilityState !== 'visible') { handMenu.close(); bow.cancel(); dialogue.finishRecording(true); missions.voice.finish(true); stopVoice(); send({ type: 'pause' }); }
     });
   } catch (error) {
     if (session) await session.end().catch(() => {});
@@ -382,7 +403,7 @@ fetch('/connection.json').then((response) => response.json()).then((data) => {
   $('help-address').textContent = address;
 }).catch(() => { $('address').textContent = address; $('help-address').textContent = address; });
 
-function interpolate(now) {
+function interpolate(now, dt) {
   if (!view.snapshots.length || serverOffset === null) return;
   const desired = now / 1000 - serverOffset - 0.075;
   const first = view.snapshots[0], last = view.snapshots.at(-1);
@@ -398,7 +419,7 @@ function interpolate(now) {
   const priorCreatures = new Map((before.creatures || []).map(c => [c.id, c]));
   const nextCreatures = new Map((after.creatures || []).map(c => [c.id, c]));
   for (const [id, creature] of creatures) {
-    if (!latestCreatures.has(id)) { contentRoot.remove(creature.group); creatures.delete(id); }
+    if (!latestCreatures.has(id)) { contentRoot.remove(creature.group); creature.batch.dispose(); creatures.delete(id); }
   }
   for (const [id, state] of latestCreatures) {
     if (!creatures.has(id)) { const creature = makeCreature(state.species); contentRoot.add(creature.group); creatures.set(id, creature); }
@@ -407,7 +428,7 @@ function interpolate(now) {
     creature.group.position.set(...a.position.map((v, k) => v + (b.position[k] - v) * alpha));
     const turn = Math.atan2(Math.sin(b.heading - a.heading), Math.cos(b.heading - a.heading));
     creature.group.rotation.y = a.heading + turn * alpha;
-    animateCreature(creature, state, now / 1000);
+    animateCreature(creature, state, now / 1000, dt, environment, camera.getWorldPosition(new THREE.Vector3()), quality.settings.detailDistance);
   }
   view.bodies = [...creatures.values()];
   const latestArrows = new Map((last.arrows || []).map(arrow => [arrow[0], arrow]));
@@ -481,10 +502,10 @@ renderer.setAnimationLoop((now, frame) => {
   }
   const dt = Math.max(0, Math.min(.05, (now - lastFrame) / 1000));
   const focusedForMove = !renderer.xr.isPresenting || renderer.xr.getSession()?.visibilityState === 'visible';
-  movement.update(dt, controllers, inGame && healthy() && view.state?.phase === 'playing' && focusedForMove);
+  movement.update(dt, controllers, inGame && healthy() && view.state?.phase === 'playing' && focusedForMove && !handMenu.open);
   planet.update(movement.position, view.mode === 'mr', now);
   environment.detailOpacity = 1 - planet.mix;
-  environment.tick(dt, now);
+  environment.tick(dt, now, camera.getWorldPosition(new THREE.Vector3()), quality.settings.detailDistance);
   sky.material.uniforms.uSpace.value = THREE.MathUtils.smoothstep(movement.position[1], 100, 700);
   fog.near = 24 + Math.max(0, movement.position[1] - 20) * .5;
   fog.far = 65 + Math.max(0, movement.position[1] - 20) * 2;
@@ -498,20 +519,23 @@ renderer.setAnimationLoop((now, frame) => {
     if (audible && now > nextBird) { playTone(1700 + Math.random() * 800, .07); nextBird = now + 6000 + Math.random() * 6000; }
   }
   sky.position.copy(rig.position);
-  if (renderer.xr.isPresenting) {
-    // A small floating field guide follows the player, outside the aiming corridor.
+  // Menus open beside the wrist and stay in local-floor space. No permanent head HUD.
+  board.visible = renderer.xr.isPresenting && (!healthy() || view.state?.phase !== 'playing');
+  if (board.visible) {
     const head = camera.getWorldPosition(new THREE.Vector3());
-    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
-    forward.y = 0; forward.normalize();
-    const side = new THREE.Vector3(-forward.z, 0, forward.x);
-    const target = head.clone().addScaledVector(forward, 2.5).addScaledVector(side, -1.7); target.y += .6;
-    board.position.copy(contentRoot.worldToLocal(target));
-    board.scale.setScalar(.29); board.quaternion.copy(contentRoot.getWorldQuaternion(new THREE.Quaternion()).invert()).multiply(camera.getWorldQuaternion(new THREE.Quaternion()));
+    const target = new THREE.Vector3(0, -.08, -1.1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion())).add(head);
+    board.position.copy(contentRoot.worldToLocal(target)); board.scale.setScalar(.14);
+    board.quaternion.copy(contentRoot.getWorldQuaternion(new THREE.Quaternion()).invert()).multiply(camera.getWorldQuaternion(new THREE.Quaternion()));
   }
-  interpolate(now);
+  interpolate(now, dt);
   scene.updateMatrixWorld(true);
   const focused = renderer.xr.getSession()?.visibilityState === 'visible';
-  bow.update(controllers, renderer.xr.isPresenting && focused, healthy() && view.state?.phase === 'playing' && focused, now);
+  inputVisuals.update(dt, renderer.xr.isPresenting && focused, bow, handMenu.open);
+  scene.updateMatrixWorld(true);
+  handMenu.update(dt, now, camera, controllers, inputVisuals.grips, hands, exploring, renderer.xr.isPresenting, bow.drawing, bow.hand);
+  bow.update(controllers, renderer.xr.isPresenting && focused && !handMenu.open, exploring && !handMenu.open, now);
+  avatar.update(dt, camera, movement, inputVisuals, environment, dragon, exploring, renderer.xr.isPresenting);
+  quality.update(dt, camera, view.mode === 'mr');
   frameCount++;
   if (now - fpsStart >= 1000) { fps = Math.round(frameCount * 1000 / (now - fpsStart)); frameCount = 0; fpsStart = now; }
   updateUI();

@@ -1,4 +1,4 @@
-import { mkdir, copyFile, cp } from 'node:fs/promises';
+import { mkdir, copyFile, cp, readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const destination = new URL('client/webxr/vendor/', root);
 await mkdir(destination, { recursive: true });
@@ -9,3 +9,14 @@ await mkdir(new URL('bvh/', destination), { recursive: true });
 await copyFile(new URL('node_modules/three-mesh-bvh/build/index.module.js', root), new URL('bvh/index.js', destination));
 await copyFile(new URL('node_modules/three-mesh-bvh/LICENSE', root), new URL('bvh/LICENSE', destination));
 console.log('Pinned Three.js copied locally with its MIT license; no runtime CDN.');
+const profiles = new URL('node_modules/@webxr-input-profiles/assets/', root);
+const names = ['generic-hand', 'generic-trigger', 'generic-trigger-squeeze-touchpad-thumbstick',
+  'oculus-touch-v2', 'oculus-touch-v3', 'meta-quest-touch-plus', 'meta-quest-touch-plus-v2', 'meta-quest-touch-pro'];
+const all = JSON.parse(await readFile(new URL('dist/profiles/profilesList.json', profiles), 'utf8'));
+const selected = Object.fromEntries(names.filter(name => all[name]).map(name => [name, all[name]]));
+await mkdir(new URL('xr-profiles/', destination), { recursive: true });
+for (const name of Object.keys(selected)) await cp(new URL(`dist/profiles/${name}/`, profiles), new URL(`xr-profiles/${name}/`, destination), { recursive: true });
+await writeFile(new URL('xr-profiles/profilesList.json', destination), JSON.stringify(selected));
+await copyFile(new URL('LICENSE.md', profiles), new URL('xr-profiles/LICENSE.md', destination));
+await copyFile(new URL('README.md', profiles), new URL('xr-profiles/README.md', destination));
+console.log('Pinned WebXR hand/controller profiles copied locally with MIT license and trademark notice.');

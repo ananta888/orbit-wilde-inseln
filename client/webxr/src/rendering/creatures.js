@@ -1,11 +1,14 @@
 import * as THREE from '/vendor/three.module.js';
 import { mergeParts, part, shadowGeometry, shadowTexture } from '/src/rendering/jungle.js';
 
-const sphere = new THREE.SphereGeometry(1, 12, 9);
-const cylinder = new THREE.CylinderGeometry(0.07, 0.055, 1, 7);
+const sphere = new THREE.SphereGeometry(1, 24, 16), lowSphere = new THREE.SphereGeometry(1, 10, 7);
+const cylinder = new THREE.CylinderGeometry(0.07, 0.055, 1, 12);
 const cone = new THREE.ConeGeometry(1, 1, 8);
+import { LimbBatch, solveTwoBone, gaitSample } from './kinematics.js';
+import { surfaceMaterial } from './materials.js';
 const dark = '#242c24';
-const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9 });
+const material = surfaceMaterial('fur', { vertexColors: true, roughness: .87 });
+const limbMaterial = surfaceMaterial('fur', { roughness: .89 });
 const shadowMaterial = new THREE.MeshBasicMaterial({ map: shadowTexture, transparent: true, depthWrite: false });
 const templates = new Map();
 function branch(a, b, shade, thickness = 0.035) {
@@ -69,27 +72,61 @@ function template(species) {
     }
     for (let i = 0; i < 4; i++) ellipsoid('#b3d6a0', [0, 1.32 - i * .12, .197], [.13 - i * .015, .025, .021]);
   }
-  const torso = mergeParts(p);
-  const leg = mergeParts([part(cylinder, '#ffffff', [0, -.5, 0]), part(sphere, '#463a2b', [0, -1, .045], [.1, .075, .16])]);
-  const legMaterial = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .9, color: legs[0].shade });
-  const result = { torso, leg, legs, center, legMaterial };
+  const pivot = species === 'deer' ? new THREE.Vector3(0, .94, .28) : species === 'boar' ? new THREE.Vector3(0, .68, .38) : new THREE.Vector3(0, 1.52, 0);
+  const isHead = item => species === 'deer' ? item.matrix.elements[13] > 1.1 : species === 'boar' ? item.matrix.elements[14] > .4 : item.matrix.elements[13] > 1.6;
+  const headParts = p.filter(isHead).map(item => ({ ...item, matrix: new THREE.Matrix4().makeTranslation(-pivot.x, -pivot.y, -pivot.z).multiply(item.matrix) }));
+  const bodyParts = p.filter(item => !isHead(item));
+  const low = parts => mergeParts(parts.map(item => ({ ...item, geometry: item.geometry === sphere ? lowSphere : item.geometry })));
+  const result = { torso: mergeParts(bodyParts), head: mergeParts(headParts), lowTorso: low(bodyParts), lowHead: low(headParts), pivot, legs, center };
   templates.set(species, result); return result;
 }
 export function makeCreature(species) {
   const data = template(species), group = new THREE.Group(), visual = new THREE.Group();
   visual.position.y = -data.center; group.add(visual);
-  const body = new THREE.Mesh(data.torso, material); visual.add(body);
+  const body = new THREE.Mesh(data.torso, material), head = new THREE.Mesh(data.head, material);
+  head.position.copy(data.pivot); visual.add(body, head);
+  body.castShadow = body.receiveShadow = head.castShadow = head.receiveShadow = true;
   const shadow = new THREE.Mesh(shadowGeometry, shadowMaterial); shadow.position.y = .028; shadow.scale.set(1.8, 1, 2.3); visual.add(shadow);
-  const legs = data.legs.map((leg, i) => {
-    const pivot = new THREE.Group(); pivot.position.set(leg.x, leg.height, leg.z);
-    const m = new THREE.Mesh(data.leg, data.legMaterial); m.scale.set(species === 'boar' ? 1.4 : .85, leg.height, 1);
-    pivot.add(m); visual.add(pivot); return { pivot, phase: i % 2 ? Math.PI : 0 };
-  });
-  return { group, visual, body, legs, species, active: true, center: data.center };
+  const batch = new LimbBatch(visual, limbMaterial);
+  const legs = data.legs.map((leg, i) => ({ ...leg, phase: species === 'alien' ? i * .5 : [0, .5, .75, .25][i], joints: [] }));
+  return { group, visual, body, head, legs, batch, data, phase: 0, species, active: true, center: data.center, highDetail: true };
 }
-export function animateCreature(creature, state, time) {
-  const walking = state.speed > 0.05 && state.mood !== 'grazing';
-  for (const { pivot, phase } of creature.legs) pivot.rotation.x = walking ? Math.sin(time * (state.mood === 'alert' ? 9 : 4) + phase) * .36 : 0;
-  creature.visual.position.y = -creature.center + (walking ? Math.sin(time * 8) * .016 : 0);
-  creature.body.rotation.x = state.mood === 'grazing' && creature.species !== 'alien' ? Math.sin(time * .8) * .035 : 0;
+export function animateCreature(creature, state, time, dt = 1 / 60, environment = null, viewer = null, detailDistance = 19) {
+  const walking = state.speed > .05 && state.mood !== 'grazing';
+  const fast = state.mood === 'alert' || state.speed > 1.8, biped = creature.species === 'alien', boar = creature.species === 'boar';
+  const stride = (boar ? .42 : biped ? .52 : .64) * (fast ? 1.35 : 1), duty = fast ? .52 : .68;
+  if (walking) creature.phase += Math.max(0, state.speed) * dt * duty / stride;
+  creature.walkBlend = THREE.MathUtils.damp(creature.walkBlend || 0, walking ? 1 : 0, 12, dt);
+  const detailed = !viewer || creature.group.getWorldPosition(new THREE.Vector3()).distanceTo(viewer) < detailDistance;
+  if (detailed !== creature.highDetail) {
+    creature.body.geometry = detailed ? creature.data.torso : creature.data.lowTorso;
+    creature.head.geometry = detailed ? creature.data.head : creature.data.lowHead; creature.highDetail = detailed;
+  }
+  creature.visual.position.y = -creature.center + (walking ? Math.sin(creature.phase * Math.PI * 4) * (fast ? .03 : .012) : Math.sin(time * 1.8) * .004);
+  creature.head.rotation.x = THREE.MathUtils.damp(creature.head.rotation.x, state.mood === 'grazing' && !biped ? (boar ? .32 : .95) : 0, 3, dt);
+  creature.head.rotation.y = Math.sin(time * .65 + creature.phase) * (state.mood === 'alert' ? .16 : .06);
+  creature.batch.begin();
+  const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), creature.group.rotation.y);
+  for (const [index, leg] of creature.legs.entries()) {
+    const sample = gaitSample(creature.phase + (fast && !biped ? [0, .5, .5, 0][index] : leg.phase), stride * creature.walkBlend, (fast ? .21 : .10) * creature.walkBlend, duty);
+    const hip = new THREE.Vector3(leg.x, leg.height, leg.z);
+    const foot = new THREE.Vector3(leg.x, .045, leg.z + sample.forward);
+    const world = foot.clone().applyQuaternion(rotation).add(creature.group.position);
+    const ground = environment && !environment.mixed ? environment.sample(world.x, world.z) : 0;
+    foot.y = (ground ?? creature.group.position.y - creature.center) - creature.group.position.y + creature.center + .045 + sample.lift;
+    const hockHeight = boar ? .065 : biped ? .04 : .13, back = leg.z < 0 && !biped;
+    const hock = foot.clone().add(new THREE.Vector3(0, hockHeight, back ? -.07 : -.025));
+    const length = boar ? .245 : biped ? .44 : .36;
+    const pole = new THREE.Vector3(0, .08, biped || back ? 1 : -1);
+    const result = solveTwoBone(hip, hock, pole, length, length);
+    leg.joints = [hip, result.joint, result.target, foot]; leg.contact = sample.contact;
+    const radius = boar ? .074 : biped ? .073 : .049;
+    creature.batch.segment(hip, result.joint, radius, leg.shade, back ? 1.3 : 1);
+    creature.batch.segment(result.joint, result.target, radius * .63, leg.shade);
+    creature.batch.sphere(result.joint, [radius * .76, radius * .9, radius * .76], leg.shade);
+    creature.batch.segment(result.target, foot, radius * .44, leg.shade);
+    if (biped) creature.batch.sphere(foot.clone().add(new THREE.Vector3(0, 0, .055)), [.075, .052, .16], '#354e47');
+    else for (const side of [-1, 1]) creature.batch.sphere(foot.clone().add(new THREE.Vector3(side * .019, -.014, .015)), [boar ? .025 : .019, .042, .071], '#2c2a23');
+  }
+  creature.batch.finish();
 }
