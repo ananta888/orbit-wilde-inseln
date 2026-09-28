@@ -290,6 +290,8 @@ def make_app(urls=(), world_path=DEFAULT_PATH, *, content_root=ROOT / "content",
     app.router.add_get("/flight-config.json", service.flight_config)
     app.router.add_post("/api/dragon/transcribe", service.transcribe)
     app.router.add_get("/api/dragon/audio/{ident}", service.audio)
+    from orbit_server.assets.http import register as register_assets
+    register_assets(app, data_path, PROFILE, same_origin)
     # Optional isolated editor. Gameplay still starts without native geometry packages.
     from importlib.util import find_spec
     if all(find_spec(name) is not None for name in ("numpy", "trimesh", "manifold3d")):

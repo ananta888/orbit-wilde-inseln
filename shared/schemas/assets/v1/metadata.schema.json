@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/metadata.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1
+    },
+    "type": {
+      "enum": [
+        "model",
+        "creature",
+        "character",
+        "animation",
+        "material",
+        "environment",
+        "prop"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "maxItems": 100
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "license": {
+          "enum": [
+            "CC0",
+            "CC-BY",
+            "CC-BY-SA",
+            "CC-BY-NC",
+            "CC-BY-ND",
+            "CC-BY-NC-SA",
+            "CC-BY-NC-ND",
+            "Public Domain",
+            "Custom",
+            "Unknown"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "licenseUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "creator": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "sourceAssetId": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "sourceUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "evidenceUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "notice": {
+          "type": "string",
+          "maxLength": 8000
+        },
+        "downloadDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 200
+        },
+        "attributionRequired": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "license",
+        "version",
+        "licenseUrl",
+        "creator",
+        "source",
+        "sourceAssetId",
+        "sourceUrl",
+        "evidenceUrl",
+        "notice",
+        "downloadDate",
+        "modifications",
+        "attributionRequired"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "license"
+  ]
+}

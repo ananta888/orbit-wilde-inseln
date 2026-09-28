@@ -61,6 +61,12 @@ Ein konfigurierter Ananta-/Jev-Dienst liefert lokale Änderungsvorschläge und n
 
 [Start und Bedienung](docs/design-mode/overview.md) · [Design-TODO](todos/active/todo.vr-ai-creature-designer.json). Allgemeiner texturierter Skin-/Morph-Import, UV-Baking, umfangreiche LODs und freie neuronale Meshgenerierung bleiben Ausbaupunkte. Diese Funktionen werden durch das neue Modell- und Werkzeugfundament nicht vorgetäuscht.
 
+## Offene Assetbibliothek
+
+Unter `/library/index.html` lassen sich freie Modelle und Materialien suchen, importieren, prüfen und als GLB in 3D ansehen. Poly Haven und ambientCG besitzen automatische Importwege; Sketchfab benötigt für Downloads einen optionalen Token. Quaternius, Kenney und OpenGameArt bieten gekennzeichnete Quelllinks und manuellen Import. Die lokale Library funktioniert offline und enthält auch den vorhandenen Arin als importierbare Quelle.
+
+Fünf Profile erzeugen getrennte Optimierungen; Originale, Skinning, Morphs, Clips und Lizenznachweise bleiben erhalten. Geprüfte Modelle können als hashgebundene Weltobjekte platziert und mit Credits exportiert werden. Unterstützte Geometrie wechselt als unabhängige Kopie in die vorhandene Werkstatt. Allgemeines texturiertes Sculpting und universelles Retargeting werden nicht vorgetäuscht. [Bedienung, API, Provider und Grenzen](docs/assets/resolver.md) · [Architekturentscheidung](docs/architecture/adr/008-open-asset-resolver.md).
+
 ## Entwicklungsprüfungen
 
 ```sh

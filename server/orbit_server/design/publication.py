@@ -4,7 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import re
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 
@@ -69,8 +69,9 @@ def prepare_mount(document: dict[str, Any]) -> None:
 
 
 class PublicationStore:
-    def __init__(self, repository):
+    def __init__(self, repository, source_guard: Callable[[str, dict], None] | None = None):
         self.repository = repository
+        self.source_guard = source_guard
         with repository.lock:
             repository.db.executescript("""
                 CREATE TABLE IF NOT EXISTS runtime_creatures(
@@ -86,6 +87,7 @@ class PublicationStore:
             doc = repo.load(owner, ident)
             if type(revision) is not int or doc["revision"] != revision:
                 raise Conflict("Kreatur wurde verändert; vor Übernahme erneut prüfen")
+            if self.source_guard: self.source_guard(owner, doc)
             artifact = build_artifact(doc)
             body = canonical(artifact)
             key = digest(artifact)
@@ -117,6 +119,7 @@ class PublicationStore:
             if not row: raise DesignError("Spielmodell nicht gefunden")
             artifact = json.loads(row[0])
             if digest(artifact) != key: raise DesignError("Spielmodell ist beschädigt")
+            if self.source_guard: self.source_guard(owner, artifact["document"])
             return artifact
 
     def active(self, owner: str) -> dict | None:
@@ -143,7 +146,19 @@ def register(app, designer, profile_key, check_origin):
     """Routes do transport only; the store owns validation and atomic publication."""
     import asyncio
     from aiohttp import web
-    store = PublicationStore(designer.repository)
+    def guard(owner, document):
+        source = document.get("provenance", {}).get("asset")
+        if not source: return
+        from orbit_server.assets.http import KEY as ASSETS
+        try:
+            resolver = app[ASSETS]
+            asset = resolver.store.get(owner, source["id"])
+            if asset["sha256"] != source["sha256"]: raise ValueError("Assetquelle verändert")
+            resolver.enforce(asset)
+            resolver.enforce(source)
+        except ValueError as error:
+            raise DesignError("Bibliotheksquelle nicht zur Veröffentlichung freigegeben: " + str(error)) from error
+    store = PublicationStore(designer.repository, guard)
 
     async def publish(request):
         try:
@@ -158,8 +173,11 @@ def register(app, designer, profile_key, check_origin):
         except (ValueError, TypeError, KeyError) as error: raise web.HTTPBadRequest(text=str(error)) from error
 
     async def active(request):
-        return web.json_response({"asset": await asyncio.to_thread(store.active, request[profile_key])},
-                                 headers={"Cache-Control": "no-store"})
+        try:
+            value = await asyncio.to_thread(store.active, request[profile_key])
+            return web.json_response({"asset": value}, headers={"Cache-Control": "no-store"})
+        except DesignError as error:
+            return web.json_response({"asset": None, "error": str(error)}, headers={"Cache-Control": "no-store"})
 
     async def select(request):
         try:

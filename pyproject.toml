@@ -19,6 +19,7 @@ dev = ["pytest>=8,<10", "ruff>=0.11,<1", "mypy>=1.15,<2", "types-jsonschema"]
 [project.scripts]
 orbit-server = "orbit_server.__main__:main"
 orbit-content = "orbit_server.missions.cli:main"
+orbit-assets = "orbit_server.assets.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["server"]
@@ -37,7 +38,7 @@ ignore = ["E701", "E702", "E731"]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["server/orbit_server/missions", "server/orbit_server/persistence", "server/orbit_server/learning", "server/orbit_server/fitness", "server/orbit_server/ai/contracts.py", "server/orbit_server/speech", "server/orbit_server/design"]
+files = ["server/orbit_server/missions", "server/orbit_server/persistence", "server/orbit_server/learning", "server/orbit_server/fitness", "server/orbit_server/ai/contracts.py", "server/orbit_server/speech", "server/orbit_server/design", "server/orbit_server/assets"]
 check_untyped_defs = true
 warn_unused_ignores = true
 follow_imports = "silent"

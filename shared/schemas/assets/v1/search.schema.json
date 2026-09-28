@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/search.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "query": {
+      "type": "string",
+      "maxLength": 400
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      },
+      "maxItems": 20
+    },
+    "licenses": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "CC0",
+          "CC-BY",
+          "CC-BY-SA",
+          "CC-BY-NC",
+          "CC-BY-ND",
+          "CC-BY-NC-SA",
+          "CC-BY-NC-ND",
+          "Public Domain",
+          "Custom",
+          "Unknown"
+        ]
+      },
+      "maxItems": 10
+    },
+    "types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "model",
+          "creature",
+          "character",
+          "animation",
+          "material",
+          "environment",
+          "prop"
+        ]
+      },
+      "maxItems": 7
+    },
+    "max_triangles": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000000
+    },
+    "max_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 134217728
+    },
+    "max_texture_resolution": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8192
+    },
+    "min_animations": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 128
+    },
+    "rigged": {
+      "type": "boolean"
+    },
+    "animated": {
+      "type": "boolean"
+    },
+    "gltf": {
+      "type": "boolean"
+    },
+    "pbr": {
+      "type": "boolean"
+    },
+    "low_poly": {
+      "type": "boolean"
+    },
+    "quest_compatible": {
+      "type": "boolean"
+    },
+    "target": {
+      "enum": [
+        "desktop-high",
+        "desktop-medium",
+        "quest3-high",
+        "quest3-balanced",
+        "quest3-performance"
+      ]
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 40
+    }
+  },
+  "required": [
+    "query"
+  ]
+}

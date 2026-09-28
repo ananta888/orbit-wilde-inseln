@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/normalize.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "scale": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1000
+    },
+    "up": {
+      "enum": [
+        "Y",
+        "Z"
+      ]
+    }
+  },
+  "required": [
+    "scale",
+    "up"
+  ]
+}

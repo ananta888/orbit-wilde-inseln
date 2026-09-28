@@ -7,6 +7,8 @@ import { Palette } from './palette.js';
 import { download, existingArin, exportGLB, importFile } from './assets.js';
 import { VoiceCapture } from '../audio/recording.js';
 import { WorkpieceNavigation } from './navigation.js';
+import { assetTool } from '../assets/api.js';
+import { assetBytes } from '../assets/instances.js';
 
 const $ = id => document.getElementById(id);
 const scene = new THREE.Scene(); scene.background = new THREE.Color('#182d28');
@@ -260,8 +262,8 @@ action('propose', () => { targets(); client.send({ type: 'proposal', instruction
   regions: [...selected], base_revision: client.document.revision }); status('Ananta bereitet eine Vorschau vor …'); });
 action('generate', () => { client.send({ type: 'generate_proposal', instruction: $('instruction').value,
   base_revision: client.document.revision }); status('Ananta entwirft eine neue Körperform …'); });
-async function ingest(doc) {
-  const response = await fetch('/api/design/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(doc) });
+async function ingest(doc, sourceAsset = null) {
+  const response = await fetch('/api/design/import' + (sourceAsset ? '?source_asset=' + encodeURIComponent(sourceAsset) : ''), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(doc) });
   if (!response.ok) throw Error(await response.text());
   client.send({ type: 'open', id: (await response.json()).id });
 }
@@ -446,8 +448,25 @@ renderer.setAnimationLoop((time) => {
   if (!living && !flight && $('tool').value !== 'pose') creature.restPose();
   renderer.render(scene, camera);
 });
-client.start().then(() => {
+client.start().then(async () => {
   for (const name of client.catalog.templates) $('template').add(new Option(name, name));
   for (const asset of client.catalog.assets) if (![...$('saved-creatures').options].some(o => o.value === asset.id))
     $('saved-creatures').add(new Option(asset.name || asset.id, asset.id));
+  const library = new URLSearchParams(location.search).get('library_asset');
+  if (library) {
+    // start() creates the socket; its hello still opens the previous document.
+    // Wait for that transaction before opening the independently imported copy.
+    if (!client.document) await new Promise((resolve, reject) => {
+      const ready = () => { clearTimeout(timer); resolve(); };
+      const timer = setTimeout(() => { client.removeEventListener('document', ready); reject(Error('Werkstattverbindung noch nicht bereit')); }, 20000);
+      client.addEventListener('document', ready, { once: true });
+    });
+    if ((await client.journal.list()).length) throw Error('Vor dem Bibliotheksimport ausstehende Bearbeitungen bestätigen oder sichern.');
+    const descriptor = await assetTool('preview_asset', { id: library });
+    const bytes = await assetBytes(descriptor, { maxBytes: 16 * 1024 * 1024 });
+    const file = new File([bytes], descriptor.name + '.glb', { type: 'model/gltf-binary' });
+    const doc = await importFile(file);
+    await ingest(doc, library);
+    status('Unabhängige Bearbeitungskopie geöffnet; die Assetquelle bleibt erhalten.');
+  }
 }).catch(error);

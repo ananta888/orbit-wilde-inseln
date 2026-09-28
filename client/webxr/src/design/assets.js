@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeVertices, deinterleaveAttribute } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { DragonMount } from '../rendering/dragon.js';
@@ -55,14 +55,21 @@ export function download(name, data, type = 'application/json') {
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
-export function documentFromObject(root, source = 'Imported GLB') {
+export function documentFromObject(root, source = 'Imported GLB', { procedural = false } = {}) {
   root.updateMatrixWorld(true); const regions = []; let total = 0;
   root.traverse(mesh => {
     if (!mesh.isMesh || !mesh.visible) return;
     if (mesh.isSkinnedMesh || Object.values(mesh.geometry.morphAttributes).some(x => x.length))
       throw Error('Dieses Importprofil unterstützt noch keine Skin-/Morphdaten. Das Original bleibt unverändert.');
+    if (!procedural && (mesh.geometry.attributes.uv || mesh.geometry.attributes.uv1))
+      throw Error('UV-Daten benötigen das erweiterte Bearbeitungsprofil. Vorschau und Spielimport sind in der Assetbibliothek verfügbar.');
+    if (!procedural && (Object.keys(mesh.geometry.attributes).some(key => !['position', 'normal', 'color'].includes(key))
+      || mesh.geometry.attributes.color && mesh.geometry.attributes.color.itemSize !== 3))
+      throw Error('Zusätzliche Vertexdaten werden von diesem Bearbeitungsprofil nicht verlustfrei unterstützt.');
     if (Array.isArray(mesh.material) || mesh.material.map) throw Error('Texturierte Mehrfachmaterialien benötigen das erweiterte Importprofil.');
     let geometry = mesh.geometry.clone();
+    for (const [name, attribute] of Object.entries(geometry.attributes))
+      if (attribute.isInterleavedBufferAttribute) geometry.setAttribute(name, deinterleaveAttribute(attribute));
     geometry.applyMatrix4(mesh.matrixWorld);
     const indexed = mergeVertices(geometry, 1e-5); geometry.dispose(); geometry = indexed;
     if (!geometry.attributes.normal) geometry.computeVertexNormals();
@@ -94,7 +101,7 @@ export function existingArin() {
   mount.head.traverse(o => { if (o.isMesh) o.userData.part = 'head'; });
   mount.wings.forEach((wing, i) => wing.traverse(o => { if (o.isMesh) o.userData.part = i ? 'right_wing' : 'left_wing'; }));
   mount.tail.forEach((tail, i) => tail.children.forEach(o => { if (o.isMesh) o.userData.part = 'tail_' + i; }));
-  const doc = documentFromObject(mount.body, 'Arin aus Orbit');
+  const doc = documentFromObject(mount.body, 'Arin aus Orbit', { procedural: true });
   const geometries = new Set(), materials = new Set();
   mount.root.traverse(o => { if (o.geometry) geometries.add(o.geometry); if (o.material) materials.add(o.material); });
   mount.rider.traverse(o => { if (o.geometry) geometries.add(o.geometry); if (o.material) materials.add(o.material); });
@@ -116,14 +123,21 @@ export async function importFile(file) {
   if ((json.accessors || []).some(a => !Number.isSafeInteger(a.count) || a.count > 540000)) throw Error('GLB-Accessorbudget');
   if (json.images?.length) throw Error('Texturimport benötigt das erweiterte Importprofil');
   const gltf = await new GLTFLoader().parseAsync(bytes, '');
-  try { return orbitDocument(gltf.scene) || documentFromObject(gltf.scene, file.name); }
+  try {
+    const own = orbitDocument(gltf.scene);
+    if (own) return own;
+    if (json.extensionsUsed?.length) throw Error('GLB-Erweiterungen benötigen ein passendes Bearbeitungsprofil. Das Original bleibt erhalten.');
+    if (gltf.animations.length) throw Error('Animationsdaten dürfen beim Werkstattimport nicht verloren gehen. Das GLB bleibt in der Assetbibliothek nutzbar.');
+    return documentFromObject(gltf.scene, file.name);
+  }
   finally { gltf.scene.traverse(o => { o.geometry?.dispose(); if (Array.isArray(o.material)) o.material.forEach(m => m.dispose()); else o.material?.dispose(); }); }
 }
 
 export async function exportGLBBytes(document) {
   // Isolated rest-space export: never move the live workspace or export a predicted stroke.
   const view = new CreatureView(new THREE.Group()); view.load(document);
-  const root = view.root, doc = plainDocument(document);
+  const root = view.root, doc = structuredClone(plainDocument(document));
+  if (doc.provenance.asset) doc.provenance.asset.license.modifications.push(`Orbit geometry editing through revision ${doc.revision}; original library asset ${doc.provenance.asset.id}`);
   root.name = doc.name;
   const { regions, rig, ...metadata } = doc;
   root.userData.orbitCreature = { ...metadata, rig: { bones: rig.bones } };

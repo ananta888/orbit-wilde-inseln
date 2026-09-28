@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/config.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "providers": {
+      "type": "object",
+      "maxProperties": 32,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "token_env": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "settings": {
+            "type": "object",
+            "maxProperties": 32,
+            "propertyNames": {
+              "maxLength": 80
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                {
+                  "type": [
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 100
+      },
+      "maxItems": 20
+    },
+    "commercial": {
+      "type": "boolean"
+    },
+    "allowed_licenses": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "CC0",
+          "CC-BY",
+          "CC-BY-SA",
+          "CC-BY-NC",
+          "CC-BY-ND",
+          "CC-BY-NC-SA",
+          "CC-BY-NC-ND",
+          "Public Domain",
+          "Custom",
+          "Unknown"
+        ]
+      },
+      "maxItems": 10
+    },
+    "custom_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2048
+      },
+      "maxItems": 100
+    },
+    "quota_bytes": {
+      "type": "integer",
+      "minimum": 67108864,
+      "maximum": 21474836480
+    }
+  },
+  "required": []
+}

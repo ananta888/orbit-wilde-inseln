@@ -1,0 +1,13 @@
+# Open Asset Resolver – Implementierungsplan
+
+Stand: 2026-09-28. Autorisierter Umfang: zentrale Asset-Infrastruktur für Spiel und Werkstatt.
+
+1. **Verträge und Speicher:** `server/orbit_server/assets`, geschlossene Schemas unter `shared/schemas/assets/v1`, Lizenzpolitik, SHA-256-Blobstore, SQLite-Katalog und unveränderliche Ableitungen. Herkunft bleibt separat von deduplizierten Bytes erhalten. Lokale Daten liegen ausschließlich im konfigurierten Laufzeitordner.
+2. **Provider:** eigener Port, lokale Library, Poly-Haven-Suche/Dateimanifeste, ambientCG-Suche/Materialdownloads, Sketchfab-Adapter mit optionalem Token. Quaternius/Kenney/OpenGameArt bieten ausdrücklich Such-/Quelllinks und manuellen Import; keine HTML-Scraper. Installierte Plugins werden nur durch Betreiberkonfiguration aktiviert.
+3. **Unvertrauenswürdige Daten:** HTTPS/DNS-Prüfung am tatsächlichen Verbindungsaufbau, begrenzte Downloads und Archive, sichere relative Ressourcennamen, keine Skripte oder externen glTF-URIs. Fester, abbrechbarer Konvertierungsprozess. Originale unverändert behalten; unbekannte Lizenzen isolieren.
+4. **Analyse und Normalisierung:** Khronos-Validierung, glTF Transform und vorhandener meshoptimizer. GLB/glTF, OBJ/STL, Materialpakete; FBX/Blend nur über ausdrücklich verfügbare isolierte Konverter. Vollständiger Report einschließlich Rig, Clips, Morphs, Texturen und Laufzeitbudgets. Unbekannte Erweiterungen werden sichtbar abgelehnt.
+5. **Ableitungen:** fünf explizite Profile, Texturreduktion, konservative Vereinfachung, LODs und semantische Rig-/Clip-Metadaten. Quelle, Toolversionen, Parameter und Ergebnis-Hashes machen Vorgänge wiederholbar. Animationen separat auffindbar; Retargeting benötigt geprüfte Zuordnung statt stiller Anatomieannahmen.
+6. **Integration:** HTTP-Tool-API ohne LLM-Abhängigkeit, Asset-Browser mit Filtern und echter GLB-Vorschau, lokale Uploads, Lizenz-/Herkunftsansicht, Werkstattübergang und servergespeicherte, hashgebundene Spielplatzierungen. Vorhandene Editorbefehle bleiben für Undo, Masken und geschützte Daten zuständig. Nicht verlustfrei editierbare Formate werden nicht reduziert importiert.
+7. **Abnahme:** automatisierte Provider-Fixtures und echte lokale HTTP-/Browserpfade, Netzwerk-/Archiv-Angriffe, Lizenzsperren, Cache, Analyse, Optimierung, Credits und Spielimport. Externe Live-Diagnose ausdrücklich separat; bestehende Python-, JS-, Design- und XR-Prüfungen. Keine simulierte Quest-Abnahme als Hardwareergebnis.
+
+Entscheidungen und präzise unterstützte Fähigkeiten werden in ADR und Resolver-Dokumentation festgehalten. Implementierung und Tests müssen vor Abschluss tatsächliche Ergebnisse liefern; der Plan selbst ist kein Fertigstellungsnachweis.

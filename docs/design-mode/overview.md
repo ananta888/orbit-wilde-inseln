@@ -44,3 +44,11 @@ ORBIT_URL=http://127.0.0.1:8443 npm run test:design:xr
 ```
 
 Die Browserprüfungen benötigen Playwright-Chromium (`npx playwright install chromium`). Mit `CHROMIUM_PATH` lässt sich eine vorhandene kompatible Chromium-Installation angeben. Tests nutzen neue Browserprofile und einen separaten Testdatenordner; sie sollten nicht gegen eine laufende persönliche Bearbeitung ausgeführt werden.
+
+## Offene Assetbibliothek
+
+Über „Assetbibliothek“ lassen sich lokale Dateien und unterstützte Remotequellen suchen, prüfen, als GLB ansehen und als unabhängige Werkstattkopie öffnen. Der gemeinsame [Resolver](../assets/resolver.md) besitzt Lizenzen, Originale, Varianten und Cache. Die Werkstatt bleibt zuständig für autoritative Bearbeitungsrevisionen, Masken, Undo, KI-Vorschläge und Veröffentlichung.
+
+Der Server bindet eine Bibliothekskopie an Asset-ID, SHA-256, vollständige Lizenz und eingebettete Quelllizenzen. JSON-/GLB-Export und Runtime-Artefakte behalten diese Herkunft. Vor Veröffentlichung, Aktivierung und Laden wird die Betreiber-Lizenzpolitik erneut geprüft; gesperrte Bibliotheksquellen werden nicht als Reittier ausgeliefert. Bearbeitungen werden im GLB-Export als Änderung an der Quelle gekennzeichnet.
+
+Interleavte Vertexdaten werden für den vorhandenen Editor korrekt in getrennte Attribute überführt. Der allgemeine Import weist fremde UVs, Skins, Morphs, Clips, zusätzliche Attribute oder Erweiterungen weiterhin sichtbar zurück, wenn das Edit-Dokument sie nicht verlustfrei darstellen kann. Die Bibliothek kann solche Assets vollständig rendern und in der Welt platzieren; sie erzwingt keinen verlustbehafteten Sculpt-Import. Orbit-eigene GLB-Rundläufe mit Edit-Metadaten und der vorhandene prozedurale Arin-Pfad bleiben erhalten.

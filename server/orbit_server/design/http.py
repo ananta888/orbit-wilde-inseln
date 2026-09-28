@@ -64,6 +64,16 @@ class DesignService:
     async def ingest(self, request):
         try:
             doc = json.loads(await self.body(request))
+            source = request.query.get("source_asset") or doc.get("provenance", {}).get("asset", {}).get("id")
+            if source:
+                from orbit_server.assets.http import KEY as ASSETS
+                resolver = request.app[ASSETS]
+                asset = resolver.store.get(request[self.profile_key], source)
+                resolver.enforce(asset)
+                if not asset["verified"]: raise DesignError("Bibliotheksquelle zuerst vollständig importieren")
+                doc["provenance"] = {"source": asset["sourceUrl"][:200], "license": asset["license"]["license"],
+                                     "asset": {"id": asset["id"], "sha256": asset["sha256"], "license": asset["license"],
+                                               "sourceLicenses": asset["sourceLicenses"]}}
             await asyncio.to_thread(check, "edit-document", doc)
             validate(doc)
             # Imports always create a copy, never overwrite another creature by supplied ID.

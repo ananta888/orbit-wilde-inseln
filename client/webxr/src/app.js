@@ -16,6 +16,7 @@ import { ActionSequence } from './xr/gestures.js';
 import { InputVisuals } from './xr/input-visuals.js';
 import { PlayerAvatar } from './rendering/avatar.js';
 import { QualitySettings } from './rendering/quality.js';
+import { WorldAssets } from './assets/world-assets.js';
 
 const $ = (id) => document.getElementById(id);
 export const view = { state: null, snapshots: [], renderTime: 0, camera: null, renderer: null, bodies: [] };
@@ -34,6 +35,8 @@ scene.fog = fog;
 const backdrop = new THREE.Group(), contentRoot = new THREE.Group();
 scene.add(backdrop, contentRoot);
 const environment = new LiveScene(contentRoot);
+const worldAssets = new WorldAssets(contentRoot, error => { view.assetError = error.message; });
+view.worldAssets = worldAssets;
 Object.assign(view, { scene, backdrop, contentRoot, environment, mode: 'desktop', arrows: new Map() });
 const camera = new THREE.PerspectiveCamera(68, innerWidth / innerHeight, 0.04, 8000);
 view.camera = camera;
@@ -504,6 +507,7 @@ renderer.setAnimationLoop((now, frame) => {
     }
   }
   const dt = Math.max(0, Math.min(.05, (now - lastFrame) / 1000));
+  worldAssets.update(dt, now);
   const focusedForMove = !renderer.xr.isPresenting || renderer.xr.getSession()?.visibilityState === 'visible';
   movement.update(dt, controllers, inGame && healthy() && view.state?.phase === 'playing' && focusedForMove && !handMenu.open);
   planet.update(movement.position, view.mode === 'mr', now);

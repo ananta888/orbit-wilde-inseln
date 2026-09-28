@@ -192,6 +192,18 @@
         "DOC-SPEC",
         "DOC-TRACK"
       ]
+    },
+    {
+      "id": "ASSET",
+      "title": "Open Asset Resolver",
+      "status": "done",
+      "task_ids": [
+        "ASSET-CONTRACT",
+        "ASSET-PROVIDERS",
+        "ASSET-PIPELINE",
+        "ASSET-INTEGRATION",
+        "ASSET-VERIFY"
+      ]
     }
   ],
   "tasks": [
@@ -1855,6 +1867,225 @@
         "XR-Testschütze wartet auf verarbeitete Posen und kompensiert Schwerkraft sowie Zielbewegung bei niedriger SwiftShader-Bildrate. Normale bewegte Tierwelt und Spielphysik unverändert. Keine automatische Zielhilfe im Spiel. Einzelheiten in docs/testing.md.",
         "Python: 156 Tests und 16 Subtests ohne Skips; Ruff, Mypy und Validierung/Bau aller drei Missionspakete bestanden. Native Windows-Adresse localhost:8443 liefert alle drei geänderten Clientmodule bytegenau. Keine physische Quest-, Mikrofon- oder KI-Abnahme."
       ]
+    },
+    {
+      "id": "ASSET-CONTRACT",
+      "title": "Verträge, Lizenzen und lokaler SHA-256-Katalog",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ASSET",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [],
+      "affected_files": [
+        "server/orbit_server/assets/contracts.py",
+        "server/orbit_server/assets/licenses.py",
+        "server/orbit_server/assets/store.py",
+        "shared/schemas/assets/v1",
+        "tests/assets/test_resolver.py",
+        "tests/assets/test_preservation.py"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "Geschlossene, versionierte Verträge und kanonischer SHA-256-Katalog mit getrennten Quellen und Ableitungen.",
+        "CC0/Public Domain/CC BY als Standard; NC/ND/Unknown/Custom und eingebettete Quelllizenzen werden nach Betreiberpolitik geprüft.",
+        "Hashintegrität, Quoten und Profiltrennung gelten bei parallelem CLI-/Serverzugriff; Credits behalten Notices und Änderungen."
+      ],
+      "tests": [
+        "python -m pytest tests/assets",
+        "npm test",
+        "npm run test:assets",
+        "Optionale Live-Diagnose, getrennt von CI und Hardwareabnahme."
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Lizenzmatrix, Schemafehler, Quarantäne, eingebettete NC/BY-Lizenzen, Credits, Integrität und zwei unabhängige SQLite-Schreiber automatisiert bestanden."
+      ]
+    },
+    {
+      "id": "ASSET-PROVIDERS",
+      "title": "Konfigurierbare Remote- und lokale Assetquellen",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ASSET",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [
+        "ASSET-CONTRACT"
+      ],
+      "affected_files": [
+        "server/orbit_server/assets/providers",
+        "server/orbit_server/assets/search.py",
+        "server/orbit_server/assets/safety.py",
+        "tests/assets/test_transport.py",
+        "tools/diagnostics/check-assets-live.py"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "Local, gebündelter Arin, Poly Haven, ambientCG und Sketchfab nutzen einen injizierbaren Vertrag.",
+        "Quaternius, Kenney und OpenGameArt geben ehrlich manuelle Quelllinks aus; Sketchfab-Download erfordert Betreiber-Token.",
+        "Installierte Plugins sind opt-in, besitzen eigene Einstellungen und werden bei Deaktivierung nicht geladen.",
+        "Begrenzte Suche normalisiert/dedupliziert Quellen; Ausfälle eines Providers verhindern lokale Suche nicht."
+      ],
+      "tests": [
+        "python -m pytest tests/assets",
+        "npm test",
+        "npm run test:assets",
+        "Optionale Live-Diagnose, getrennt von CI und Hardwareabnahme."
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Reale Poly-Haven-Suche bis texturiertem Spielobjekt in Chromium bestanden; Wooden Stool 01, 7.458 Dreiecke, drei Texturen, CC0.",
+        "2026-09-28: Echter ambientCG-Import Bricks105 einschließlich inert erhaltener Begleitdateien bestanden. Sketchfab-Downloadvertrag mit Fixture geprüft, kein Live-Token-Test behauptet."
+      ]
+    },
+    {
+      "id": "ASSET-PIPELINE",
+      "title": "Begrenzter Import, Analyse und reproduzierbare Optimierung",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ASSET",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [
+        "ASSET-CONTRACT"
+      ],
+      "affected_files": [
+        "server/orbit_server/assets/pipeline.py",
+        "server/orbit_server/assets/profiles.py",
+        "tools/assets/resolver-worker.mjs",
+        "package.json",
+        "package-lock.json",
+        "tests/assets/test_preservation.py",
+        "tests/assets/data"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "GLB/glTF, einfache OBJ/STL und PBR-Materialpakete werden zu erneut validiertem GLB; FBX/Blend/OBJ-MTL melden ihren manuellen Exportweg.",
+        "Quelle bleibt unverändert; Skin, Morphs, Clips und Zusatzattribute gehen bei Optimierung nicht verloren.",
+        "Fünf Budgetprofile, LOD-Ableitungen, Clipkatalog und explizit kompatibles Rotationsretargeting laufen mit reproduzierbaren Parametern.",
+        "Download-, Archiv-, Prozess-, Geometrie- und Outputbudgets sind durchgesetzt; Linux-Namensräume isolieren den hier geprüften Worker."
+      ],
+      "tests": [
+        "python -m pytest tests/assets",
+        "npm test",
+        "npm run test:assets",
+        "Optionale Live-Diagnose, getrennt von CI und Hardwareabnahme."
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Tatsächliche isolierte Worker mit Animations-/Morph-Fixture, Arins Original-GLB, unabhängiger Animationsbibliothek, PBR-Paket, Retarget-Erfolg/-Ablehnung und Quellenlizenzprüfung bestanden.",
+        "Original-Arin behält 32 Bones und vier Clips; ein fehlerhafter optionaler skin.skeleton-Hinweis wird dokumentiert repariert. Keine anatomische Universalzuordnung oder Quest-Framerate behauptet."
+      ]
+    },
+    {
+      "id": "ASSET-INTEGRATION",
+      "title": "Assetbrowser, Tool-API und servergespeicherte Spielplatzierung",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ASSET",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [
+        "ASSET-PROVIDERS",
+        "ASSET-PIPELINE"
+      ],
+      "affected_files": [
+        "server/orbit_server/assets/service.py",
+        "server/orbit_server/assets/http.py",
+        "server/orbit_server/assets/cli.py",
+        "server/orbit_server/networking/http.py",
+        "server/orbit_server/configuration.py",
+        "client/webxr/library",
+        "client/webxr/src/assets",
+        "client/webxr/src/app.js",
+        "tests/client/asset-resolver.test.mjs"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "Browser und LLM-unabhängige Tool-API führen denselben Such-/Import-/Optimierungsdienst aus.",
+        "Echte 3D-/VR-/MR-Vorschau, Lizenz-/Analyseanzeige, Credits und deterministischer Buildexport sind verfügbar.",
+        "Hashgebundene Platzierungen werden serverseitig pro Profil gespeichert und im laufenden Spiel geladen; Instanzskelette und Animationen bleiben unabhängig.",
+        "Objekte sind dekorativ; keine neuen Missionsbelohnungen oder vorgetäuschten Kollisionskörper."
+      ],
+      "tests": [
+        "python -m pytest tests/assets",
+        "npm test",
+        "npm run test:assets",
+        "Optionale Live-Diagnose, getrennt von CI und Hardwareabnahme."
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Automatischer Browserpfad Upload → Analyse → Optimierung → GLB-Vorschau → IWER-VR → Werkstatt/Sculpt/Undo → sichtbares Spielobjekt bestanden.",
+        "2026-09-28: Zwei echte GLB-Instanzen teilen unveränderte Geometrie, aber keine Bones, Materialien, Morphzustände oder Mixer; fehlerhafte Pins/Bytes und zu große Streams werden abgelehnt."
+      ]
+    },
+    {
+      "id": "ASSET-VERIFY",
+      "title": "Resolver-Sicherheitsprüfungen, Credits und End-to-End-Abnahme",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "ASSET",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [
+        "ASSET-INTEGRATION"
+      ],
+      "affected_files": [
+        "tests/assets",
+        "tests/client/asset-resolver.test.mjs",
+        "tools/diagnostics/check-asset-resolver.mjs",
+        "docs/assets/resolver.md",
+        "docs/architecture/adr/008-open-asset-resolver.md",
+        "docs/testing.md",
+        "THIRD_PARTY.md",
+        ".github/workflows/ci.yml"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "Neue Sicherheits-/Verarbeitungstests und bestehende Python-/JS-/Browser-/Design-/XR-Prüfungen bestehen.",
+        "Provider-Erweiterung, Lizenzregeln, unterstützte Formate und echte Grenzen sind dokumentiert.",
+        "Laufendes localhost-HTTPS liefert die neue Bibliothek und API; Sicherheitsgrenzen und tatsächliche Fähigkeiten sind belegt."
+      ],
+      "tests": [
+        "Automatisierte lokale Unit-/Integrationstests und dokumentierte Foundation-Prüfungen."
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Python 202 Tests und 16 Subtests; JavaScript 29 Tests; Ruff und Mypy erfolgreich. Browser-, Design- und IWER-Prüfungen getrennt dokumentiert.",
+        "2026-09-28: Native Windows-HTTPS-Abnahme nach Sicherung der SQLite-Datenbanken und Neustart: API, acht Quellen, Linux-Netzwerkisolation und Bibliotheksdateien unter localhost:8443 bestätigt.",
+        "2026-09-28: Tatsächlicher Remote-Browserpfad Poly Haven → texturiertes Spielobjekt erfolgreich; Foundation, Presence, Design und IWER-VR/MR bestanden."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -1876,25 +2107,25 @@
     "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
   ],
   "tasks_status_summary": {
-    "total": 51,
+    "total": 56,
     "by_status": {
       "todo": 16,
       "in_progress": 1,
       "partial": 1,
       "blocked": 0,
-      "done": 33
+      "done": 38
     },
-    "progress_percent_done": 64.71,
+    "progress_percent_done": 67.86,
     "by_priority": {
       "P0": 30,
-      "P1": 7,
+      "P1": 12,
       "P2": 14,
       "P3": 0
     },
     "by_risk": {
       "low": 27,
       "medium": 19,
-      "high": 5
+      "high": 10
     },
     "critical_path": {
       "total": 10,
@@ -1902,12 +2133,12 @@
       "remaining": 3
     },
     "milestones": {
-      "total": 17,
+      "total": 18,
       "todo": 0,
       "in_progress": 15,
       "partial": 0,
       "blocked": 0,
-      "done": 2
+      "done": 3
     }
   },
   "summary_notes": [

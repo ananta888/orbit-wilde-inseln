@@ -1,0 +1,1097 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/asset.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "type": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "sourceAssetId": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "sourceUrl": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "license": {
+      "$ref": "#/$defs/license"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "maxItems": 100
+    },
+    "formats": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 20
+      },
+      "maxItems": 20
+    },
+    "geometry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/geometry"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "skeleton": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/skeleton"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "animations": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/animations"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "textures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/textures"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "materials": {
+      "$ref": "#/$defs/materials"
+    },
+    "bounds": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/bounds"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "performance": {
+      "$ref": "#/$defs/performance"
+    },
+    "pbr": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "verified": {
+      "type": "boolean"
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sourceFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 240
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "name",
+          "sha256",
+          "bytes"
+        ]
+      },
+      "maxItems": 512
+    },
+    "entry": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "kind": {
+      "enum": [
+        "model",
+        "material"
+      ]
+    },
+    "status": {
+      "enum": [
+        "downloaded",
+        "ready",
+        "quarantine"
+      ]
+    },
+    "profile": {
+      "enum": [
+        null,
+        "desktop-high",
+        "desktop-medium",
+        "quest3-high",
+        "quest3-balanced",
+        "quest3-performance"
+      ]
+    },
+    "report": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/report"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "input": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "maxItems": 512
+          },
+          "output": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "tool": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "date": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "operation",
+          "input",
+          "output",
+          "parameters",
+          "tool",
+          "date"
+        ]
+      },
+      "maxItems": 200
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+      },
+      "maxItems": 100
+    },
+    "lod": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "profile": {
+            "enum": [
+              "desktop-high",
+              "desktop-medium",
+              "quest3-high",
+              "quest3-balanced",
+              "quest3-performance"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "sha256",
+          "profile"
+        ]
+      },
+      "maxItems": 5
+    },
+    "advertised": {
+      "type": "object"
+    },
+    "sourceLicenses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/license"
+      },
+      "maxItems": 32
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "type",
+    "provider",
+    "sourceAssetId",
+    "sourceUrl",
+    "license",
+    "tags",
+    "formats",
+    "geometry",
+    "skeleton",
+    "animations",
+    "textures",
+    "materials",
+    "bounds",
+    "performance",
+    "pbr",
+    "size",
+    "verified",
+    "sha256",
+    "sourceFiles",
+    "entry",
+    "kind",
+    "status",
+    "profile",
+    "report",
+    "provenance",
+    "dependencies",
+    "lod",
+    "advertised",
+    "sourceLicenses"
+  ],
+  "$defs": {
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "license": {
+          "enum": [
+            "CC0",
+            "CC-BY",
+            "CC-BY-SA",
+            "CC-BY-NC",
+            "CC-BY-ND",
+            "CC-BY-NC-SA",
+            "CC-BY-NC-ND",
+            "Public Domain",
+            "Custom",
+            "Unknown"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "licenseUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "creator": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "sourceAssetId": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "sourceUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "evidenceUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "notice": {
+          "type": "string",
+          "maxLength": 8000
+        },
+        "downloadDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 200
+        },
+        "attributionRequired": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "license",
+        "version",
+        "licenseUrl",
+        "creator",
+        "source",
+        "sourceAssetId",
+        "sourceUrl",
+        "evidenceUrl",
+        "notice",
+        "downloadDate",
+        "modifications",
+        "attributionRequired"
+      ]
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vertices": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "triangles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "renderTriangles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "meshes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "primitives": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "vertices",
+        "triangles",
+        "renderTriangles",
+        "meshes",
+        "primitives"
+      ]
+    },
+    "skeleton": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "present": {
+          "type": "boolean"
+        },
+        "bones": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "joints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 1024
+              },
+              "parent": {
+                "type": "integer",
+                "minimum": -1
+              },
+              "translation": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              "scale": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "index",
+              "name",
+              "parent",
+              "translation",
+              "rotation",
+              "scale"
+            ]
+          },
+          "maxItems": 10000
+        },
+        "skins": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skinning": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "present",
+        "bones",
+        "joints",
+        "skins",
+        "skinning"
+      ]
+    },
+    "animations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^clip_[a-f0-9]{64}$"
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0
+          },
+          "channels": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "maxItems": 20000
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "idle",
+                "walk",
+                "run",
+                "takeoff",
+                "flight",
+                "glide",
+                "turn-left",
+                "turn-right",
+                "climb",
+                "dive",
+                "landing",
+                "attack",
+                "roar",
+                "bite",
+                "tail-attack",
+                "sleep"
+              ]
+            },
+            "maxItems": 17
+          }
+        },
+        "required": [
+          "id",
+          "index",
+          "name",
+          "duration",
+          "channels",
+          "targets",
+          "tags"
+        ]
+      },
+      "maxItems": 128
+    },
+    "textures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "resolution": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            }
+          },
+          "mimeType": {
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ]
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "name",
+          "resolution",
+          "mimeType",
+          "bytes"
+        ]
+      },
+      "maxItems": 64
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "pbr": {
+            "type": "boolean"
+          },
+          "alphaMode": {
+            "enum": [
+              "OPAQUE",
+              "MASK",
+              "BLEND"
+            ]
+          },
+          "doubleSided": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "pbr",
+          "alphaMode",
+          "doubleSided"
+        ]
+      },
+      "maxItems": 256
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "max": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "size": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "pose": {
+          "const": "rest"
+        }
+      },
+      "required": [
+        "min",
+        "max",
+        "size",
+        "pose"
+      ]
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "desktop-high": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "withinBudget": {
+              "type": "boolean"
+            },
+            "exceeded": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "triangles",
+                  "textureSize",
+                  "drawCalls",
+                  "textureBytes",
+                  "fileBytes"
+                ]
+              },
+              "maxItems": 5
+            },
+            "estimated": {
+              "const": true
+            }
+          },
+          "required": [
+            "withinBudget",
+            "exceeded",
+            "estimated"
+          ]
+        },
+        "desktop-medium": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "withinBudget": {
+              "type": "boolean"
+            },
+            "exceeded": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "triangles",
+                  "textureSize",
+                  "drawCalls",
+                  "textureBytes",
+                  "fileBytes"
+                ]
+              },
+              "maxItems": 5
+            },
+            "estimated": {
+              "const": true
+            }
+          },
+          "required": [
+            "withinBudget",
+            "exceeded",
+            "estimated"
+          ]
+        },
+        "quest3-high": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "withinBudget": {
+              "type": "boolean"
+            },
+            "exceeded": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "triangles",
+                  "textureSize",
+                  "drawCalls",
+                  "textureBytes",
+                  "fileBytes"
+                ]
+              },
+              "maxItems": 5
+            },
+            "estimated": {
+              "const": true
+            }
+          },
+          "required": [
+            "withinBudget",
+            "exceeded",
+            "estimated"
+          ]
+        },
+        "quest3-balanced": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "withinBudget": {
+              "type": "boolean"
+            },
+            "exceeded": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "triangles",
+                  "textureSize",
+                  "drawCalls",
+                  "textureBytes",
+                  "fileBytes"
+                ]
+              },
+              "maxItems": 5
+            },
+            "estimated": {
+              "const": true
+            }
+          },
+          "required": [
+            "withinBudget",
+            "exceeded",
+            "estimated"
+          ]
+        },
+        "quest3-performance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "withinBudget": {
+              "type": "boolean"
+            },
+            "exceeded": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "triangles",
+                  "textureSize",
+                  "drawCalls",
+                  "textureBytes",
+                  "fileBytes"
+                ]
+              },
+              "maxItems": 5
+            },
+            "estimated": {
+              "const": true
+            }
+          },
+          "required": [
+            "withinBudget",
+            "exceeded",
+            "estimated"
+          ]
+        }
+      }
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "geometry": {
+          "$ref": "#/$defs/geometry"
+        },
+        "skeleton": {
+          "$ref": "#/$defs/skeleton"
+        },
+        "bounds": {
+          "$ref": "#/$defs/bounds"
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometryBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "textureBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "geometryBytes",
+            "textureBytes"
+          ]
+        },
+        "semanticRig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "profile": {
+              "const": "dragon-v1"
+            },
+            "mapping": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "head": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "neck": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "spine": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "tail": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "jaw": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "eyes": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "left-wing": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "right-wing": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "legs": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                },
+                "feet": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxItems": 10000
+                }
+              },
+              "required": [
+                "head",
+                "neck",
+                "spine",
+                "tail",
+                "jaw",
+                "eyes",
+                "left-wing",
+                "right-wing",
+                "legs",
+                "feet"
+              ]
+            },
+            "status": {
+              "const": "name-hints-unverified"
+            },
+            "riderPosition": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "profile",
+            "mapping",
+            "status",
+            "riderPosition"
+          ]
+        },
+        "performance": {
+          "$ref": "#/$defs/performance"
+        },
+        "materials": {
+          "$ref": "#/$defs/materials"
+        },
+        "textures": {
+          "$ref": "#/$defs/textures"
+        },
+        "animations": {
+          "$ref": "#/$defs/animations"
+        },
+        "morphTargets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "drawCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fileBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pbr": {
+          "type": "boolean"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "maxItems": 4
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 100
+        },
+        "sourceLicenses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/license"
+          },
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "geometry",
+        "skeleton",
+        "bounds",
+        "memory",
+        "semanticRig",
+        "performance",
+        "materials",
+        "textures",
+        "animations",
+        "morphTargets",
+        "drawCalls",
+        "fileBytes",
+        "pbr",
+        "classes",
+        "warnings",
+        "sourceLicenses"
+      ]
+    }
+  }
+}

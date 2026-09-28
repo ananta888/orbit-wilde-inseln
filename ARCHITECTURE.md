@@ -64,6 +64,12 @@ Ein KI-Vorschlag bleibt ein Kandidat bis zur expliziten Annahme. Anantas separat
 
 Veröffentlichung erzeugt ein separates SHA-256-adressiertes Runtime-Artefakt mit Asset-ID und exakter Revision. Pro Browserprofil wird ein Reittier gewählt; bestehende Sitzungen pinnen ihren Stand. `/ws?test_asset=<hash>` öffnet eine separate Sitzung ohne reguläres Laden/Speichern von Spielständen. Der Client prüft Hash und Revision, teilt unveränderliche GPU-Geometrie und erstellt pro Instanz ein eigenes Skelett. Fehler behalten die vorherige Figur. [Veröffentlichungsvertrag](docs/design-mode/publication.md).
 
+## Open Asset Resolver
+
+`server/orbit_server/assets` ist die gemeinsame Asset-Domäne für Spiel, Werkstatt und modellunabhängige Tool-Harnesses. Provider liefern normalisierte Metadaten und begrenzte Downloadmanifeste. Lizenzpolitik, HTTPS-/Archivgrenzen, SHA-256-Blobs und der profilgebundene SQLite-Katalog liegen hinter eigenen Schnittstellen. CPU-/Bildverarbeitung läuft in abbrechbaren lokalen Node-Prozessen mit glTF Transform, Khronos Validator, Sharp und dem vorhandenen meshoptimizer. Unter Linux kann der Prozess zusätzlich durch `bwrap` isoliert werden.
+
+`client/webxr/src/assets` enthält den Asset-Browser, GLB-Instanzen und allgemeine Weltplatzierungen. Unveränderliche Geometrie kann geteilt werden; Skeletons, Materialien und Mixer gehören pro Instanz. Neue Objekte sind ausdrücklich deklarative Dekoration; Gameplay-Autorität und Missionen bleiben im vorhandenen Server. Die Werkstatt erhält eine unabhängige Bearbeitungskopie mit Quellenbindung und weist nicht verlustfrei unterstützte Daten zurück. Buildreferenzen erzeugen automatisch Herkunftsmanifest und Credits. [ADR 008](docs/architecture/adr/008-open-asset-resolver.md) · [Vertrag und Pipeline](docs/assets/resolver.md).
+
 ## Spielstand und Anpassung
 
 SQLite schreibt validierte JSON-Spielstände atomar, regelmäßig und beim Sitzungsende. Der HttpOnly/SameSite-Cookie identifiziert ein lokales Browserprofil; er ist kein Cloud-Konto. Gespeichert werden Missions- und Lernfortschritt, Entdeckungen, Arins Erinnerungen/Beziehung, Einstellungen, Lösungswege, Achsenbeobachtungen und exakte Paketversionen. Unbekannte Save-Schemas werden abgelehnt und nicht überschrieben. Inventar und aktuelle Stufe können fortgesetzt werden.

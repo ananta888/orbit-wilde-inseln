@@ -1,0 +1,953 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/assets/v1/tools.schema.json",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "search_assets"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "query": {
+              "type": "string",
+              "maxLength": 400
+            },
+            "providers": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "maxItems": 20
+            },
+            "licenses": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "CC0",
+                  "CC-BY",
+                  "CC-BY-SA",
+                  "CC-BY-NC",
+                  "CC-BY-ND",
+                  "CC-BY-NC-SA",
+                  "CC-BY-NC-ND",
+                  "Public Domain",
+                  "Custom",
+                  "Unknown"
+                ]
+              },
+              "maxItems": 10
+            },
+            "types": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "model",
+                  "creature",
+                  "character",
+                  "animation",
+                  "material",
+                  "environment",
+                  "prop"
+                ]
+              },
+              "maxItems": 7
+            },
+            "max_triangles": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2000000
+            },
+            "max_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 134217728
+            },
+            "max_texture_resolution": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "min_animations": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 128
+            },
+            "rigged": {
+              "type": "boolean"
+            },
+            "animated": {
+              "type": "boolean"
+            },
+            "gltf": {
+              "type": "boolean"
+            },
+            "pbr": {
+              "type": "boolean"
+            },
+            "low_poly": {
+              "type": "boolean"
+            },
+            "quest_compatible": {
+              "type": "boolean"
+            },
+            "target": {
+              "enum": [
+                "desktop-high",
+                "desktop-medium",
+                "quest3-high",
+                "quest3-balanced",
+                "quest3-performance"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 40
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "inspect_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "preview_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "get_license"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "get_provenance"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "download_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "refresh": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "import_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "profile": {
+              "enum": [
+                "desktop-high",
+                "desktop-medium",
+                "quest3-high",
+                "quest3-balanced",
+                "quest3-performance"
+              ]
+            },
+            "normalize": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "scale": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1000
+                },
+                "up": {
+                  "enum": [
+                    "Y",
+                    "Z"
+                  ]
+                }
+              },
+              "required": [
+                "scale",
+                "up"
+              ]
+            },
+            "entry": {
+              "type": "string",
+              "maxLength": 240
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "optimize_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "profile": {
+              "enum": [
+                "desktop-high",
+                "desktop-medium",
+                "quest3-high",
+                "quest3-balanced",
+                "quest3-performance"
+              ]
+            },
+            "lod": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "profile"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "find_animations"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "query": {
+              "type": "string",
+              "maxLength": 400
+            },
+            "rig_family": {
+              "enum": [
+                "humanoid",
+                "quadruped",
+                "flying-creature",
+                "dragon",
+                "custom"
+              ]
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "retarget_animation"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "source": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "clip": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "mapping": {
+              "type": "object",
+              "minProperties": 1,
+              "maxProperties": 256,
+              "additionalProperties": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "propertyNames": {
+                "type": "string",
+                "maxLength": 200
+              }
+            }
+          },
+          "required": [
+            "id",
+            "source",
+            "clip",
+            "mapping"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "place_asset"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "position": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -100000,
+                "maximum": 100000
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "rotation": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -100000,
+                "maximum": 100000
+              },
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "scale": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "position",
+            "rotation",
+            "scale"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "remove_placement"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "placement_id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "placement_id",
+            "revision"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "const": "export_credits"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+              },
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "ids"
+          ]
+        }
+      },
+      "required": [
+        "tool",
+        "arguments"
+      ]
+    }
+  ],
+  "$defs": {
+    "search_assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "maxItems": 20
+        },
+        "licenses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "CC0",
+              "CC-BY",
+              "CC-BY-SA",
+              "CC-BY-NC",
+              "CC-BY-ND",
+              "CC-BY-NC-SA",
+              "CC-BY-NC-ND",
+              "Public Domain",
+              "Custom",
+              "Unknown"
+            ]
+          },
+          "maxItems": 10
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "model",
+              "creature",
+              "character",
+              "animation",
+              "material",
+              "environment",
+              "prop"
+            ]
+          },
+          "maxItems": 7
+        },
+        "max_triangles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000000
+        },
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 134217728
+        },
+        "max_texture_resolution": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "min_animations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "rigged": {
+          "type": "boolean"
+        },
+        "animated": {
+          "type": "boolean"
+        },
+        "gltf": {
+          "type": "boolean"
+        },
+        "pbr": {
+          "type": "boolean"
+        },
+        "low_poly": {
+          "type": "boolean"
+        },
+        "quest_compatible": {
+          "type": "boolean"
+        },
+        "target": {
+          "enum": [
+            "desktop-high",
+            "desktop-medium",
+            "quest3-high",
+            "quest3-balanced",
+            "quest3-performance"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "inspect_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "preview_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "get_license": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "get_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "download_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "refresh": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "import_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "profile": {
+          "enum": [
+            "desktop-high",
+            "desktop-medium",
+            "quest3-high",
+            "quest3-balanced",
+            "quest3-performance"
+          ]
+        },
+        "normalize": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scale": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1000
+            },
+            "up": {
+              "enum": [
+                "Y",
+                "Z"
+              ]
+            }
+          },
+          "required": [
+            "scale",
+            "up"
+          ]
+        },
+        "entry": {
+          "type": "string",
+          "maxLength": 240
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "optimize_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "profile": {
+          "enum": [
+            "desktop-high",
+            "desktop-medium",
+            "quest3-high",
+            "quest3-balanced",
+            "quest3-performance"
+          ]
+        },
+        "lod": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "profile"
+      ]
+    },
+    "find_animations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "rig_family": {
+          "enum": [
+            "humanoid",
+            "quadruped",
+            "flying-creature",
+            "dragon",
+            "custom"
+          ]
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "retarget_animation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "source": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "clip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127
+        },
+        "mapping": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 256,
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "propertyNames": {
+            "type": "string",
+            "maxLength": 200
+          }
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "clip",
+        "mapping"
+      ]
+    },
+    "place_asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -100000,
+            "maximum": 100000
+          },
+          "maxItems": 3,
+          "minItems": 3
+        },
+        "rotation": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -100000,
+            "maximum": 100000
+          },
+          "maxItems": 3,
+          "minItems": 3
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "position",
+        "rotation",
+        "scale"
+      ]
+    },
+    "remove_placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "placement_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "placement_id",
+        "revision"
+      ]
+    },
+    "export_credits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_:-]{1,160}$"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "ids"
+      ]
+    }
+  }
+}

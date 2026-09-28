@@ -298,6 +298,14 @@
         "DM-GATE-CREATOR"
       ],
       "status": "in_progress"
+    },
+    {
+      "id": "DM-RESOLVER",
+      "title": "Asset Resolver – Werkstattintegration",
+      "status": "done",
+      "task_ids": [
+        "DM-RESOLVER-BRIDGE"
+      ]
     }
   ],
   "tasks": [
@@ -5421,6 +5429,50 @@
         "[Implementierung] Erste Stufen Add/Paint/validierte Vorschau/rigide Pose/Clips ausführbar. Vollständiger Creator einschließlich Layern, organischem Rig, Runtime-Publishing und Geräteabnahme ist nicht fertig.",
         "[Prüfbeleg] docs/design-mode/verification.md trennt bestandene Softwareprüfungen von noch offenen Task-/Geräteabnahmen; daraus folgt keine vollständige Abnahme dieses Tasks."
       ]
+    },
+    {
+      "id": "DM-RESOLVER-BRIDGE",
+      "title": "Verlustfreier Assetübergang, Quellenbindung und Bibliothekszugang",
+      "status": "done",
+      "type": "implementation",
+      "milestone_id": "DM-RESOLVER",
+      "priority": "P1",
+      "risk": "high",
+      "progress_percent": 100,
+      "dependencies": [],
+      "affected_files": [
+        "client/webxr/src/design/assets.js",
+        "client/webxr/src/design/workspace.js",
+        "client/webxr/designer/index.html",
+        "server/orbit_server/design/http.py",
+        "server/orbit_server/design/publication.py",
+        "shared/schemas/design/v1/edit-document.schema.json",
+        "docs/design-mode/overview.md"
+      ],
+      "implementation_plan": [
+        "docs/assets/resolver-plan.md schrittweise implementieren; vorhandene Verträge wiederverwenden.",
+        "Schema-/Fehlerfälle vor Integration prüfen und abgeschlossene Schritte mit Messwerten dokumentieren."
+      ],
+      "acceptance_criteria": [
+        "Unterstützte GLBs wechseln als unabhängige, servergespeicherte Kopie mit Quell-ID/Hash/Lizenz in die Werkstatt.",
+        "Interleavte Attribute werden korrekt übernommen; nicht darstellbare UV-/Skin-/Morph-/Zusatzdaten werden sichtbar zurückgewiesen.",
+        "Sculpt/Undo, Exporte und Veröffentlichung behalten die Quelle; gesperrte Lizenzen verhindern spätere Auslieferung.",
+        "Bestehende Arin-/Orbit-GLB-Rundläufe, Editorbefehle und Probeflug bleiben funktionsfähig."
+      ],
+      "tests": [
+        "pytest tests/assets/test_http.py tests/design",
+        "npm run test:assets",
+        "npm run test:design",
+        "npm run test:design:xr"
+      ],
+      "definition_of_done": [
+        "Implementierung, Fehlerpfade, Schemas und Dokumentation stimmen überein; relevante Tests bestanden."
+      ],
+      "evidence": [
+        "2026-09-28: Bibliotheksimport, tatsächlicher Sculpt-Befehl, Undo und Quellenbindung im Browser bestanden.",
+        "Bestehende vier Design-Diagnosen und IWER-VR/MR/Hand-/Controller-Bearbeitung bestanden; Veröffentlichung prüft geänderte Lizenzpolitik im HTTP-Regressionstest.",
+        "Allgemeiner texturierter Skin-/Morph-Sculpt-Import bleibt außerhalb dieses verlustfreien Übergangs; physische Quest wurde nicht geprüft."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -5487,25 +5539,25 @@
     "Ein zukünftiger Abschlussbericht nennt tatsächlich gewählte Mesh/SDF/Hybrid-Repräsentation, Libraries, Queststatus, Deltaformat, Rechenverteilung, funktionierende KI-Integration und offene Milestones. Dieser Plan allein ist kein Implementierungsnachweis."
   ],
   "tasks_status_summary": {
-    "total": 108,
+    "total": 109,
     "by_status": {
       "todo": 10,
       "in_progress": 0,
       "partial": 96,
       "blocked": 0,
-      "done": 2
+      "done": 3
     },
-    "progress_percent_done": 1.85,
+    "progress_percent_done": 2.75,
     "by_priority": {
       "P0": 42,
-      "P1": 49,
+      "P1": 50,
       "P2": 15,
       "P3": 2
     },
     "by_risk": {
       "low": 3,
       "medium": 16,
-      "high": 89
+      "high": 90
     },
     "critical_path": {
       "total": 47,
@@ -5513,12 +5565,12 @@
       "remaining": 45
     },
     "milestones": {
-      "total": 24,
+      "total": 25,
       "todo": 0,
       "in_progress": 24,
       "partial": 0,
       "blocked": 0,
-      "done": 0
+      "done": 1
     }
   },
   "summary_notes": [

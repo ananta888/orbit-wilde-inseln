@@ -15,11 +15,17 @@
     "test:game": "node tools/diagnostics/check-browser.mjs",
     "test:design": "node tools/diagnostics/check-design.mjs && node tools/diagnostics/check-design-assets.mjs && node tools/diagnostics/check-designer-authoring.mjs && node tools/diagnostics/check-published-creature.mjs",
     "test:design:xr": "node tools/diagnostics/check-design-xr.mjs",
-    "test:bow": "node tools/diagnostics/check-bow-grip.mjs"
+    "test:bow": "node tools/diagnostics/check-bow-grip.mjs",
+    "test:assets": "node tools/diagnostics/check-asset-resolver.mjs"
   },
   "dependencies": {
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
     "@webxr-input-profiles/assets": "1.0.20",
+    "gltf-validator": "2.0.0-dev.3.10",
     "meshoptimizer": "1.3.0",
+    "sharp": "0.35.5",
     "three": "0.186.1",
     "three-mesh-bvh": "0.9.15"
   },
