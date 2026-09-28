@@ -13,6 +13,7 @@ Das ausführbare Fundament verbindet tropische Inseln, Bogen, Drachenflug und Pl
 - Kleine Menüs am Handgelenk mit stabilen, blätterbaren Panels; Controllerauswahl beim Loslassen, Hand-Pinch und direktes Antippen. Lokale Hand-/Controllermodelle und berechnete Knie/Ellbogen.
 - CC0-Drache von Cethiel/Drummyfish als GLB mit Skelett; dynamische Flügel, gegliederte Tiergänge, Materialdetails, Schatten, Wasser und drei Grafikprofile.
 - Gehen, Drachenflug, höhenabhängige Beschleunigung, Schweben, Landung und vereinfachte Globusübersicht.
+- Arin bleibt am Boden als animierter Begleiter sichtbar: Stand-/Gehclips, begrenzte Folgebewegung und Blickgesten. Gespräche funktionieren zu Fuß, im Flug und in MR; im Desktop über „Arin“.
 - **Pfeile im Wind:** Wind beobachten, echte ballistische Treffer, bewegtes Finale. **Die verlorene Brücke:** englische Anweisungen, Bohlen sammeln, freie Antwort, Reparatur. **Das Tier am Tempel:** beobachten und über Ablenkung, Seitenpfad oder Umweltinteraktion lösen.
 - Geschlossene Paketschemas, Validator, reproduzierbarer Paketbau und atomarer Katalogwechsel mit gebundenen Versionen laufender Missionen.
 - Lokale SQLite-Spielstände, Episoden-Resume, Lernbeobachtungen, Arins Erinnerungen, manuelle Fitness-/Schwierigkeitsprofile und Anantas vier Hilfestufen.
@@ -48,7 +49,7 @@ Desktop-Vorschau: <http://localhost:8443>. Quest benötigt HTTPS; siehe [Verbind
 
 Für einen Checkout in WSL mit eingerichtetem Zertifikat startet `Start-Orbit.cmd` das aktuelle Spiel unter Windows auf **https://localhost:8443/**. Für WLAN: `Start-Orbit.cmd -BindAddress 0.0.0.0 -Background`. Der Starter verbindet eine Windows-TCP-Weiterleitung mit der vorhandenen WSL-Laufzeit; Details stehen im [Windows-Setup](docs/vr/setup.md#windows-start-mit-https).
 
-Desktop: WASD bewegen, F fliegen/landen, Leertaste/Shift Höhe, rechte Maus umsehen, linke Maus Bogen. Quest: links bewegen, rechts drehen/Höhe, A fliegen, X links Episodenmenü. Episode auswählen, Aufgaben nahe am passenden Objekt ausführen. [Bedienung](docs/vr/setup.md) · [Sprache einrichten](docs/ai/speech.md).
+Desktop: WASD bewegen, F fliegen/landen, Leertaste/Shift Höhe, rechte Maus umsehen, linke Maus Bogen, „Arin“ für das Gespräch. Quest: links bewegen, rechts drehen/Höhe, A fliegen, X links Episodenmenü; Arin über das Handgelenkmenü oder B rechts ansprechen. Episode auswählen, Aufgaben nahe am passenden Objekt ausführen. [Bedienung](docs/vr/setup.md) · [Sprache einrichten](docs/ai/speech.md).
 
 ## Kreaturenwerkstatt (Design Mode)
 

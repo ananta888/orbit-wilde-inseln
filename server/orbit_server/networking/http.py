@@ -168,7 +168,7 @@ class Service:
         elif kind == "move": world.move(data, now)
         elif kind == "enter": game.enter(data["mode"]); chat.reset()
         elif kind == "dragon": await chat.ask(data["message"])
-        elif kind in {"start", "restart"}: world.start(now)
+        elif kind in {"start", "restart"}: world.start(now); chat.reset()
         elif kind == "pause": world.pause(now); chat.reset()
         elif kind == "resume": world.resume(now)
         elif kind == "ping": await socket.send_json({"type": "pong", "echo": data["time"]})

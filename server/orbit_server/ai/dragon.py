@@ -56,7 +56,14 @@ class DragonBridge:
             source = 'ananta-local-jev'
         else:
             region = context['environment']['region']
-            line = 'Von hier oben sehen die Inseln aus wie Erinnerungen, die wieder zusammenfinden.' if region == 'orbit' else 'Ich bin Arin. Der Wind trägt uns über diese Inseln. Unten warten alte Erinnerungen.'
+            if context['player']['current_activity'] == 'mixed_reality':
+                line = 'Ich bin da. Wir können die Gegenstände vor dir in Ruhe untersuchen. Was möchtest du ausprobieren?'
+            elif not world.flying:
+                line = 'Ich bleibe an deiner Seite. Zwischen den Bäumen warten alte Spuren. Lass uns erst beobachten, bevor wir handeln.'
+            elif region == 'orbit':
+                line = 'Von hier oben sehen die Inseln aus wie Erinnerungen, die wieder zusammenfinden.'
+            else:
+                line = 'Der Wind trägt uns über diese Inseln. Unten warten alte Erinnerungen.'
             answer = CharacterResponse(line, options=['Was entdecken wir?', 'Erzähl mir von dir.', 'Ich möchte etwas fragen.'])
             source = 'authored-offline'
         result = answer.validated()
@@ -89,7 +96,7 @@ class DragonConversation:
 
     async def ask(self, message):
         if not isinstance(message, str) or len(message) > 600: raise ValueError('Drachen-Nachricht: höchstens 600 Zeichen.')
-        if self.world.mode == 'mr' or self.world.phase != 'playing' or not self.world.flying: return
+        if self.world.phase != 'playing': return
         if self.task and not self.task.done():
             if message.strip(): self.pending = message
             return
@@ -102,20 +109,20 @@ class DragonConversation:
         try:
             await self.socket.send_json({'type': 'dragon', 'status': 'thinking', 'serial': serial})
             answer = await self.bridge.decide(self.world, message, self.history)
-            if serial != self.serial or self.socket.closed: return
+            if serial != self.serial or self.socket.closed or self.world.phase != 'playing': return
             if message.strip(): self.history.append({'role': 'user', 'text': message})
             self.history.append({'role': 'assistant', 'text': answer['speech']}); self.history = self.history[-6:]
             await self.socket.send_json({'type': 'dragon', 'status': 'ready', 'serial': serial, **answer})
             try:
                 url = await self.bridge.speak(answer['speech'])
-                if serial == self.serial and not self.socket.closed:
+                if serial == self.serial and not self.socket.closed and self.world.phase == 'playing':
                     await self.socket.send_json({'type': 'dragon_audio', 'url': url, 'serial': serial})
             except (OSError, RuntimeError, aiohttp.ClientError, asyncio.TimeoutError):
                 pass  # Caption is already delivered; flight and dialogue continue without audio.
         except (OSError, RuntimeError, ValueError, KeyError, aiohttp.ClientError, asyncio.TimeoutError):
-            if serial == self.serial and not self.socket.closed:
+            if serial == self.serial and not self.socket.closed and self.world.phase == 'playing':
                 await self.socket.send_json({'type': 'dragon', 'status': 'offline', 'serial': serial,
-                                            'speech': 'Die Verbindung zu Ananta fehlt gerade. Du kannst weiterfliegen.'})
+                                            'speech': 'Die Verbindung zu Ananta fehlt gerade. Du kannst weiter erkunden.'})
         finally:
             if serial == self.serial:
                 pending, self.pending, self.task = self.pending, None, None

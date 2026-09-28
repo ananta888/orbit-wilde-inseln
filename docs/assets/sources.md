@@ -22,6 +22,13 @@ Die Quest-Hand- und Controllermodelle kommen aus dem fixierten MIT-Paket `@webxr
 
 Quaternius' Reh und Hirsch wurden in der offiziellen glTF-Dateiliste gefunden. Der Download lieferte beim Importversuch eine Google-Drive-Quotenfehlermeldung, daher wurden diese Dateien **nicht** übernommen. Reh, Wildschwein und Aliens benutzen weiterhin eigene Geometrie, jetzt mit separaten Gelenken, Gangphasen und Bodenkontakt.
 
+Weitere konkret geprüfte Kandidaten, **noch nicht importiert**:
+
+- [Boar von Teh_Bucket](https://opengameart.org/content/boar): Upload unter CC0, texturiertes Rig, Geh- und Angriffsanimation; Ausgangsdatei `.blend`. Der Autor nennt ungefähr 1.000 Dreiecke. Export, Gelenke und tatsächliche Laufzeitkosten sind vor Übernahme zu messen.
+- [Deer Female von CDmir / TinyWorlds](https://opengameart.org/content/deer-female): CC0, Rig, Animationen und diffuse Textur; `.blend` und ein FBX-Archiv. Noch kein von Orbit geprüfter GLB-Export.
+
+Auch freie Rigged-Assets sind keine Zusage moderner Detailqualität. Stil, Bewegungsqualität, Materialauflösung und Quest-Budget werden am konkreten Export bewertet. Der nächste Import soll insbesondere vierbeinige Originalanimationen vergleichen, statt humanoide Bewegungen auf Reh oder Wildschwein zu übertragen.
+
 ## Übernahmepipeline
 
 1. Konkrete Primärquelle, Urheber und Lizenz prüfen; Quelle und Download-Hash notieren.

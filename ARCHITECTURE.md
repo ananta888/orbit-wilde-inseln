@@ -50,6 +50,10 @@ Quest-Aufnahme → Orbit → externer Ananta-Hub → Whisper → Dialogplanung/J
 
 `DialogueProvider`, `SpeechRecognizer`, `SpeechSynthesizer` beschreiben die Ports. Adapter existieren für den vorhandenen Ananta-`game-dragon`-Vertrag, Whisper.cpp-WAV-HTTP und Piper-HTTP. `FallbackRecognizer` kann einen separat konfigurierten CPU-Dienst verwenden. GPU-Auswahl ist Aufgabe des externen Whisper-Prozesses, nicht des Quest-Clients. [Pipeline](docs/ai/speech.md), [Kontextgrenzen](docs/ai/context-and-actions.md).
 
+Arins Gespräch ist in jeder aktiven Spielphase erreichbar: am Boden, im Flug und in MR. Pause, Neustart und Sitzungswechsel brechen ausstehende Antworten ab; verspäteter Text oder Ton wird verworfen. Das lokale Kontextmodell unterscheidet Erkunden, Flug und MR. Der bestehende externe `game-dragon`-Adapter übermittelt weiterhin nur seinen freigegebenen Ausschnitt; eine Erweiterung des Ananta-Vertrags wird dadurch nicht behauptet.
+
+`CompanionMotion` berechnet ausschließlich Arins sichtbare Begleiterpose auf geladenem Terrain. Die Klasse ändert weder den Spieler noch die Kamera und entscheidet keine Kollisionen, Missionen oder Belohnungen. `DragonAnimation` mischt die Originalclips des CC0-Modells und begrenzte Flug-/Blick-/Sprechgesten pro Instanz. Eigene veröffentlichte Kreaturen behalten ihren separaten Animationspfad. Grenzen und spätere Navigation: [ADR 007](docs/architecture/adr/007-ground-companion.md).
+
 ## Kreaturenwerkstatt
 
 `client/webxr/src/design` ist eine eigene XR-Szene mit Auswahl, Formung, Malen und Vorschau. `server/orbit_server/design` validiert Commands, berechnet Geometrie in begrenzten, abbrechbaren Prozessen und speichert autoritative Revisionen in einer separaten `creatures.sqlite3`. Optionales Python-Extra: `design`.

@@ -113,7 +113,8 @@
       "task_ids": [
         "ARIN-FLIGHT",
         "ARIN-MEMORY",
-        "ARIN-CHARACTER"
+        "ARIN-CHARACTER",
+        "ARIN-COMPANION"
       ]
     },
     {
@@ -1735,6 +1736,60 @@
         "Quest-Bildrate und Ergonomie bleiben XR-DEVICE / TEST-HARDWARE. Quaternius-Tierdownload durch externe Quotenbegrenzung nicht übernommen; Tiere bleiben eigene stilisierte Modelle.",
         "2026-09-28: npm run test:xr nach letzter Eingabeänderung bestanden: MR-/VR-Bogentreffer, Flug, Steigen, Schweben, Sinken, Landen, Gehen, Streaming, Drehen, Fokusabbruch und Sitzungsende. IWER-Emulation."
       ]
+    },
+    {
+      "id": "ARIN-COMPANION",
+      "title": "Arin am Boden sichtbar machen und Gespräche in allen Spielmodi ermöglichen",
+      "status": "partial",
+      "type": "implementation",
+      "milestone_id": "ARIN",
+      "priority": "P1",
+      "risk": "medium",
+      "progress_percent": 90,
+      "dependencies": [
+        "ARIN-FLIGHT",
+        "XR-HAND-UI"
+      ],
+      "affected_files": [
+        "client/webxr/src/rendering/dragon.js",
+        "client/webxr/src/rendering/rigged-dragon.js",
+        "client/webxr/src/rendering/companion-motion.js",
+        "client/webxr/src/rendering/dragon-animation.js",
+        "client/webxr/src/ui/dragon-dialogue.js",
+        "client/webxr/src/app.js",
+        "server/orbit_server/ai/dragon.py",
+        "tests/test_dragon.py",
+        "tests/client",
+        "docs/vr/presence.md",
+        "server/orbit_server/ai/context.py",
+        "server/orbit_server/networking/http.py",
+        "client/webxr/index.html",
+        "client/webxr/style.css",
+        "tools/diagnostics/check-presence.mjs",
+        "docs/architecture/adr/007-ground-companion.md",
+        "README.md",
+        "ARCHITECTURE.md"
+      ],
+      "acceptance_criteria": [
+        "Arin bleibt in VR nach der Landung neben dem Spieler sichtbar; Originalclips idle/walk werden passend und ohne Kamerabewegung überblendet.",
+        "Begleiter hält Abstand, bleibt beim Umsehen ruhig und wandert nicht über ungeladene Böden oder Klippen.",
+        "Dialoganfragen funktionieren zu Fuß, im Flug und in MR; Pause, Neustart und Moduswechsel verwerfen alte Antworten.",
+        "Spielstände und Treffer bleiben ausschließlich serverseitig; Begleiterpose ist Darstellung und keine neue Physikfigur.",
+        "Vorhandene Fremdassets und eigene veröffentlichte Kreaturen bleiben erhalten."
+      ],
+      "tests": [
+        "Node-Tests mit echtem GLB-Skelett ohne Texturdekodierung; Folgebewegung, Clipmischung und Pose-Drift",
+        "Python-Dialogtests mit kontrolliertem Provider: Boden/MR/Flug, Abbruch, Warteschlange",
+        "check-presence.mjs: Desktop-Gespräch, schmale Menüs, VR-Landung und MR-Controlleranfrage; Chromium/IWER in GitHub CI"
+      ],
+      "definition_of_done": [
+        "Getestete Implementierung und tatsächliche Ausführungsgrenzen dokumentiert.",
+        "Übernahme ins Hauptrepository und Browserprüfung getrennt vom lokalen Änderungsstand ausweisen."
+      ],
+      "evidence": [
+        "2026-09-28: 23 JavaScript-Tests einschließlich echtem GLB-Rig sowie 65 relevante Python-Tests und 11 Subtests bestanden (TODO-Tests nach Korrektur der Milestone-Zuordnung erneut grün). Ruff, Mypy, Content-, Asset- und TODO-Validierung bestanden. Vollständige Browserregression noch in GitHub CI auszuführen.",
+        "Arbeitskopie in /home/krusty/3d-games/orbit-next. Hauptcheckout ist in dieser Sitzung schreibgeschützt; Live-Server unverändert. Lokale Server-/Chromium-Starts sind eingeschränkt; keine neue Quest-Hardwareprüfung."
+      ]
     }
   ],
   "critical_path_tasks": [
@@ -1756,24 +1811,24 @@
     "Echte Hardware-Abnahme und umfangreiche Inhalte bleiben ausdrücklich als nächste Aufgaben sichtbar."
   ],
   "tasks_status_summary": {
-    "total": 49,
+    "total": 50,
     "by_status": {
       "todo": 16,
       "in_progress": 1,
-      "partial": 1,
+      "partial": 2,
       "blocked": 0,
       "done": 31
     },
-    "progress_percent_done": 63.27,
+    "progress_percent_done": 62.0,
     "by_priority": {
       "P0": 30,
-      "P1": 5,
+      "P1": 6,
       "P2": 14,
       "P3": 0
     },
     "by_risk": {
       "low": 27,
-      "medium": 17,
+      "medium": 18,
       "high": 5
     },
     "critical_path": {

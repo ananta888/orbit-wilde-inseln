@@ -10,6 +10,11 @@ export class DragonDialogue {
     this.serial = 0; this.busy = false; this.stream = null; this.recorder = null; this.recording = false; this.transcribing = false;
     this.lastChoose = 0; this.lastAuto = -Infinity; this.band = null; this.wasMounted = false;
     this.lastPaint = ''; this.active = false;
+    this.desktopOpen = false;
+    document.getElementById('dragon-toggle').addEventListener('click', () => { this.desktopOpen = !this.desktopOpen; });
+    document.getElementById('dragon-close').addEventListener('click', () => {
+      this.desktopOpen = false; document.getElementById('dragon-toggle').focus();
+    });
     this.micStatus = document.getElementById('voice-status');
     document.getElementById('voice-enable').addEventListener('click', () => this.enableMic());
     document.getElementById('dragon-form').addEventListener('submit', event => {
@@ -107,9 +112,12 @@ export class DragonDialogue {
   update(dt, camera, movement, controllers, hands, active, xr, now) {
     const mounted = movement.mode !== 'mr' && movement.locomotion !== 'walk';
     this.active = active; this.xr = xr;
-    document.getElementById('dragon-panel').hidden = !mounted || !active || xr;
+    const desktopVisible = this.desktopOpen && active && !xr;
+    document.getElementById('dragon-panel').hidden = !desktopVisible;
+    document.getElementById('dragon-toggle').setAttribute('aria-expanded', String(desktopVisible));
+    document.body.classList.toggle('arin-dialogue-open', desktopVisible);
     if (!this.active) { this.finishRecording(true); this.stopVoice(); }
-    if (!mounted && this.wasMounted) { this.band = null; this.lastAuto = -Infinity; this.stopVoice(); }
+    if (!mounted && this.wasMounted) { this.band = null; this.lastAuto = -Infinity; }
     this.wasMounted = mounted;
     for (const controller of controllers) {
       const source = controller.userData.source, pressed = !!source?.gamepad?.buttons[5]?.pressed && source.handedness === 'right';

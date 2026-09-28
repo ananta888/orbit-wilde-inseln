@@ -234,6 +234,7 @@ function unlockSound() {
 
 function stopVoice() {
   voiceGeneration++;
+  dragon.speaking = false;
   if (voiceNode) { try { voiceNode.stop(); } catch {} voiceNode = null; }
 }
 async function playVoice(url) {
@@ -247,7 +248,9 @@ async function playVoice(url) {
     if (generation !== voiceGeneration || !sound || !dialogue.active) return;
     voiceNode = audioContext.createBufferSource(); voiceNode.buffer = buffer;
     const gain = audioContext.createGain(); gain.gain.value = .85;
+    voiceNode.onended = () => { if (generation === voiceGeneration) { dragon.speaking = false; voiceNode = null; } };
     voiceNode.connect(gain).connect(audioContext.destination); voiceNode.start();
+    dragon.speaking = true;
   } catch { /* Dialogue remains readable if the device cannot play audio. */ }
 }
 function playTone(frequency, duration) {
@@ -510,7 +513,7 @@ renderer.setAnimationLoop((now, frame) => {
   fog.near = 24 + Math.max(0, movement.position[1] - 20) * .5;
   fog.far = 65 + Math.max(0, movement.position[1] - 20) * 2;
   const exploring = inGame && healthy() && view.state?.phase === 'playing' && focusedForMove;
-  dragon.update(dt, camera, movement, controllers, exploring);
+  dragon.update(dt, camera, movement, controllers, exploring, environment);
   dialogue.update(dt, camera, movement, controllers, hands, exploring, renderer.xr.isPresenting, now);
   missions.update(camera, hands, exploring, renderer.xr.isPresenting, controllers);
   if (ambience && audioContext.state === 'running') {

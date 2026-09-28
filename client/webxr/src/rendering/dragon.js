@@ -1,5 +1,7 @@
 import * as THREE from '/vendor/three.module.js';
 import { RiggedDragon } from './rigged-dragon.js';
+import { CompanionMotion } from './companion-motion.js';
+import { groundOffset } from './dragon-animation.js';
 import { surfaceMaterial } from './materials.js';
 import { LimbBatch, solveTwoBone } from './kinematics.js';
 import { mergeParts, part } from '/src/rendering/jungle.js';
@@ -40,6 +42,7 @@ export class DragonMount {
     this.root = new THREE.Group(); this.root.visible = false; scene.add(this.root);
     this.body = new THREE.Group(); this.root.add(this.body);
     this.heading = null; this.blend = 0; this.mood = 'calm'; this.gesture = 'glide'; this.time = 0;
+    this.companion = new CompanionMotion(); this.speaking = false; this.gestureTime = 0;
     const parts = [part(sphere, '#366f70', [0, 0, .2], [.68, .55, 1.6]),
       part(sphere, '#bad0a8', [0, -.35, -.03], [.46, .25, 1.25]),
       part(sphere, '#2b5558', [0, .24, -1.5], [.37, .42, .95]),
@@ -92,7 +95,10 @@ export class DragonMount {
     this.rigged = new RiggedDragon(this.body);
     this.riderLegs = new LimbBatch(this.rider, new THREE.MeshStandardMaterial({ roughness: .86 }), 16);
   }
-  react(state) { this.mood = state.mood || 'calm'; this.gesture = state.gesture || 'glide'; }
+  react(state) {
+    if (state.mood) this.mood = state.mood;
+    if (state.gesture) { this.gesture = state.gesture; this.gestureTime = 3; }
+  }
   async setAsset(descriptor) {
     if (this.assetHash === descriptor?.hash) return;
     const generation = this.assetGeneration = (this.assetGeneration || 0) + 1;
@@ -107,41 +113,68 @@ export class DragonMount {
     if (generation !== this.assetGeneration) { candidate.dispose(); return; }
     try { alignRider(candidate); } catch (error) { candidate.dispose(); throw error; }
     this.body.add(candidate.view.root);
+    candidate.groundOffset = groundOffset(candidate.view.root, this.body);
     this.custom?.dispose(); this.custom = candidate; this.assetHash = descriptor.hash;
     this.defaultVisuals.forEach(child => { child.visible = false; });
   }
-  update(dt, camera, movement, controllers, active) {
+  update(dt, camera, movement, controllers, active, environment = null) {
     const mounted = active && movement.mode !== 'mr' && movement.locomotion !== 'walk';
+    if (!active || movement.mode === 'mr') {
+      this.root.visible = false;
+      if (movement.mode === 'mr') { this.companion.reset(); this.heading = null; this.blend = 0; }
+      return;
+    }
+    const takingOff = mounted && !this.companion.wasMounted;
     this.blend = THREE.MathUtils.damp(this.blend, mounted ? 1 : 0, 7, dt);
-    this.root.visible = this.blend > .02;
-    if (!this.root.visible) { this.heading = null; return; }
     const velocity = new THREE.Vector3(...movement.velocity), speed = Math.hypot(velocity.x, velocity.z);
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
+    this.companion.update(dt, movement.rig.position, velocity, Math.atan2(-forward.x, -forward.z), mounted,
+      (x, z) => environment?.sample(x, z) ?? null);
+    this.root.visible = mounted || this.blend > .02 || this.companion.ready;
+    if (!this.root.visible) return;
+    if (takingOff) this.heading = Math.atan2(-forward.x, -forward.z);
     const targetHeading = speed > .4 ? Math.atan2(-velocity.x, -velocity.z) : (this.heading ?? Math.atan2(-forward.x, -forward.z));
     this.heading ??= targetHeading;
     const delta = Math.atan2(Math.sin(targetHeading - this.heading), Math.cos(targetHeading - this.heading));
     this.heading += delta * (1 - Math.exp(-3 * dt));
-    this.root.position.copy(movement.rig.position).add(new THREE.Vector3(Math.sin(this.heading) * .8, .33, Math.cos(this.heading) * .8));
-    this.root.rotation.y = this.heading; this.root.scale.setScalar(this.blend);
+    const mountPosition = movement.rig.position.clone().add(new THREE.Vector3(Math.sin(this.heading) * .8, .33, Math.cos(this.heading) * .8));
+    const flight = mounted ? 1 : this.blend;
+    if (this.companion.ready && !mounted) {
+      const lift = this.custom?.groundOffset ?? (this.rigged.ready ? this.rigged.groundOffset : .68);
+      const standing = this.companion.position.clone().add(new THREE.Vector3(0, lift, 0));
+      this.root.position.copy(standing).lerp(mountPosition, flight);
+      // A grounded transition must not interpolate the standing legs below the island.
+      const surface = environment?.sample(this.root.position.x, this.root.position.z);
+      if (Number.isFinite(surface)) this.root.position.y = Math.max(this.root.position.y, surface + lift);
+      this.root.rotation.y = this.companion.heading + Math.atan2(Math.sin(this.heading - this.companion.heading), Math.cos(this.heading - this.companion.heading)) * flight;
+    } else { this.root.position.copy(mountPosition); this.root.rotation.y = this.heading; }
+    this.root.scale.setScalar(1); this.rider.visible = mounted;
     this.time += dt;
+    this.gestureTime = Math.max(0, this.gestureTime - dt);
+    if (!this.gestureTime) this.gesture = 'glide';
     if (this.custom) {
       const clips = this.custom.artifact.document.clips;
-      this.custom.view.pose(true, this.time, clips.find(c => c.id === (speed > .5 ? 'fly' : 'idle')));
+      const clip = clips.find(c => c.id === (mounted ? 'fly' : this.companion.speed > .1 ? 'walk' : 'idle')) || clips.find(c => c.id === 'idle');
+      this.custom.view.pose(true, this.time, clip);
     }
     const useRigged = this.rigged.ready && !this.custom;
     this.rigged.root.visible = useRigged;
     this.proceduralVisuals.forEach(child => { child.visible = !this.custom && !useRigged; });
     const climbing = THREE.MathUtils.clamp(velocity.y / Math.max(5, velocity.length()), -1, 1);
-    this.body.rotation.x = THREE.MathUtils.damp(this.body.rotation.x, climbing * .18, 4, dt);
-    this.body.rotation.z = THREE.MathUtils.damp(this.body.rotation.z, THREE.MathUtils.clamp(-delta * .28, -.22, .22), 4, dt);
+    this.body.rotation.x = THREE.MathUtils.damp(this.body.rotation.x, climbing * .18 * flight, 4, dt);
+    this.body.rotation.z = THREE.MathUtils.damp(this.body.rotation.z, THREE.MathUtils.clamp(-delta * .28, -.22, .22) * flight, 4, dt);
     const flap = Math.sin(this.time * (climbing > .2 ? 6.5 : 3.8)) * (speed > 12 && climbing < .2 ? .045 : .24);
-    this.wings.forEach((wing, i) => { wing.rotation.z = (i ? 1 : -1) * (flap + .12); });
+    this.wings.forEach((wing, i) => { wing.rotation.z = (i ? 1 : -1) * ((flap + .12) * flight + (1 - flight) * 1.1); });
     this.tail.forEach((tail, i) => { tail.rotation.y = Math.sin(this.time * 1.8 - i * .5) * .065; tail.rotation.x = Math.cos(this.time - i * .4) * .035; });
     this.head.rotation.y = Math.sin(this.time * .65) * (this.gesture === 'look_around' ? .28 : .045);
     this.head.rotation.x = this.gesture === 'nod' ? Math.sin(this.time * 3) * .09 : -.04;
     this.eyes.material.emissiveIntensity = this.mood === 'excited' ? .9 : this.mood === 'alert' ? .7 : .35;
-    this.rigged.update(dt, speed, climbing, this.gesture);
+    const toPlayer = camera.getWorldPosition(new THREE.Vector3()).sub(this.root.position);
+    const attention = Math.atan2(Math.sin(Math.atan2(-toPlayer.x, -toPlayer.z) - this.root.rotation.y), Math.cos(Math.atan2(-toPlayer.x, -toPlayer.z) - this.root.rotation.y));
+    this.rigged.update(dt, mounted ? speed : this.companion.speed, climbing, this.gesture,
+      { flight, speaking: this.speaking, attention: this.companion.speed < .1 ? attention : 0 });
     this.root.updateMatrixWorld(true);
+    if (!mounted) return;
     this.riderLegs.begin();
     for (const side of [-1, 1]) {
       const hip = new THREE.Vector3(side * .14, .65, 1.05);

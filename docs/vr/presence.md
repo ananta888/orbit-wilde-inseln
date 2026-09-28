@@ -8,6 +8,8 @@ Controller: auf das Feld zeigen, Trigger drücken und **über demselben Feld los
 
 Das Menü sperrt den Bogen und die Stickbewegung, bis es geschlossen wird. Kopf und Hände bleiben unmittelbar getrackt. In MR bleibt künstliche Bewegung ausgeschaltet. Metas reservierte Systemgesten werden nicht nachgebaut oder abgefangen.
 
+Arin lässt sich zu Fuß, im Flug und in MR ansprechen. B rechts startet bei vorbereitetem Mikrofon eine Aufnahme; Loslassen sendet sie. Ohne freigegebenes Mikrofon fragt B nach der Umgebung. Im Desktop öffnet **Arin** das Text-/Sprachfenster; **Schließen** kehrt zurück. Auf schmalen Bildschirmen weichen die Episodenoptionen während des Gesprächs, damit die Bedienflächen sich nicht überdecken.
+
 ## Darstellung
 
 Die lokal gebündelten WebXR-Profile zeigen zum verbundenen Controller passende Hardware, etwa Quest Touch Plus. Echte Hand-Eingaben steuern das Hautmodell anhand der 25 WebXR-Gelenke. Bei Controllern sind Fingerstellungen **berechnete Greifposen**, abhängig von Trigger, Griff und Bogenrolle; keine Behauptung von erfasstem Fingertracking.
@@ -17,6 +19,14 @@ Der Bogen sitzt an `gripSpace` statt am Zeigestrahl. Bei Händen werden Handflä
 Der VR-Körper verwendet Kopf und Handgelenke als Eingabe für Ellbogen-/Knieberechnung. Beine setzen abwechselnd auf, schwingen über den Boden und federn beim Ducken ein; Gangrichtung folgt der Bewegung. Der Reiter bleibt auf Arins Rücken ausgerichtet, während die Kamera frei dem Kopf folgt. In MR ist dieser geschätzte Ganzkörper ausgeblendet. Fuß- und Hüftpositionen sind **Animation, kein Body Tracking**; echtes Beintracking und eine Nutzerkalibrierung bleiben Erweiterungen.
 
 Reh und Wildschwein haben Hüfte, Knie, Sprunggelenk und gespaltene Hufe. Bodenkontakt und Schwungphase sind getrennt. Gehen und schneller Trab verwenden unterschiedliche Beinphasen, Geschwindigkeit steuert die Schrittfrequenz. Aliens bewegen sich zweibeinig. Die Modelle bleiben stilisiert.
+
+## Arin am Boden
+
+In VR und der Desktop-Vorschau steht Arin einige Meter neben dem Spieler und folgt dessen Bewegung mit begrenzter Geschwindigkeit. Bloßes Umsehen versetzt ihn nicht. Das eingebundene CC0-Skelett verwendet seine Originalclips **idle** und **walk**; Flügel und Hals wechseln beim Flug in die berechnete Flugpose. Kurze Blick-/Nickgesten ergänzen die Clips. Die Kieferbewegung läuft nur während tatsächlich gestarteter Audioausgabe und ist eine Sprechbewegung, keine phonetische Lippensynchronisation.
+
+Beim Landen wird die Begleiterpose eingeblendet und der Reiter ausgeblendet. Beliebige Kopfrotation bleibt unabhängig. Auf ungeladenem Terrain, im Wasser oder vor starken Höhenstufen wird kein neuer Standplatz gewählt. Das ist eine visuelle Folgebewegung ohne Wegsuche um Bäume, präzise Fuß-IK oder eigene serverseitige Drachenphysik. Größere Weltversetzungen setzen die Begleiterposition neu. Im MR-Raum wird das große Drachenmodell ausgeblendet; Gespräch, Auswahl und Audio bleiben erreichbar.
+
+Eigene veröffentlichte Kreaturen haben Vorrang. Deren vorhandene `idle`-/`walk`-/`fly`-Clips werden genutzt; fehlende Gehclips werden nicht künstlich als vorhandene Animation ausgegeben. Ein Ladefehler beim CC0-Modell erhält die prozedurale Rückfalldarstellung.
 
 ## Grafik
 
